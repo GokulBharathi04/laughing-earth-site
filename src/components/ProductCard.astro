@@ -1,0 +1,167 @@
+---
+import Card from './Card.astro';
+import Button from './Button.astro';
+import { categoryLabel, discountPercent, formatPrice, productQuoteLink, type Product } from '../lib/products';
+
+// One catalogue item: square image, name, price with MRP struck through and a
+// WhatsApp quote button naming the product. Horizontal layout on small screens.
+interface Props {
+  product: Product;
+}
+
+const { product: p } = Astro.props;
+const off = discountPercent(p);
+const imageBase = p.image.replace(/\.webp$/, '');
+---
+
+<Card as="li" colourway="sage" lift class="product-card" data-category={p.category}>
+  <img
+    slot="media"
+    src={p.image}
+    srcset={`${imageBase}-600.webp 600w, ${p.image} 1200w`}
+    sizes="(min-width: 1024px) 360px, (min-width: 560px) 45vw, 7.5rem"
+    width="1200"
+    height="1200"
+    alt={p.name}
+    loading="lazy"
+    decoding="async"
+  />
+  <p class="product-card__cat">{categoryLabel(p.category)}</p>
+  <h3 class="product-card__name">{p.name}</h3>
+  <p class="product-card__desc">{p.description}</p>
+  <p class="product-card__price">
+    <span class="sr-only">Price:</span>
+    <strong>{formatPrice(p.price)}</strong>
+    {
+      p.mrp > p.price && (
+        <>
+          <span class="sr-only">, MRP</span>
+          <s>{formatPrice(p.mrp)}</s>
+          <span class="product-card__off">{off}% off</span>
+        </>
+      )
+    }
+    <span class="product-card__unit">per piece</span>
+  </p>
+  <Button
+    href={productQuoteLink(p)}
+    icon="whatsapp"
+    iconPosition="start"
+    external
+    class="product-card__cta"
+    aria-label={`Get quote on WhatsApp for ${p.name}`}
+    data-event="whatsapp_click"
+    data-event-label={p.slug}
+  >
+    Get quote on WhatsApp
+  </Button>
+</Card>
+
+<style>
+  .product-card__cat {
+    font-weight: var(--weight-semibold);
+  }
+
+  .product-card__name {
+    font-size: var(--text-24);
+    text-wrap: pretty;
+  }
+
+  .product-card__price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 var(--space-2);
+  }
+
+  .product-card__price strong {
+    font-family: var(--font-heading);
+    font-size: var(--text-24);
+    font-weight: var(--weight-heading);
+  }
+
+  .product-card__off {
+    padding: 0 var(--space-2);
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--card-text) 12%, transparent);
+    font-weight: var(--weight-semibold);
+  }
+
+  .product-card__unit {
+    flex-basis: 100%;
+  }
+
+  /* ---- Layout (Card internals are another component: :global) ---- */
+  :global(.product-card .card__body) {
+    flex: 1;
+    gap: var(--space-2);
+  }
+
+  :global(.product-card .product-card__cta) {
+    margin-top: auto;
+    width: 100%;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .product-card__price {
+    margin-bottom: var(--space-3);
+  }
+
+  /* Small screens: image left, details right, button full width underneath */
+  @media (max-width: 559px) {
+    :global(.product-card.card) {
+      display: grid;
+      grid-template-columns: 7.5rem 1fr;
+      column-gap: var(--space-4);
+      align-items: start;
+      padding: var(--space-4);
+    }
+
+    :global(.product-card .card__media) {
+      grid-area: 1 / 1 / span 3 / 2;
+      padding: 0;
+    }
+
+    :global(.product-card .card__body) {
+      display: contents;
+    }
+
+    /* explicit placement: auto-placement around the spanning image is fragile */
+    .product-card__cat {
+      grid-area: 1 / 2;
+    }
+    .product-card__name {
+      grid-area: 2 / 2;
+    }
+    .product-card__price {
+      grid-area: 3 / 2;
+    }
+    .product-card__desc {
+      grid-area: 4 / 1 / auto / -1;
+    }
+
+    .product-card__name {
+      font-size: var(--text-18);
+      line-height: 1.3;
+    }
+
+    .product-card__desc {
+      margin-top: var(--space-3);
+    }
+
+    .product-card__cat {
+      margin-bottom: var(--space-1);
+    }
+
+    .product-card__price {
+      margin-top: var(--space-2);
+      margin-bottom: 0;
+    }
+
+    :global(.product-card .product-card__cta) {
+      grid-area: 5 / 1 / auto / -1;
+      margin-top: var(--space-4);
+    }
+  }
+</style>

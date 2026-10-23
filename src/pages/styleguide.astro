@@ -28,7 +28,7 @@ const tones = ['base', 'alt', 'deep'] as const;
         {tones.map((tone) => (
           <Section tone={tone} labelledby={`sg-${t.id}-${tone}`}>
             <p class="eyebrow">{t.name} · tone “{tone}”</p>
-            <h2 id={`sg-${t.id}-${tone}`}>Gardens that grow</h2>
+            <h2 id={`sg-${t.id}-${tone}`}>Gardens that grow <span class="sr-only">({t.name}, {tone})</span></h2>
             <p class="lead">Body text at 16–18px with a line height of 1.6. <a href="#">An inline link</a> for contrast checks.</p>
             <div class="sg-row">
               <Button href="#">Primary pill</Button>

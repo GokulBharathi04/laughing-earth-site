@@ -1,0 +1,102 @@
+[
+  {
+    "name": "Succulent in ceramic pot wrapped with jute",
+    "slug": "succulent-ceramic-pot-jute",
+    "category": "plants",
+    "price": 150,
+    "mrp": 170,
+    "image": "/images/products/succulent-ceramic-pot-jute.webp",
+    "description": "A hardy little succulent in a ceramic pot, finished with jute, that your guests can keep on a sunny sill for years.",
+    "descriptionNeedsReview": true
+  },
+  {
+    "name": "Succulent in plastic pot wrapped with jute",
+    "slug": "succulent-plastic-pot-jute",
+    "category": "plants",
+    "price": 99,
+    "mrp": 120,
+    "image": "/images/products/succulent-plastic-pot-jute.webp",
+    "description": "A budget-friendly favour: an easy-care succulent dressed in natural jute.",
+    "descriptionNeedsReview": true
+  },
+  {
+    "name": "Jade wrapped with jute",
+    "slug": "jade-plant-jute",
+    "category": "plants",
+    "price": 85,
+    "mrp": 95,
+    "image": "/images/products/jade-plant-jute.webp",
+    "description": "The jade plant, a symbol of good luck and prosperity, wrapped in jute for a warm thank-you.",
+    "descriptionNeedsReview": true
+  },
+  {
+    "name": "Sapling with paper bag and thank-you card",
+    "slug": "sapling-paper-bag-thank-you-card",
+    "category": "seeded-gifts",
+    "price": 35,
+    "mrp": 40,
+    "image": "/images/products/sapling-paper-bag-thank-you-card.webp",
+    "description": "A young sapling in a paper bag with a thank-you card, so every guest goes home with a tree to plant.",
+    "descriptionNeedsReview": true
+  },
+  {
+    "name": "Sapling with eco-friendly customised bag",
+    "slug": "sapling-eco-customised-bag",
+    "category": "thamboolam-bags",
+    "price": 55,
+    "mrp": 60,
+    "image": "/images/products/sapling-eco-customised-bag.webp",
+    "description": "A sapling tucked into an eco-friendly bag printed with your names, date or message.",
+    "descriptionNeedsReview": true
+  },
+  {
+    "name": "Customisable thamboolam bag 8.8×6×3",
+    "slug": "thamboolam-bag-8-8x6x3",
+    "category": "thamboolam-bags",
+    "price": 35,
+    "mrp": 40,
+    "image": "/images/products/thamboolam-bag-8-8x6x3.webp",
+    "description": "A compact eco-friendly thamboolam bag, just right for betel, fruit and a small sweet.",
+    "descriptionNeedsReview": true
+  },
+  {
+    "name": "Customisable thamboolam bag 8.8×10.5×3",
+    "slug": "thamboolam-bag-8-8x10-5x3",
+    "category": "thamboolam-bags",
+    "price": 40,
+    "mrp": 45,
+    "image": "/images/products/thamboolam-bag-8-8x10-5x3.webp",
+    "description": "A taller thamboolam bag with room for a coconut and a return gift, printed your way.",
+    "descriptionNeedsReview": true
+  },
+  {
+    "name": "Customisable thamboolam bag 10.5×12×4",
+    "slug": "thamboolam-bag-10-5x12x4",
+    "category": "thamboolam-bags",
+    "price": 50,
+    "mrp": 55,
+    "image": "/images/products/thamboolam-bag-10-5x12x4.webp",
+    "description": "A roomy, sturdy thamboolam bag for generous hampers at weddings and functions.",
+    "descriptionNeedsReview": true
+  },
+  {
+    "name": "Customisable thamboolam bag 12×14×4",
+    "slug": "thamboolam-bag-12x14x4",
+    "category": "thamboolam-bags",
+    "price": 60,
+    "mrp": 65,
+    "image": "/images/products/thamboolam-bag-12x14x4.webp",
+    "description": "Our largest thamboolam bag, made to carry a full traditional thamboolam with ease.",
+    "descriptionNeedsReview": true
+  },
+  {
+    "name": "Aesthetic wedding card",
+    "slug": "aesthetic-wedding-card",
+    "category": "seed-paper-invitations",
+    "price": 50,
+    "mrp": 90,
+    "image": "/images/products/aesthetic-wedding-card.webp",
+    "description": "A seed-paper wedding invitation your guests can plant after the big day, so it grows into flowers.",
+    "descriptionNeedsReview": true
+  }
+]

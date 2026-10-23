@@ -69,6 +69,7 @@
   --wa-bg: var(--chocolate);
   --wa-icon: var(--cream);
   --wa-ring: var(--cream);
+  --accent-panel: var(--tan); /* decorative shape behind hero visuals */
 
   /* decorative leaves: dried tan and brown, sage only as a small accent */
   --leaf-1: var(--tan);
@@ -136,6 +137,7 @@
   --wa-bg: var(--peach);
   --wa-icon: var(--ink);
   --wa-ring: var(--forest-deep);
+  --accent-panel: var(--chocolate); /* the mockup's brown shape behind the leaves */
 
   /* decorative leaves: layered greens, as in the mockup */
   --leaf-1: var(--sage);
@@ -203,20 +205,41 @@
   --card-bg: var(--sage);
   --card-text: var(--ink);
   --card-heading: var(--ink);
+  --muted: var(--ink);
   --icon: var(--forest);
   --focus: var(--ink);
+  /* peach is too close to sage; forest pill with cream text reads clearly (7.9:1) */
+  --btn-bg: var(--forest);
+  --btn-text: var(--cream);
 }
 [data-card='earth'] {
   --card-bg: var(--chocolate);
   --card-text: var(--cream);
   --card-heading: var(--cream);
+  --muted: var(--cream);
   --icon: var(--peach);
   --focus: var(--peach);
+}
+[data-card='bark'] {
+  --card-bg: var(--chocolate-soft);
+  --card-text: var(--cream);
+  --card-heading: var(--cream);
+  --muted: var(--cream);
+  --icon: var(--peach);
+  --focus: var(--peach);
+}
+[data-card='earth'],
+[data-card='bark'] {
+  --btn-bg: var(--peach);
+  --btn-text: var(--ink);
 }
 [data-card='sand'] {
   --card-bg: var(--beige);
   --card-text: var(--ink);
   --card-heading: var(--chocolate);
+  --muted: var(--ink-soft);
   --icon: var(--chocolate);
   --focus: var(--chocolate);
+  --btn-bg: var(--chocolate);
+  --btn-text: var(--cream);
 }

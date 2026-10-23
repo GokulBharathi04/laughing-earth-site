@@ -1,0 +1,73 @@
+---
+import Section from './Section.astro';
+import Button from './Button.astro';
+import Leaves from './Leaves.astro';
+import { SITE, whatsappLink } from '../config/site';
+
+// Closing call-to-action band with a WhatsApp button and a phone fallback.
+interface Props {
+  id: string;
+  title: string;
+  text: string;
+  whatsappMessage: string;
+  ctaLabel?: string;
+  tone?: 'base' | 'alt' | 'deep';
+}
+
+const { id, title, text, whatsappMessage, ctaLabel = 'Chat on WhatsApp', tone = 'alt' } = Astro.props;
+---
+
+<Section tone={tone} labelledby={id} class="cta-band">
+  <Leaves class="cta-band__leaves" />
+  <div class="cta-band__copy">
+    <h2 id={id}>{title}</h2>
+    <p class="lead">{text}</p>
+    <div class="cta-band__actions">
+      <Button
+        href={whatsappLink(whatsappMessage)}
+        size="lg"
+        icon="whatsapp"
+        iconPosition="start"
+        external
+        data-event="whatsapp_click"
+        data-event-label={`${id}-cta`}
+      >
+        {ctaLabel}
+      </Button>
+      <Button href={SITE.phoneHref} variant="outline" size="lg" icon="phone" iconPosition="start">
+        Call {SITE.phoneDisplay}
+      </Button>
+    </div>
+  </div>
+</Section>
+
+<style>
+  /* Section and Leaves are child components, so their classes need :global */
+  :global(.cta-band) {
+    position: relative;
+    overflow: hidden;
+  }
+
+  :global(.cta-band .cta-band__leaves) {
+    position: absolute;
+    right: -5rem;
+    bottom: -6rem;
+    width: clamp(14rem, 32vw, 28rem);
+    opacity: 0.8;
+    transform: rotate(150deg);
+  }
+
+  .cta-band__copy {
+    position: relative;
+    display: grid;
+    gap: var(--space-4);
+    max-width: 40rem;
+  }
+
+  .cta-band__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+  }
+</style>

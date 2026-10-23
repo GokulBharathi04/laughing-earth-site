@@ -10,17 +10,19 @@ interface Props {
 const { message = WHATSAPP_MESSAGES.general } = Astro.props;
 ---
 
-<a
-  class="wa-float"
-  href={whatsappLink(message)}
-  target="_blank"
-  rel="noopener noreferrer"
-  data-event="whatsapp_click"
-  data-event-label="floating_button"
->
-  <Icon name="whatsapp" size={28} />
-  <span class="wa-float__label">Chat on WhatsApp</span>
-</a>
+<aside aria-label="Quick contact">
+  <a
+    class="wa-float"
+    href={whatsappLink(message)}
+    target="_blank"
+    rel="noopener noreferrer"
+    data-event="whatsapp_click"
+    data-event-label="floating_button"
+  >
+    <Icon name="whatsapp" size={28} />
+    <span class="wa-float__label">Chat on WhatsApp</span>
+  </a>
+</aside>
 
 <style>
   .wa-float {

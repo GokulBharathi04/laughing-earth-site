@@ -1,0 +1,77 @@
+---
+// Photo grid with captions. The first image is featured (larger) on wider screens.
+interface Props {
+  items: readonly { src: string; alt: string; caption: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+<ul class="gallery" role="list">
+  {
+    items.map((item, i) => (
+      <li class:list={['gallery__item', { 'gallery__item--feature': i === 0 }]}>
+        <figure>
+          <img
+            src={item.src}
+            srcset={`${item.src.replace(/\.webp$/, '-800.webp')} 800w, ${item.src} 1600w`}
+            sizes={i === 0 ? '(min-width: 1024px) 66vw, 100vw' : '(min-width: 1024px) 33vw, 50vw'}
+            width="1600"
+            height="1200"
+            alt={item.alt}
+            loading="lazy"
+            decoding="async"
+          />
+          <figcaption>{item.caption}</figcaption>
+        </figure>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .gallery {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 560px) {
+    .gallery {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .gallery {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .gallery__item--feature {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+  }
+
+  figure {
+    display: grid;
+    gap: var(--space-3);
+    height: 100%;
+    grid-template-rows: 1fr auto;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-image);
+    box-shadow: var(--shadow-card);
+  }
+
+  figcaption {
+    color: var(--muted);
+  }
+</style>

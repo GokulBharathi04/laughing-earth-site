@@ -1,0 +1,153 @@
+---
+import ProductCard from './ProductCard.astro';
+import { CATEGORIES, PRODUCTS } from '../lib/products';
+
+// Product grid with a client-side category filter. Without JavaScript every
+// product is shown. Filter state is mirrored in ?category= so category cards
+// and shared links can open a filtered view.
+const filters = [
+  { id: 'all', label: 'All', count: PRODUCTS.length },
+  ...CATEGORIES.map((c) => ({ id: c.id, label: c.label, count: PRODUCTS.filter((p) => p.category === c.id).length })),
+];
+---
+
+<div class="catalogue" data-catalogue>
+  <div class="catalogue__filters" role="group" aria-label="Filter products by category" data-filters hidden>
+    {
+      filters.map((f) => (
+        <button type="button" class="filter" data-filter={f.id} aria-pressed={f.id === 'all' ? 'true' : 'false'}>
+          {f.label}
+          <span class="filter__count" aria-hidden="true">{f.count}</span>
+        </button>
+      ))
+    }
+  </div>
+  <p class="catalogue__status" role="status" data-status>Showing all {PRODUCTS.length} products</p>
+  <ul class="catalogue__grid" role="list">
+    {PRODUCTS.map((p) => <ProductCard product={p} />)}
+  </ul>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-catalogue]');
+  if (root) {
+    const filterBar = root.querySelector<HTMLElement>('[data-filters]')!;
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+    const items = [...root.querySelectorAll<HTMLElement>('.product-card')];
+    const status = root.querySelector<HTMLElement>('[data-status]')!;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const valid = new Set(buttons.map((b) => b.dataset.filter));
+
+    const apply = (id: string) => {
+      const filter = valid.has(id) ? id : 'all';
+      let shown = 0;
+      items.forEach((el) => {
+        const match = filter === 'all' || el.dataset.category === filter;
+        el.hidden = !match;
+        if (match) shown++;
+      });
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filter === filter)));
+      const label = buttons.find((b) => b.dataset.filter === filter)?.firstChild?.textContent?.trim();
+      status.textContent =
+        filter === 'all' ? `Showing all ${shown} products` : `Showing ${shown} of ${items.length}: ${label}`;
+
+      const url = new URL(window.location.href);
+      if (filter === 'all') url.searchParams.delete('category');
+      else url.searchParams.set('category', filter);
+      history.replaceState(null, '', url);
+      return buttons.find((b) => b.dataset.filter === filter);
+    };
+
+    filterBar.hidden = false; // filters only make sense with JS
+    buttons.forEach((b) => b.addEventListener('click', () => apply(b.dataset.filter!)));
+
+    // Category cards elsewhere on the page: filter, scroll here, focus the filter.
+    document.querySelectorAll<HTMLAnchorElement>('[data-category-link]').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        const active = apply(link.dataset.categoryLink!);
+        root.scrollIntoView({ behavior: reduceMotion.matches ? 'auto' : 'smooth', block: 'start' });
+        active?.focus({ preventScroll: true });
+      });
+    });
+
+    const initial = new URL(window.location.href).searchParams.get('category');
+    if (initial) apply(initial);
+  }
+</script>
+
+<style>
+  .catalogue {
+    scroll-margin-top: 9rem;
+  }
+
+  .catalogue__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+
+  .filter {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--tap-target);
+    padding: var(--space-2) var(--space-4);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--text);
+    font-weight: var(--weight-semibold);
+    transition:
+      background-color var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out);
+  }
+
+  .filter:hover {
+    border-color: var(--text);
+  }
+
+  .filter[aria-pressed='true'] {
+    background: var(--btn-bg);
+    border-color: var(--btn-bg);
+    color: var(--btn-text);
+  }
+
+  .filter:focus-visible {
+    border-radius: var(--radius-pill);
+  }
+
+  .filter__count {
+    min-width: 1.75em;
+    padding-inline: 0.4em;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, currentColor 16%, transparent);
+    text-align: center;
+  }
+
+  .catalogue__status {
+    margin-bottom: var(--space-5);
+    color: var(--muted);
+  }
+
+  .catalogue__grid {
+    display: grid;
+    gap: var(--space-5);
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 560px) {
+    .catalogue__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .catalogue__grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-6);
+    }
+  }
+</style>

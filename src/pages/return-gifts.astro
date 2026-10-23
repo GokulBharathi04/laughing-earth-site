@@ -1,19 +1,451 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PagePlaceholder from '../components/PagePlaceholder.astro';
-import { WHATSAPP_MESSAGES } from '../config/site';
+import Section from '../components/Section.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import Button from '../components/Button.astro';
+import Card from '../components/Card.astro';
+import Icon from '../components/Icon.astro';
+import Leaves from '../components/Leaves.astro';
+import ProductCatalogue from '../components/ProductCatalogue.astro';
+import FaqList from '../components/FaqList.astro';
+import Gallery from '../components/Gallery.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { whatsappLink } from '../config/site';
+import { BULK_RULES, GIFT_FAQS } from '../config/gifts';
+import { CATEGORIES, productCount } from '../lib/products';
+
+const quoteMessage =
+  "Hi Laughing Earth! I'd like a quote for eco-friendly return gifts.\n" +
+  'Event type: \nEvent date: \nApprox. quantity: ';
+
+const bulkMessage =
+  "Hi Laughing Earth! I'd like to place a bulk return-gift order.\n" +
+  'Products: \nQuantity: \nEvent date: \nCustomisation (names / date / logo): \nDelivery area: ';
+
+const gallery = [
+  {
+    src: '/images/gallery/event-wedding-return-gift-table.webp',
+    alt: 'A wedding return-gift table lined with jute-wrapped succulents and thank-you cards',
+    caption: 'Wedding return-gift table (placeholder photo)',
+  },
+  {
+    src: '/images/gallery/event-seed-paper-invitation-suite.webp',
+    alt: 'Seed-paper wedding invitations laid out on a wooden surface with leaves',
+    caption: 'Seed-paper invitation suite (placeholder photo)',
+  },
+  {
+    src: '/images/gallery/event-thamboolam-bags-stacked.webp',
+    alt: 'Stacks of customised eco-friendly thamboolam bags ready for guests',
+    caption: 'Customised thamboolam bags (placeholder photo)',
+  },
+  {
+    src: '/images/gallery/event-housewarming-sapling-gifts.webp',
+    alt: 'Saplings in paper bags with thank-you cards for a housewarming',
+    caption: 'Housewarming saplings (placeholder photo)',
+  },
+  {
+    src: '/images/gallery/event-corporate-plant-gifting.webp',
+    alt: 'Jade plants in jute wraps arranged for a corporate gifting event',
+    caption: 'Corporate plant gifting (placeholder photo)',
+  },
+  {
+    src: '/images/gallery/event-baby-shower-succulent-favours.webp',
+    alt: 'Ceramic and jute-wrapped succulent favours with a thank-you card at a baby shower',
+    caption: 'Baby shower succulent favours (placeholder photo)',
+  },
+] as const;
 ---
 
 <BaseLayout
-  title="Eco-friendly Return Gifts, Seed-paper Invitations & Thamboolam Bags in Chennai"
-  description="Seeded return gifts, seed-paper wedding invitations, customisable thamboolam bags and potted plants for weddings and events in Chennai."
+  title="Seeded Return Gifts & Thamboolam Bags Chennai | Laughing Earth"
+  description="Seeded return gifts, seed paper wedding invitations and customisable thamboolam bags in Chennai. Bulk orders for weddings and events, with quotes on WhatsApp."
   theme="gifts"
 >
-  <PagePlaceholder
-    eyebrow="Return Gifts · Chennai"
-    title="Return gifts that keep growing"
-    lead="Seeded gifts, seed-paper invitations, thamboolam bags and potted plants for weddings and events."
-    phase="Phase 2"
-    whatsappMessage={WHATSAPP_MESSAGES.gifts}
+  <!-- Hero -->
+  <Section tone="base" class="gifts-hero" reveal={false} labelledby="gifts-hero-title">
+    <div class="gifts-hero__grid">
+      <div class="gifts-hero__copy">
+        <p class="eyebrow">Return Gifts · Chennai</p>
+        <h1 id="gifts-hero-title">Eco-friendly return gifts for weddings and events</h1>
+        <p class="lead">
+          Seeded gifts, seed-paper wedding invitations, thamboolam bags and potted plants: thank-you gifts your
+          guests will plant, grow and remember.
+        </p>
+        <div class="gifts-hero__actions">
+          <Button
+            href={whatsappLink(quoteMessage)}
+            size="lg"
+            icon="whatsapp"
+            iconPosition="start"
+            external
+            data-event="whatsapp_click"
+            data-event-label="hero"
+          >
+            Get a quote on WhatsApp
+          </Button>
+          <Button href="#catalogue" variant="outline" size="lg">Browse the catalogue</Button>
+        </div>
+      </div>
+
+      <div class="gifts-hero__visual">
+        <span class="gifts-hero__shape" aria-hidden="true"></span>
+        <img
+          class="gifts-hero__photo"
+          src="/images/return-gifts-hero-seeded-favours-on-jute.webp"
+          srcset="/images/return-gifts-hero-seeded-favours-on-jute-800.webp 800w, /images/return-gifts-hero-seeded-favours-on-jute.webp 1200w"
+          sizes="(min-width: 1024px) 440px, 70vw"
+          width="1200"
+          height="1500"
+          alt="Seeded return gifts, a jute-wrapped succulent and a paper gift bag on a jute mat"
+          fetchpriority="high"
+        />
+        <Leaves class="gifts-hero__leaves gifts-hero__leaves--back" />
+        <Leaves class="gifts-hero__leaves gifts-hero__leaves--front" />
+      </div>
+    </div>
+  </Section>
+
+  <!-- Categories -->
+  <Section tone="alt" labelledby="gift-categories">
+    <SectionHeader
+      id="gift-categories"
+      eyebrow="Shop by category"
+      title="Gifts that keep on growing"
+      lead="Pick a category to see its products and prices below."
+    />
+    <ul class="categories" role="list">
+      {
+        CATEGORIES.map((c) => (
+          <li>
+            <Card
+              href={`?category=${c.id}#catalogue`}
+              colourway={c.colourway}
+              class="category-card"
+              data-category-link={c.id}
+            >
+              <Icon slot="icon" name={c.icon} size={30} />
+              <h3>{c.label}</h3>
+              <p>{c.blurb}</p>
+              <span class="category-card__more">
+                {productCount(c.id)} {productCount(c.id) === 1 ? 'product' : 'products'}
+                <Icon name="arrow-right" size={20} />
+              </span>
+            </Card>
+          </li>
+        ))
+      }
+    </ul>
+  </Section>
+
+  <!-- Catalogue -->
+  <Section tone="base" id="catalogue" labelledby="catalogue-title">
+    <SectionHeader
+      id="catalogue-title"
+      eyebrow="Catalogue"
+      title="Prices and products"
+      lead="Prices are per piece. Tap “Get quote on WhatsApp” on any product and we'll reply with a quote for your quantity and customisation."
+    />
+    <ProductCatalogue />
+  </Section>
+
+  <!-- Bulk orders -->
+  <Section tone="base" labelledby="bulk-title" class="bulk-section">
+    <div class="bulk textured" data-tone="alt">
+      <div class="bulk__intro">
+        <p class="eyebrow">Bulk orders</p>
+        <h2 id="bulk-title">Ordering for a wedding or event?</h2>
+        <p>
+          We make return gifts in bulk for weddings, baby showers, housewarmings and corporate events, customised
+          to your occasion.
+        </p>
+      </div>
+      <ul class="bulk__rules" role="list">
+        {
+          BULK_RULES.map((rule) => (
+            <li class="bulk__rule">
+              <span class="bulk__icon">
+                <Icon name={rule.icon} size={28} />
+              </span>
+              <h3>{rule.title}</h3>
+              <p class="bulk__value">
+                {rule.value}
+                {rule.placeholder && <span class="tbc">To be confirmed</span>}
+              </p>
+              <p>{rule.detail}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="bulk__cta">
+        <Button
+          href={whatsappLink(bulkMessage)}
+          icon="whatsapp"
+          iconPosition="start"
+          external
+          data-event="whatsapp_click"
+          data-event-label="bulk-order"
+        >
+          Plan a bulk order on WhatsApp
+        </Button>
+      </div>
+    </div>
+  </Section>
+
+  <!-- Event gallery -->
+  <Section tone="deep" labelledby="gallery-title">
+    <SectionHeader
+      id="gallery-title"
+      eyebrow="Event gallery"
+      title="Gifts at real celebrations"
+      lead="A look at return gifts we've made for weddings, housewarmings and corporate events."
+    />
+    <Gallery items={gallery} />
+  </Section>
+
+  <!-- FAQ -->
+  <Section tone="base" width="narrow" labelledby="faq-title">
+    <SectionHeader id="faq-title" eyebrow="FAQ" title="Questions about return gifts" />
+    <FaqList items={GIFT_FAQS} />
+  </Section>
+
+  <CtaBand
+    id="gifts-cta"
+    title="Let's plan your return gifts"
+    text="Tell us your event, date and guest count, and we'll send a quote with ideas, usually the same day."
+    whatsappMessage={quoteMessage}
+    ctaLabel="Get a quote on WhatsApp"
   />
 </BaseLayout>
+
+<style>
+  /* ---------- Hero ---------- */
+  :global(.gifts-hero) {
+    overflow: hidden;
+    padding-block: var(--space-7) var(--space-8);
+  }
+
+  .gifts-hero__grid {
+    display: grid;
+    gap: var(--space-7);
+    align-items: center;
+  }
+
+  .gifts-hero__copy {
+    display: grid;
+    gap: var(--space-4);
+    max-width: 36rem;
+  }
+
+  .gifts-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+  }
+
+  .gifts-hero__visual {
+    position: relative;
+    justify-self: center;
+    width: min(100%, 22rem);
+    aspect-ratio: 4 / 5;
+    margin-block: var(--space-4);
+  }
+
+  .gifts-hero__shape {
+    position: absolute;
+    inset: 8% -18% -6% 22%;
+    border-radius: var(--radius-panel);
+    background: var(--accent-panel);
+    transform: rotate(8deg);
+    box-shadow: var(--shadow-card);
+  }
+
+  .gifts-hero__photo {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 999px 999px var(--radius-card) var(--radius-card);
+    box-shadow: var(--shadow-lifted);
+  }
+
+  .gifts-hero__visual :global(.gifts-hero__leaves) {
+    position: absolute;
+    width: 70%;
+  }
+
+  .gifts-hero__visual :global(.gifts-hero__leaves--back) {
+    top: -14%;
+    right: -30%;
+    z-index: 0;
+  }
+
+  .gifts-hero__visual :global(.gifts-hero__leaves--front) {
+    bottom: -12%;
+    left: -16%;
+    width: 60%;
+    transform: rotate(200deg);
+  }
+
+  @media (min-width: 1024px) {
+    :global(.gifts-hero) {
+      padding-block: var(--space-8) var(--space-9);
+    }
+
+    .gifts-hero__grid {
+      grid-template-columns: 1.3fr 1fr;
+      column-gap: var(--space-8);
+    }
+
+    .gifts-hero__copy {
+      max-width: 42rem;
+    }
+
+    .gifts-hero__visual {
+      width: min(100%, 27.5rem);
+    }
+  }
+
+  /* ---------- Categories ---------- */
+  .categories {
+    display: grid;
+    gap: var(--space-5);
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 560px) {
+    .categories {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .categories {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .categories li {
+    display: grid;
+  }
+
+  .categories h3 {
+    font-size: var(--text-24);
+  }
+
+  .category-card__more {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: auto;
+    padding-top: var(--space-2);
+    font-weight: var(--weight-semibold);
+  }
+
+  :global(.category-card .card__body) {
+    flex: 1;
+  }
+
+  /* ---------- Bulk orders ---------- */
+  :global(.bulk-section) {
+    padding-top: 0;
+  }
+
+  .bulk {
+    display: grid;
+    gap: var(--space-6);
+    padding: var(--space-6) var(--space-5);
+    border-radius: var(--radius-panel);
+    background: var(--bg);
+    color: var(--text);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
+
+  @media (min-width: 768px) {
+    .bulk {
+      padding: var(--space-7);
+    }
+  }
+
+  .bulk__intro {
+    display: grid;
+    gap: var(--space-3);
+    max-width: 42rem;
+  }
+
+  .bulk__rules {
+    display: grid;
+    gap: var(--space-5);
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 560px) {
+    .bulk__rules {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .bulk__rules {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .bulk__rule + .bulk__rule {
+      border-left: 1px solid var(--border);
+      padding-left: var(--space-5);
+    }
+  }
+
+  .bulk__rule {
+    display: grid;
+    align-content: start;
+    gap: var(--space-2);
+  }
+
+  .bulk__icon {
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    margin-bottom: var(--space-2);
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    box-shadow: var(--highlight-inner);
+  }
+
+  .bulk__rule h3 {
+    font-family: var(--font-body);
+    font-size: var(--text-16);
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+
+  .bulk__value {
+    font-family: var(--font-heading);
+    font-size: var(--text-24);
+    font-weight: var(--weight-heading);
+    line-height: 1.25;
+    color: var(--heading);
+  }
+
+  /* Visible marker on values the client still has to confirm */
+  .tbc {
+    display: block;
+    width: fit-content;
+    margin-top: var(--space-2);
+    padding: 0 var(--space-2);
+    border: 1.5px dashed currentColor;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-body);
+    font-size: var(--text-16);
+    font-weight: var(--weight-medium);
+    line-height: 1.6;
+    white-space: nowrap;
+  }
+</style>

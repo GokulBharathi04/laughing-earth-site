@@ -1,19 +1,27 @@
 ---
+import type { HTMLAttributes } from 'astro/types';
+
 // Rounded card. Colours come from the section tone, or a fixed colourway
-// via `colourway` (sage / earth / sand — the mockup's mixed tiles).
-interface Props {
-  colourway?: 'sage' | 'earth' | 'sand';
+// via `colourway` (sage / earth / bark / sand — the mockup's mixed tiles).
+// Extra attributes (data-*, aria-*) pass through to the root element.
+type Props = {
+  colourway?: 'sage' | 'earth' | 'bark' | 'sand';
   href?: string;
   as?: 'article' | 'div' | 'li';
   lift?: boolean;
   class?: string;
-}
+} & Omit<HTMLAttributes<'div'>, 'class'>;
 
-const { colourway, href, as = 'article', lift = Boolean(href), class: className } = Astro.props;
+const { colourway, href, as = 'article', lift = Boolean(href), class: className, ...rest } = Astro.props;
 const Tag = href ? 'a' : as;
 ---
 
-<Tag href={href} data-card={colourway} class:list={['card', { 'card--lift': lift, 'card--link': href }, className]}>
+<Tag
+  href={href}
+  data-card={colourway}
+  class:list={['card', { 'card--lift': lift, 'card--link': href }, className]}
+  {...rest}
+>
   {Astro.slots.has('media') && <div class="card__media"><slot name="media" /></div>}
   <div class="card__body">
     {Astro.slots.has('icon') && <div class="card__icon"><slot name="icon" /></div>}
@@ -29,6 +37,9 @@ const Tag = href ? 'a' : as;
     border-radius: var(--radius-card);
     background: var(--card-bg);
     color: var(--card-text);
+    /* secondary text and links inside a card follow the card, not the section */
+    --muted: var(--card-text);
+    --link: var(--card-text);
     box-shadow: var(--shadow-card);
     text-decoration: none;
     transition:

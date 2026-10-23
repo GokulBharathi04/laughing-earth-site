@@ -67,6 +67,10 @@ button {
   cursor: pointer;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 /* ---------- Typography ---------- */
 h1,
 h2,

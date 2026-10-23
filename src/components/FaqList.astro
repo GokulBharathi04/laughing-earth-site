@@ -1,0 +1,87 @@
+---
+import Icon from './Icon.astro';
+
+// Accessible accordion built on native <details>/<summary>: keyboard and
+// screen-reader support come for free and it works without JavaScript.
+interface Props {
+  items: readonly { q: string; a: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="faq">
+  {
+    items.map((item, i) => (
+      <details class="faq__item" name="faq" open={i === 0}>
+        <summary class="faq__q">
+          <h3>{item.q}</h3>
+          <Icon name="plus" size={22} class="faq__icon" />
+        </summary>
+        <div class="faq__a">
+          <p>{item.a}</p>
+        </div>
+      </details>
+    ))
+  }
+</div>
+
+<style>
+  .faq {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .faq__item {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    background: color-mix(in srgb, var(--text) 5%, transparent);
+    box-shadow: var(--highlight-inner);
+    transition: background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .faq__item[open] {
+    background: color-mix(in srgb, var(--text) 9%, transparent);
+  }
+
+  .faq__q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    min-height: var(--tap-target);
+    padding: var(--space-4) var(--space-5);
+    cursor: pointer;
+    list-style: none;
+    border-radius: var(--radius-card);
+  }
+
+  .faq__q::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__q h3 {
+    font-family: var(--font-body);
+    font-size: var(--text-18);
+    font-weight: var(--weight-semibold);
+    line-height: 1.4;
+    color: var(--heading);
+    letter-spacing: 0;
+  }
+
+  .faq__q :global(.faq__icon) {
+    flex: none;
+    color: var(--icon);
+    transition: transform var(--duration-fast) var(--ease-out);
+  }
+
+  .faq__item[open] :global(.faq__icon) {
+    transform: rotate(45deg);
+  }
+
+  .faq__a {
+    padding: 0 var(--space-5) var(--space-5);
+    color: var(--muted);
+    max-width: 70ch;
+  }
+</style>
