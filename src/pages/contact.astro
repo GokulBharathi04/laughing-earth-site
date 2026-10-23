@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PagePlaceholder from '../components/PagePlaceholder.astro';
+import { WHATSAPP_MESSAGES } from '../config/site';
+---
+
+<BaseLayout
+  title="Contact Laughing Earth, Villivakkam, Chennai"
+  description="Call or WhatsApp +91 86681 96940, email info@laughingearth.in, or visit Laughing Earth in Villivakkam, Chennai."
+  theme="gifts"
+  whatsappMessage={WHATSAPP_MESSAGES.general}
+>
+  <PagePlaceholder
+    eyebrow="Contact"
+    title="Let's talk gardens and gifts"
+    lead="Call, WhatsApp or visit us in Villivakkam, Chennai. The full contact page with map and enquiry form is coming soon."
+    phase="Phase 4"
+    whatsappMessage={WHATSAPP_MESSAGES.general}
+  />
+</BaseLayout>

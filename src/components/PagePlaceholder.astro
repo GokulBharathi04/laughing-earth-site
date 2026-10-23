@@ -1,0 +1,74 @@
+---
+import Section from './Section.astro';
+import Button from './Button.astro';
+import Leaves from './Leaves.astro';
+import { whatsappLink } from '../config/site';
+
+// Temporary page body for routes that are built in later phases.
+interface Props {
+  eyebrow: string;
+  title: string;
+  lead: string;
+  phase: string;
+  whatsappMessage: string;
+}
+
+const { eyebrow, title, lead, phase, whatsappMessage } = Astro.props;
+---
+
+<Section tone="deep" class="placeholder-hero" reveal={false}>
+  <Leaves class="placeholder-hero__leaves" />
+  <div class="placeholder-hero__copy">
+    <p class="eyebrow">{eyebrow}</p>
+    <h1>{title}</h1>
+    <p class="lead">{lead}</p>
+    <div class="placeholder-hero__actions">
+      <Button href={whatsappLink(whatsappMessage)} icon="whatsapp" iconPosition="start" external data-event="whatsapp_click">
+        Chat on WhatsApp
+      </Button>
+      <Button href="/" variant="outline">Back to home</Button>
+    </div>
+  </div>
+</Section>
+
+<Section tone="base" width="narrow">
+  <p class="placeholder-note">This page is a placeholder. Its full content is built in {phase}.</p>
+</Section>
+
+<style>
+  /* Section and Leaves are child components, so their classes need :global */
+  :global(.placeholder-hero) {
+    position: relative;
+    overflow: hidden;
+  }
+
+  :global(.placeholder-hero .placeholder-hero__leaves) {
+    position: absolute;
+    right: -4rem;
+    top: -3rem;
+    width: clamp(14rem, 34vw, 30rem);
+    opacity: 0.85;
+    z-index: 0;
+  }
+
+  .placeholder-hero__copy {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: var(--space-4);
+    max-width: 40rem;
+    padding-block: var(--space-6);
+  }
+
+  .placeholder-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+  }
+
+  .placeholder-note {
+    text-align: center;
+    color: var(--muted);
+  }
+</style>

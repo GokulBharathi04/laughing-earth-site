@@ -1,0 +1,46 @@
+---
+// Page band. Picks a tone of the current theme (base / alt / deep) and
+// optionally adds the paper-grain texture and scroll reveal.
+interface Props {
+  tone?: 'base' | 'alt' | 'deep';
+  id?: string;
+  width?: 'default' | 'narrow' | 'full';
+  textured?: boolean;
+  reveal?: boolean;
+  as?: 'section' | 'div' | 'header' | 'aside';
+  labelledby?: string;
+  class?: string;
+}
+
+const {
+  tone = 'base',
+  id,
+  width = 'default',
+  textured = tone !== 'base',
+  reveal = true,
+  as: Tag = 'section',
+  labelledby,
+  class: className,
+} = Astro.props;
+
+const innerClass = width === 'narrow' ? 'container--narrow' : width === 'default' ? 'container' : undefined;
+---
+
+<Tag
+  id={id}
+  data-tone={tone}
+  aria-labelledby={labelledby}
+  class:list={['section', { textured }, className]}
+>
+  <div class:list={['section__inner', innerClass]} data-reveal={reveal ? '' : undefined}>
+    <slot />
+  </div>
+</Tag>
+
+<style>
+  .section {
+    background-color: var(--bg);
+    color: var(--text);
+    padding-block: var(--section-pad-y);
+  }
+</style>

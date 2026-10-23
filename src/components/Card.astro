@@ -1,0 +1,83 @@
+---
+// Rounded card. Colours come from the section tone, or a fixed colourway
+// via `colourway` (sage / earth / sand — the mockup's mixed tiles).
+interface Props {
+  colourway?: 'sage' | 'earth' | 'sand';
+  href?: string;
+  as?: 'article' | 'div' | 'li';
+  lift?: boolean;
+  class?: string;
+}
+
+const { colourway, href, as = 'article', lift = Boolean(href), class: className } = Astro.props;
+const Tag = href ? 'a' : as;
+---
+
+<Tag href={href} data-card={colourway} class:list={['card', { 'card--lift': lift, 'card--link': href }, className]}>
+  {Astro.slots.has('media') && <div class="card__media"><slot name="media" /></div>}
+  <div class="card__body">
+    {Astro.slots.has('icon') && <div class="card__icon"><slot name="icon" /></div>}
+    <slot />
+  </div>
+</Tag>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: var(--radius-card);
+    background: var(--card-bg);
+    color: var(--card-text);
+    box-shadow: var(--shadow-card);
+    text-decoration: none;
+    transition:
+      transform var(--duration-fast) var(--ease-out),
+      box-shadow var(--duration-fast) var(--ease-out);
+  }
+
+  .card :global(h2),
+  .card :global(h3),
+  .card :global(h4) {
+    color: var(--card-heading);
+  }
+
+  .card--lift:hover,
+  .card--lift:focus-within {
+    transform: translateY(var(--lift));
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  .card--link:focus-visible {
+    border-radius: var(--radius-card);
+  }
+
+  .card__media {
+    padding: var(--space-3) var(--space-3) 0;
+  }
+
+  .card__media :global(img) {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--radius-image);
+  }
+
+  .card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-5);
+  }
+
+  .card__icon {
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    color: var(--icon);
+    background: color-mix(in srgb, var(--card-text) 10%, transparent);
+    box-shadow: var(--highlight-inner);
+  }
+</style>

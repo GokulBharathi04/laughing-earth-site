@@ -1,0 +1,54 @@
+---
+// Decorative layered leaves (as in the mockup hero). Purely visual:
+// hidden from assistive tech, colours from the theme's --leaf-* variables.
+interface Props {
+  class?: string;
+  flip?: boolean;
+}
+
+const { class: className, flip = false } = Astro.props;
+
+const leaf = 'M50 0C92 48 94 150 50 200C6 150 8 48 50 0Z';
+const vein = 'M50 12V196M50 60l-18-16M50 60l18-16M50 100l-22-18M50 100l22-18M50 140l-20-16M50 140l20-16';
+
+const layers = [
+  { t: 'translate(250 10) rotate(28 50 100) scale(1.15)', fill: 'var(--leaf-2)' },
+  { t: 'translate(150 60) rotate(-12 50 100) scale(1.3)', fill: 'var(--leaf-1)' },
+  { t: 'translate(280 150) rotate(62 50 100) scale(1.05)', fill: 'var(--leaf-3)' },
+  { t: 'translate(60 140) rotate(-48 50 100)', fill: 'var(--leaf-2)' },
+  { t: 'translate(200 210) rotate(18 50 100) scale(0.9)', fill: 'var(--leaf-1)' },
+  { t: 'translate(330 260) rotate(95 50 100) scale(0.55)', fill: 'var(--leaf-accent)' },
+];
+---
+
+<svg
+  class:list={['leaves', { 'leaves--flip': flip }, className]}
+  viewBox="0 0 420 420"
+  aria-hidden="true"
+  focusable="false"
+>
+  <defs>
+    <filter id="leaf-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-opacity="0.22" />
+    </filter>
+  </defs>
+  {
+    layers.map((l) => (
+      <g transform={l.t} filter="url(#leaf-shadow)">
+        <path d={leaf} fill={l.fill} />
+        <path d={vein} fill="none" stroke="var(--leaf-vein)" stroke-width="2" stroke-linecap="round" />
+      </g>
+    ))
+  }
+</svg>
+
+<style>
+  .leaves {
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .leaves--flip {
+    transform: scaleX(-1);
+  }
+</style>

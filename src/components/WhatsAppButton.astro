@@ -1,0 +1,90 @@
+---
+import Icon from './Icon.astro';
+import { whatsappLink, WHATSAPP_MESSAGES } from '../config/site';
+
+// Floating click-to-chat button, shown on every page. Colours follow the theme.
+interface Props {
+  message?: string;
+}
+
+const { message = WHATSAPP_MESSAGES.general } = Astro.props;
+---
+
+<a
+  class="wa-float"
+  href={whatsappLink(message)}
+  target="_blank"
+  rel="noopener noreferrer"
+  data-event="whatsapp_click"
+  data-event-label="floating_button"
+>
+  <Icon name="whatsapp" size={28} />
+  <span class="wa-float__label">Chat on WhatsApp</span>
+</a>
+
+<style>
+  .wa-float {
+    position: fixed;
+    right: max(var(--space-4), env(safe-area-inset-right));
+    bottom: max(var(--space-4), env(safe-area-inset-bottom));
+    z-index: var(--z-whatsapp);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 3.5rem;
+    min-height: 3.5rem;
+    padding: var(--space-3);
+    border-radius: var(--radius-pill);
+    background: var(--wa-bg);
+    color: var(--wa-icon);
+    box-shadow:
+      0 0 0 3px var(--wa-ring),
+      var(--shadow-soft);
+    font-weight: var(--weight-semibold);
+    text-decoration: none;
+    transition:
+      transform var(--duration-fast) var(--ease-out),
+      box-shadow var(--duration-fast) var(--ease-out);
+  }
+
+  .wa-float :global(svg) {
+    flex: none;
+  }
+
+  /* Label is visually hidden on small screens but stays the accessible name */
+  .wa-float__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  @media (min-width: 1024px) {
+    .wa-float {
+      padding-inline: var(--space-4) var(--space-5);
+    }
+
+    .wa-float__label {
+      position: static;
+      width: auto;
+      height: auto;
+      clip: auto;
+      overflow: visible;
+    }
+  }
+
+  .wa-float:hover {
+    transform: translateY(var(--lift));
+    box-shadow:
+      0 0 0 3px var(--wa-ring),
+      var(--shadow-lifted);
+  }
+
+  .wa-float:focus-visible {
+    outline: 3px solid var(--wa-bg);
+    outline-offset: 5px;
+    border-radius: var(--radius-pill);
+  }
+</style>

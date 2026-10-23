@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PagePlaceholder from '../components/PagePlaceholder.astro';
+import { WHATSAPP_MESSAGES } from '../config/site';
+---
+
+<BaseLayout
+  title="Landscaping Services & Garden Design in Chennai"
+  description="Garden design, lawn setup, vertical and terrace gardens, and garden maintenance in Chennai by Laughing Earth, Villivakkam."
+  theme="landscaping"
+>
+  <PagePlaceholder
+    eyebrow="Landscaping · Chennai"
+    title="Gardens designed to grow with you"
+    lead="Garden design, lawns, vertical and terrace gardens, and ongoing care for homes and offices across Chennai."
+    phase="Phase 3"
+    whatsappMessage={WHATSAPP_MESSAGES.landscaping}
+  />
+</BaseLayout>

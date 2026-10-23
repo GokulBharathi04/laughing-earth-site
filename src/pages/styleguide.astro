@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/Section.astro';
+import Button from '../components/Button.astro';
+import Card from '../components/Card.astro';
+import Icon from '../components/Icon.astro';
+
+// Internal review page: every theme × tone with buttons and cards.
+// Not linked from the site and marked noindex; remove before launch if unwanted.
+const themes = [
+  { id: 'landscaping', name: 'Landscaping — muddy brown & beige' },
+  { id: 'gifts', name: 'Return Gifts — green' },
+] as const;
+const tones = ['base', 'alt', 'deep'] as const;
+---
+
+<BaseLayout title="Style guide" description="Internal component and theme review page." theme="landscaping">
+  <meta slot="head" name="robots" content="noindex, nofollow" />
+
+  <Section tone="base" width="narrow" reveal={false}>
+    <h1>Style guide</h1>
+    <p class="lead">Each theme in its three tones, with pill buttons and card colourways. All colours come from theme variables.</p>
+  </Section>
+
+  {
+    themes.map((t) => (
+      <div data-theme={t.id}>
+        {tones.map((tone) => (
+          <Section tone={tone} labelledby={`sg-${t.id}-${tone}`}>
+            <p class="eyebrow">{t.name} · tone “{tone}”</p>
+            <h2 id={`sg-${t.id}-${tone}`}>Gardens that grow</h2>
+            <p class="lead">Body text at 16–18px with a line height of 1.6. <a href="#">An inline link</a> for contrast checks.</p>
+            <div class="sg-row">
+              <Button href="#">Primary pill</Button>
+              <Button href="#" variant="outline">Outline pill</Button>
+              <Button href="#" icon="whatsapp" iconPosition="start">WhatsApp</Button>
+            </div>
+            <div class="sg-cards">
+              <Card href="#">
+                <Icon slot="icon" name="leaf" size={28} />
+                <h3>Tone card</h3>
+                <p>Default card for this tone. Lifts on hover.</p>
+              </Card>
+              <Card colourway="sage">
+                <Icon slot="icon" name="leaf" size={28} />
+                <h3>Sage</h3>
+                <p>Ink text on sage.</p>
+              </Card>
+              <Card colourway="earth">
+                <Icon slot="icon" name="leaf" size={28} />
+                <h3>Earth</h3>
+                <p>Cream text on chocolate.</p>
+              </Card>
+              <Card colourway="sand">
+                <Icon slot="icon" name="leaf" size={28} />
+                <h3>Sand</h3>
+                <p>Ink text on beige.</p>
+              </Card>
+            </div>
+          </Section>
+        ))}
+      </div>
+    ))
+  }
+</BaseLayout>
+
+<style>
+  .sg-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-block: var(--space-5);
+  }
+
+  .sg-cards {
+    display: grid;
+    gap: var(--space-5);
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  }
+
+  .sg-cards h3 {
+    font-size: var(--text-24);
+  }
+</style>

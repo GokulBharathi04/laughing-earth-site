@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PagePlaceholder from '../components/PagePlaceholder.astro';
+import { POLICIES, WHATSAPP_MESSAGES } from '../config/site';
+
+// Policy pages so footer links resolve. Placeholder copy until the client
+// supplies final text (Phase 4).
+export function getStaticPaths() {
+  return POLICIES.map((p) => ({ params: { policy: p.href.slice(1) }, props: { label: p.label } }));
+}
+
+const { label } = Astro.props;
+---
+
+<BaseLayout
+  title={label}
+  description={`${label} for Laughing Earth, Villivakkam, Chennai.`}
+  theme="landscaping"
+  whatsappMessage={WHATSAPP_MESSAGES.general}
+>
+  <PagePlaceholder
+    eyebrow="Policies"
+    title={label}
+    lead="Final policy text is to be supplied by Laughing Earth."
+    phase="Phase 4"
+    whatsappMessage={WHATSAPP_MESSAGES.general}
+  />
+</BaseLayout>

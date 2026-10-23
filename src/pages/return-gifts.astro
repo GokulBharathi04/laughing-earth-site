@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PagePlaceholder from '../components/PagePlaceholder.astro';
+import { WHATSAPP_MESSAGES } from '../config/site';
+---
+
+<BaseLayout
+  title="Eco-friendly Return Gifts, Seed-paper Invitations & Thamboolam Bags in Chennai"
+  description="Seeded return gifts, seed-paper wedding invitations, customisable thamboolam bags and potted plants for weddings and events in Chennai."
+  theme="gifts"
+>
+  <PagePlaceholder
+    eyebrow="Return Gifts · Chennai"
+    title="Return gifts that keep growing"
+    lead="Seeded gifts, seed-paper invitations, thamboolam bags and potted plants for weddings and events."
+    phase="Phase 2"
+    whatsappMessage={WHATSAPP_MESSAGES.gifts}
+  />
+</BaseLayout>

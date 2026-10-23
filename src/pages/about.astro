@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PagePlaceholder from '../components/PagePlaceholder.astro';
+import { SITE, WHATSAPP_MESSAGES } from '../config/site';
+---
+
+<BaseLayout
+  title="About Laughing Earth"
+  description="The story behind Laughing Earth, Villivakkam, Chennai: landscaping and eco-friendly return gifts with one green mission."
+  theme="landscaping"
+  whatsappMessage={WHATSAPP_MESSAGES.general}
+>
+  <PagePlaceholder
+    eyebrow="About us"
+    title="About Laughing Earth"
+    lead={SITE.brandLine}
+    phase="Phase 4"
+    whatsappMessage={WHATSAPP_MESSAGES.general}
+  />
+</BaseLayout>

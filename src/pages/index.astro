@@ -1,0 +1,449 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Logo from '../components/Logo.astro';
+import Leaves from '../components/Leaves.astro';
+import Button from '../components/Button.astro';
+import { NAV, SITE, WHATSAPP_MESSAGES } from '../config/site';
+
+const halves = [
+  {
+    key: 'land',
+    theme: 'landscaping',
+    href: NAV.landscaping.href,
+    eyebrow: 'Garden design & care',
+    title: 'Landscaping',
+    text: 'Lawns, terrace and vertical gardens, designed and looked after across Chennai.',
+    cta: 'Explore Landscaping',
+    image: '/images/home-split-landscaping-garden',
+  },
+  {
+    key: 'gifts',
+    theme: 'gifts',
+    href: NAV.gifts.href,
+    eyebrow: 'Eco-friendly return gifts',
+    title: 'Return Gifts',
+    text: 'Seeded gifts, seed-paper invitations, thamboolam bags and potted plants for your event.',
+    cta: 'Explore Return Gifts',
+    image: '/images/home-split-return-gifts-products',
+  },
+] as const;
+---
+
+<BaseLayout
+  title="Laughing Earth | Landscaping & Eco-friendly Return Gifts in Chennai"
+  description="Laughing Earth, Villivakkam, Chennai: garden design and landscaping services, plus eco-friendly seeded return gifts, seed-paper wedding invitations and thamboolam bags."
+  theme="gifts"
+  whatsappMessage={WHATSAPP_MESSAGES.general}
+  showHeader={false}
+>
+  <div class="chooser" data-chooser>
+    <div class="chooser__brand" data-theme="landscaping" data-tone="alt">
+      <h1>
+        <Logo href="" size="lg" />
+        <span class="sr-only">: landscaping and eco-friendly return gifts in Chennai</span>
+      </h1>
+      <p class="chooser__tagline">{SITE.tagline}</p>
+    </div>
+
+    {
+      halves.map((h) => (
+        <a
+          class={`half half--${h.key}`}
+          href={h.href}
+          data-theme={h.theme}
+          data-half={h.key}
+          aria-describedby={`half-${h.key}-text`}
+        >
+          <img
+            class="half__media"
+            src={`${h.image}.webp`}
+            srcset={`${h.image}-800.webp 800w, ${h.image}.webp 1600w`}
+            sizes="(min-width: 768px) 420px, 100vw"
+            width="1600"
+            height="2000"
+            alt=""
+            loading="eager"
+            decoding="async"
+          />
+          <Leaves class="half__leaves" />
+          <span class="half__content">
+            <span class="eyebrow">{h.eyebrow}</span>
+            <h2 class="half__title">{h.title}</h2>
+            <span class="half__text" id={`half-${h.key}-text`}>
+              {h.text}
+            </span>
+            <Button as="span" icon="arrow-right" class="half__cta">
+              {h.cta}
+            </Button>
+          </span>
+          <span class="half__dim" aria-hidden="true" />
+        </a>
+      ))
+    }
+  </div>
+</BaseLayout>
+
+<script>
+  // Desktop hover/focus expansion is pure CSS. This adds the "slide into the
+  // page" step: the chosen half fills the screen, then we navigate.
+  const chooser = document.querySelector<HTMLElement>('[data-chooser]');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  if (chooser) {
+    chooser.querySelectorAll<HTMLAnchorElement>('[data-half]').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        const modified = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+        if (event.defaultPrevented || event.button !== 0 || modified || reduceMotion.matches) return;
+        event.preventDefault();
+        chooser.dataset.entering = link.dataset.half;
+        window.setTimeout(() => {
+          window.location.href = link.href;
+        }, 450);
+      });
+    });
+
+    // Coming back via the back button restores the page from cache: reset it.
+    window.addEventListener('pageshow', () => {
+      delete chooser.dataset.entering;
+    });
+  }
+</script>
+
+<style>
+  /* ---------- Layout: stacked on mobile ---------- */
+  .chooser {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100svh;
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  .half {
+    --half-gap: 4.25rem; /* room for the logo badge at the seam */
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    min-height: max(50svh, 19rem);
+    overflow: hidden;
+    padding: var(--space-6) var(--gutter);
+    background: var(--bg);
+    color: var(--text);
+    text-decoration: none;
+    transition: flex-grow var(--duration-split) var(--ease-out);
+  }
+
+  .half--land {
+    justify-content: flex-start;
+    padding-bottom: calc(var(--half-gap) + var(--space-4));
+  }
+
+  .half--gifts {
+    justify-content: flex-end;
+    padding-top: calc(var(--half-gap) + var(--space-4));
+    padding-bottom: 6rem; /* clear the floating WhatsApp button */
+  }
+
+  /* Photo as a softly tinted backdrop on small screens */
+  .half__media {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .half::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: color-mix(in srgb, var(--bg) 86%, transparent);
+  }
+
+  .half :global(.half__leaves) {
+    position: absolute;
+    z-index: -1;
+    width: 11rem;
+    height: auto;
+    opacity: 0.9;
+  }
+
+  .half--land :global(.half__leaves) {
+    right: -2.5rem;
+    top: -2rem;
+  }
+
+  .half--gifts :global(.half__leaves) {
+    left: -2.5rem;
+    bottom: -2.5rem;
+    transform: scaleX(-1) rotate(180deg);
+  }
+
+  .half__content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+    width: 100%;
+    max-width: 26rem;
+  }
+
+  .half--gifts .half__content {
+    margin-left: auto;
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .half__title {
+    font-size: clamp(2.25rem, 1rem + 3vw, 3.5rem);
+  }
+
+  .half__text {
+    color: var(--muted);
+    max-width: 34ch;
+  }
+
+  .half :global(.half__cta) {
+    margin-top: var(--space-3);
+  }
+
+  .half__dim {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: var(--overlay-dim);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-split) var(--ease-out);
+  }
+
+  /* Whole half is the link: draw the focus ring inside it */
+  .half:focus-visible {
+    outline: 4px solid var(--focus);
+    outline-offset: -10px;
+    border-radius: calc(var(--radius-panel) + 6px);
+  }
+
+  .half:hover :global(.half__cta),
+  .half:focus-visible :global(.half__cta) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft), var(--highlight-inner);
+  }
+
+  /* ---------- Logo badge, centred over the split ---------- */
+  .chooser__brand {
+    position: absolute;
+    z-index: 5;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    display: grid;
+    justify-items: center;
+    gap: var(--space-1);
+    width: max-content;
+    max-width: calc(100% - 2 * var(--gutter));
+    padding: var(--space-3) var(--space-5);
+    border-radius: var(--radius-panel);
+    background: var(--bg);
+    color: var(--heading);
+    box-shadow: var(--shadow-card);
+    text-align: center;
+    pointer-events: none;
+    transition:
+      left var(--duration-split) var(--ease-out),
+      opacity 300ms var(--ease-out);
+  }
+
+  .chooser__brand h1 {
+    font-size: inherit;
+    line-height: 1;
+  }
+
+  .chooser__brand :global(.logo--lg) {
+    flex-direction: row;
+    font-size: 1.5rem;
+  }
+
+  .chooser__brand :global(.logo--lg .logo__mark) {
+    width: 1.6em;
+    height: 1.6em;
+  }
+
+  .chooser__tagline {
+    font-family: var(--font-heading);
+    font-size: var(--text-16);
+    font-style: italic;
+    color: var(--text);
+  }
+
+  /* ---------- Entering a page: chosen half fills the screen ---------- */
+  .chooser[data-entering] .chooser__brand {
+    opacity: 0;
+  }
+
+  /* Extra attribute selectors so this beats the :has(:hover) rules below */
+  .chooser[data-chooser][data-entering='land'] .half.half--land,
+  .chooser[data-chooser][data-entering='gifts'] .half.half--gifts {
+    flex-grow: 14;
+  }
+
+  .chooser[data-chooser][data-entering='land'] .half--gifts .half__dim,
+  .chooser[data-chooser][data-entering='gifts'] .half--land .half__dim {
+    opacity: 1;
+  }
+
+  /* ---------- Tablet and up: side by side ---------- */
+  @media (min-width: 768px) {
+    .chooser {
+      flex-direction: row;
+      height: 100vh;
+      height: 100svh;
+      min-height: 40rem;
+    }
+
+    .half,
+    .half--land,
+    .half--gifts {
+      min-height: 0;
+      justify-content: center;
+      align-items: center;
+      padding: 11rem var(--space-6) 6.5rem; /* bottom clears the WhatsApp button */
+    }
+
+    .half::before {
+      display: none;
+    }
+
+    .half__media {
+      position: static;
+      z-index: auto;
+      flex: none;
+      width: auto;
+      height: clamp(12rem, 34svh, 26rem);
+      aspect-ratio: 4 / 5;
+      margin-bottom: var(--space-5);
+      border-radius: 999px 999px var(--radius-image) var(--radius-image);
+      box-shadow: var(--shadow-card);
+    }
+
+    .half__content,
+    .half--gifts .half__content {
+      margin: 0;
+      align-items: center;
+      text-align: center;
+      max-width: 22rem;
+    }
+
+    .half__text {
+      max-width: 32ch;
+    }
+
+    .half :global(.half__leaves) {
+      width: clamp(14rem, 26vw, 24rem);
+    }
+
+    .half--land :global(.half__leaves) {
+      left: -4rem;
+      right: auto;
+      top: auto;
+      bottom: -4rem;
+      transform: rotate(160deg);
+    }
+
+    .half--gifts :global(.half__leaves) {
+      left: auto;
+      right: -4rem;
+      bottom: auto;
+      top: 5rem;
+      transform: scaleX(-1) rotate(-20deg);
+    }
+
+    .chooser__brand {
+      top: var(--space-6);
+      translate: -50% 0;
+      padding: var(--space-4) var(--space-6);
+    }
+
+    .chooser__brand :global(.logo--lg) {
+      flex-direction: column;
+      font-size: clamp(1.75rem, 1.2rem + 1.2vw, 2.5rem);
+    }
+
+    .chooser__brand :global(.logo--lg .logo__mark) {
+      width: 1.9em;
+      height: 1.9em;
+    }
+
+    .chooser__tagline {
+      font-size: var(--text-18);
+    }
+  }
+
+  /* Short desktop windows: hide the arch photo so the text never clips */
+  @media (min-width: 768px) and (max-height: 640px) {
+    .half__media {
+      display: none;
+    }
+  }
+
+  /* ---------- Desktop with a pointer: hover / focus expands to ~65% ---------- */
+  @media (min-width: 1024px) {
+    /* Fixed content width so text never re-wraps mid-animation */
+    .half,
+    .half--land,
+    .half--gifts {
+      padding-inline: var(--space-5);
+    }
+
+    .half__content,
+    .half--gifts .half__content {
+      width: clamp(18rem, 35vw - 3rem, 23rem);
+      max-width: none;
+      flex: none;
+    }
+
+    .chooser:has(.half--land:focus-visible) .half--land,
+    .chooser:has(.half--gifts:focus-visible) .half--gifts {
+      flex-grow: 1.857; /* 65 / 35 */
+    }
+
+    .chooser:has(.half--land:focus-visible) .half--gifts .half__dim,
+    .chooser:has(.half--gifts:focus-visible) .half--land .half__dim {
+      opacity: 1;
+    }
+
+    .chooser:has(.half--land:focus-visible) .chooser__brand {
+      left: 65%;
+    }
+
+    .chooser:has(.half--gifts:focus-visible) .chooser__brand {
+      left: 35%;
+    }
+  }
+
+  @media (min-width: 1024px) and (hover: hover) {
+    .chooser:has(.half--land:hover) .half--land,
+    .chooser:has(.half--gifts:hover) .half--gifts {
+      flex-grow: 1.857;
+    }
+
+    .chooser:has(.half--land:hover) .half--gifts .half__dim,
+    .chooser:has(.half--gifts:hover) .half--land .half__dim {
+      opacity: 1;
+    }
+
+    .chooser:has(.half--land:hover) .chooser__brand {
+      left: 65%;
+    }
+
+    .chooser:has(.half--gifts:hover) .chooser__brand {
+      left: 35%;
+    }
+  }
+</style>

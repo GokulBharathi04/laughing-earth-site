@@ -1,0 +1,222 @@
+/*
+ * Section themes, switched by data-theme on <body> (or any wrapper, e.g. the
+ * two Home halves). Each theme defines three tones; a Section picks one with
+ * data-tone="base" | "alt" | "deep". Components read only the semantic
+ * variables at the bottom of this file (--bg, --text, --btn-bg …).
+ *
+ * Contrast (WCAG AA, 4.5:1 for body text) — checked pairs:
+ *   ink/beige 10.7 · chocolate/beige 6.0 · cream/chocolate 8.4 · ink/peach 9.4
+ *   cream/forest 7.9 · cream/teal 5.2 · ink/sage 5.9 · peach/forest 5.3
+ *   peach/chocolate 5.7
+ * Tan (2.4 on beige) and sage (2.4 under cream) are never used for text.
+ */
+
+/* ---------- Landscaping: muddy brown and beige ---------- */
+[data-theme='landscaping'] {
+  /* base — beige */
+  --base-bg: var(--beige);
+  --base-text: var(--ink);
+  --base-heading: var(--chocolate);
+  --base-muted: var(--ink-soft);
+  --base-link: var(--chocolate);
+  --base-btn-bg: var(--chocolate);
+  --base-btn-text: var(--cream);
+  --base-card-bg: var(--cream);
+  --base-card-text: var(--ink);
+  --base-card-heading: var(--chocolate);
+  --base-border: color-mix(in srgb, var(--chocolate) 22%, transparent);
+  --base-icon: var(--tan);
+  --base-focus: var(--chocolate);
+
+  /* alt — cream */
+  --alt-bg: var(--cream);
+  --alt-text: var(--ink);
+  --alt-heading: var(--chocolate);
+  --alt-muted: var(--ink-soft);
+  --alt-link: var(--chocolate);
+  --alt-btn-bg: var(--chocolate);
+  --alt-btn-text: var(--cream);
+  --alt-card-bg: var(--beige);
+  --alt-card-text: var(--ink);
+  --alt-card-heading: var(--chocolate);
+  --alt-border: color-mix(in srgb, var(--chocolate) 20%, transparent);
+  --alt-icon: var(--tan);
+  --alt-focus: var(--chocolate);
+
+  /* deep — chocolate brown (hero bands, CTA bands, footer) */
+  --deep-bg: var(--chocolate);
+  --deep-text: var(--cream);
+  --deep-heading: var(--cream);
+  --deep-muted: color-mix(in srgb, var(--cream) 86%, var(--chocolate));
+  --deep-link: var(--peach);
+  --deep-btn-bg: var(--peach);
+  --deep-btn-text: var(--ink);
+  --deep-card-bg: var(--chocolate-soft);
+  --deep-card-text: var(--cream);
+  --deep-card-heading: var(--cream);
+  --deep-border: color-mix(in srgb, var(--cream) 20%, transparent);
+  --deep-icon: var(--peach);
+  --deep-focus: var(--peach);
+
+  /* chrome */
+  --header-bg: color-mix(in srgb, var(--cream) 94%, transparent);
+  --header-text: var(--ink);
+  --header-border: color-mix(in srgb, var(--chocolate) 16%, transparent);
+  --switch-track: var(--beige);
+  --switch-text: var(--ink);
+  --switch-active-bg: var(--chocolate);
+  --switch-active-text: var(--cream);
+  --wa-bg: var(--chocolate);
+  --wa-icon: var(--cream);
+  --wa-ring: var(--cream);
+
+  /* decorative leaves: dried tan and brown, sage only as a small accent */
+  --leaf-1: var(--tan);
+  --leaf-2: var(--chocolate-soft);
+  --leaf-3: color-mix(in srgb, var(--tan) 55%, var(--beige));
+  --leaf-accent: var(--sage);
+  --leaf-vein: color-mix(in srgb, var(--cream) 55%, transparent);
+}
+
+/* ---------- Return Gifts: green ---------- */
+[data-theme='gifts'] {
+  /* base — forest green */
+  --base-bg: var(--forest);
+  --base-text: var(--cream);
+  --base-heading: var(--cream);
+  --base-muted: color-mix(in srgb, var(--cream) 88%, var(--forest));
+  --base-link: var(--peach);
+  --base-btn-bg: var(--peach);
+  --base-btn-text: var(--ink);
+  --base-card-bg: var(--sage);
+  --base-card-text: var(--ink);
+  --base-card-heading: var(--ink);
+  --base-border: color-mix(in srgb, var(--cream) 18%, transparent);
+  --base-icon: var(--peach);
+  --base-focus: var(--peach);
+
+  /* alt — teal panels */
+  --alt-bg: var(--teal);
+  --alt-text: var(--cream);
+  --alt-heading: var(--cream);
+  --alt-muted: var(--cream);
+  --alt-link: var(--cream); /* peach is only 3.5:1 on teal */
+  --alt-btn-bg: var(--peach);
+  --alt-btn-text: var(--ink);
+  --alt-card-bg: var(--sage);
+  --alt-card-text: var(--ink);
+  --alt-card-heading: var(--ink);
+  --alt-border: color-mix(in srgb, var(--cream) 22%, transparent);
+  --alt-icon: var(--peach);
+  --alt-focus: var(--cream);
+
+  /* deep — darkest forest (CTA bands, footer) */
+  --deep-bg: var(--forest-deep);
+  --deep-text: var(--cream);
+  --deep-heading: var(--cream);
+  --deep-muted: color-mix(in srgb, var(--cream) 86%, var(--forest));
+  --deep-link: var(--peach);
+  --deep-btn-bg: var(--peach);
+  --deep-btn-text: var(--ink);
+  --deep-card-bg: var(--teal);
+  --deep-card-text: var(--cream);
+  --deep-card-heading: var(--cream);
+  --deep-border: color-mix(in srgb, var(--cream) 18%, transparent);
+  --deep-icon: var(--peach);
+  --deep-focus: var(--peach);
+
+  /* chrome */
+  --header-bg: color-mix(in srgb, var(--forest-deep) 94%, transparent);
+  --header-text: var(--cream);
+  --header-border: color-mix(in srgb, var(--cream) 14%, transparent);
+  --switch-track: var(--teal);
+  --switch-text: var(--cream);
+  --switch-active-bg: var(--peach);
+  --switch-active-text: var(--ink);
+  --wa-bg: var(--peach);
+  --wa-icon: var(--ink);
+  --wa-ring: var(--forest-deep);
+
+  /* decorative leaves: layered greens, as in the mockup */
+  --leaf-1: var(--sage);
+  --leaf-2: var(--teal);
+  --leaf-3: color-mix(in srgb, var(--sage) 60%, var(--cream));
+  --leaf-accent: var(--tan);
+  --leaf-vein: color-mix(in srgb, var(--cream) 45%, transparent);
+}
+
+/* ---------- Tone mapping → semantic variables ---------- */
+[data-theme],
+[data-tone='base'] {
+  --bg: var(--base-bg);
+  --text: var(--base-text);
+  --heading: var(--base-heading);
+  --muted: var(--base-muted);
+  --link: var(--base-link);
+  --btn-bg: var(--base-btn-bg);
+  --btn-text: var(--base-btn-text);
+  --card-bg: var(--base-card-bg);
+  --card-text: var(--base-card-text);
+  --card-heading: var(--base-card-heading);
+  --border: var(--base-border);
+  --icon: var(--base-icon);
+  --focus: var(--base-focus);
+}
+
+[data-tone='alt'] {
+  --bg: var(--alt-bg);
+  --text: var(--alt-text);
+  --heading: var(--alt-heading);
+  --muted: var(--alt-muted);
+  --link: var(--alt-link);
+  --btn-bg: var(--alt-btn-bg);
+  --btn-text: var(--alt-btn-text);
+  --card-bg: var(--alt-card-bg);
+  --card-text: var(--alt-card-text);
+  --card-heading: var(--alt-card-heading);
+  --border: var(--alt-border);
+  --icon: var(--alt-icon);
+  --focus: var(--alt-focus);
+}
+
+[data-tone='deep'] {
+  --bg: var(--deep-bg);
+  --text: var(--deep-text);
+  --heading: var(--deep-heading);
+  --muted: var(--deep-muted);
+  --link: var(--deep-link);
+  --btn-bg: var(--deep-btn-bg);
+  --btn-text: var(--deep-btn-text);
+  --card-bg: var(--deep-card-bg);
+  --card-text: var(--deep-card-text);
+  --card-heading: var(--deep-card-heading);
+  --border: var(--deep-border);
+  --icon: var(--deep-icon);
+  --focus: var(--deep-focus);
+}
+
+/*
+ * Card colourways (mockup's mixed sage / brown / sand tiles). A card with
+ * data-card="…" overrides only its own card variables.
+ */
+[data-card='sage'] {
+  --card-bg: var(--sage);
+  --card-text: var(--ink);
+  --card-heading: var(--ink);
+  --icon: var(--forest);
+  --focus: var(--ink);
+}
+[data-card='earth'] {
+  --card-bg: var(--chocolate);
+  --card-text: var(--cream);
+  --card-heading: var(--cream);
+  --icon: var(--peach);
+  --focus: var(--peach);
+}
+[data-card='sand'] {
+  --card-bg: var(--beige);
+  --card-text: var(--ink);
+  --card-heading: var(--chocolate);
+  --icon: var(--chocolate);
+  --focus: var(--chocolate);
+}

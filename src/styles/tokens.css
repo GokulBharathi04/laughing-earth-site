@@ -1,0 +1,93 @@
+/*
+ * Laughing Earth design tokens — exact values from BRIEF.md §3.
+ * Raw palette only. Components never use these directly for colour:
+ * they read the semantic variables set by themes.css.
+ */
+:root {
+  /* Palette */
+  --forest: #1f4d45;
+  --teal: #2e6b5e;
+  --sage: #7fa36b;
+  --chocolate: #5a3a2a;
+  --tan: #a47551;
+  --beige: #d9c4a5;
+  --cream: #f4e9d8;
+  --peach: #e8b98a;
+  --ink: #1e1e1a;
+
+  /* Derived shades (mixed only from palette colours) */
+  --forest-deep: color-mix(in srgb, var(--forest) 78%, var(--ink));
+  --chocolate-deep: color-mix(in srgb, var(--chocolate) 80%, var(--ink));
+  --chocolate-soft: color-mix(in srgb, var(--chocolate) 82%, var(--tan));
+  --ink-soft: color-mix(in srgb, var(--ink) 84%, var(--chocolate));
+
+  /* Overlays */
+  --overlay-dim: rgb(0 0 0 / 0.4); /* inactive half on the Home split */
+
+  /* Typography */
+  --font-heading: 'Fraunces', 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', 'DM Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --weight-heading: 600;
+  --weight-body: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --line-height-body: 1.6;
+  --line-height-heading: 1.12;
+
+  /* Type scale: 72 / 48 / 32 / 24 / 18 / 16 px */
+  --text-72: 4.5rem;
+  --text-48: 3rem;
+  --text-32: 2rem;
+  --text-24: 1.5rem;
+  --text-18: 1.125rem;
+  --text-16: 1rem;
+  /* Hero: 36–40px mobile, 56–72px desktop */
+  --text-hero: clamp(2.25rem, 1.4rem + 3.6vw, 4.5rem);
+  --text-h2: clamp(2rem, 1.5rem + 2vw, 3rem);
+  --text-h3: clamp(1.5rem, 1.3rem + 0.8vw, 2rem);
+
+  /* Radius */
+  --radius-card: 24px;
+  --radius-panel: 24px;
+  --radius-image: 16px;
+  --radius-pill: 999px;
+
+  /* Shadows: soft and large, plus a subtle inner highlight */
+  --shadow-soft: 0 20px 40px rgb(0 0 0 / 0.18);
+  --shadow-lifted: 0 28px 56px rgb(0 0 0 / 0.24);
+  --shadow-small: 0 8px 20px rgb(0 0 0 / 0.16);
+  --highlight-inner: inset 0 1px 0 rgb(255 255 255 / 0.14);
+  --shadow-card: var(--shadow-soft), var(--highlight-inner);
+  --shadow-card-hover: var(--shadow-lifted), var(--highlight-inner);
+
+  /* Spacing (8px rhythm) */
+  --space-1: 0.25rem;  /* 4 */
+  --space-2: 0.5rem;   /* 8 */
+  --space-3: 0.75rem;  /* 12 */
+  --space-4: 1rem;     /* 16 */
+  --space-5: 1.5rem;   /* 24 */
+  --space-6: 2rem;     /* 32 */
+  --space-7: 3rem;     /* 48 */
+  --space-8: 4rem;     /* 64 */
+  --space-9: 6rem;     /* 96 */
+  --space-10: 8rem;    /* 128 */
+  --section-pad-y: clamp(var(--space-8), 6vw + 1rem, var(--space-10));
+  --gutter: clamp(var(--space-4), 4vw, var(--space-7));
+  --container: 1200px;
+  --container-narrow: 760px;
+  --tap-target: 44px;
+
+  /* Texture: paper grain at 5–8% opacity on coloured bands */
+  --texture-opacity: 0.06;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-split: 600ms;
+  --duration-reveal: 400ms;
+  --duration-fast: 200ms;
+  --lift: -4px;
+
+  /* Layering */
+  --z-header: 50;
+  --z-whatsapp: 60;
+}

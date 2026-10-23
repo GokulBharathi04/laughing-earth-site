@@ -1,0 +1,122 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import Icon from './Icon.astro';
+
+// Pill button. Renders <a> when href is set, a <span> when `as="span"` (for a
+// pill inside a larger link), otherwise <button>.
+// primary: theme CTA colours · outline: transparent with text-colour border.
+type Props = {
+  href?: string;
+  variant?: 'primary' | 'outline';
+  size?: 'md' | 'lg';
+  icon?: 'whatsapp' | 'arrow-right' | 'phone';
+  iconPosition?: 'start' | 'end';
+  external?: boolean;
+  as?: 'span';
+  class?: string;
+} & Omit<HTMLAttributes<'a'> & HTMLAttributes<'button'>, 'class'>;
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  icon,
+  iconPosition = 'end',
+  external = false,
+  as,
+  class: className,
+  ...rest
+} = Astro.props;
+
+const classes = ['btn', `btn--${variant}`, `btn--${size}`, className];
+const externalAttrs = external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+---
+
+{
+  href ? (
+    <a href={href} class:list={classes} {...externalAttrs} {...rest}>
+      {icon && iconPosition === 'start' && <Icon name={icon} size={20} />}
+      <span><slot /></span>
+      {icon && iconPosition === 'end' && <Icon name={icon} size={20} class="btn__icon-end" />}
+    </a>
+  ) : as === 'span' ? (
+    <span class:list={classes}>
+      {icon && iconPosition === 'start' && <Icon name={icon} size={20} />}
+      <span><slot /></span>
+      {icon && iconPosition === 'end' && <Icon name={icon} size={20} class="btn__icon-end" />}
+    </span>
+  ) : (
+    <button type="button" class:list={classes} {...rest}>
+      {icon && iconPosition === 'start' && <Icon name={icon} size={20} />}
+      <span><slot /></span>
+      {icon && iconPosition === 'end' && <Icon name={icon} size={20} class="btn__icon-end" />}
+    </button>
+  )
+}
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6em;
+    min-height: var(--tap-target);
+    padding: 0.75em 1.6em;
+    border: 2px solid transparent;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-body);
+    font-size: var(--text-16);
+    font-weight: var(--weight-semibold);
+    line-height: 1.2;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      transform var(--duration-fast) var(--ease-out),
+      box-shadow var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .btn--lg {
+    min-height: 3.5rem;
+    padding-inline: 2em;
+    font-size: var(--text-18);
+  }
+
+  .btn--primary {
+    background: var(--btn-bg);
+    color: var(--btn-text);
+    box-shadow: var(--shadow-small), var(--highlight-inner);
+  }
+
+  .btn--outline {
+    background: transparent;
+    color: var(--text);
+    border-color: currentColor;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft), var(--highlight-inner);
+  }
+
+  .btn--outline:hover {
+    background: color-mix(in srgb, var(--text) 8%, transparent);
+  }
+
+  .btn:active {
+    transform: translateY(0);
+  }
+
+  .btn:focus-visible {
+    border-radius: var(--radius-pill);
+    outline-offset: 3px;
+  }
+
+  .btn :global(.btn__icon-end) {
+    transition: transform var(--duration-fast) var(--ease-out);
+  }
+
+  .btn:hover :global(.btn__icon-end) {
+    transform: translateX(3px);
+  }
+</style>
