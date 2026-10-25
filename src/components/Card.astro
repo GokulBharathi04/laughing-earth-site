@@ -7,13 +7,19 @@ interface Props {
   as?: 'article' | 'div' | 'li';
   lift?: boolean;
   class?: string;
+  [attr: `data-${string}`]: string | undefined;
 }
 
-const { colourway, href, as = 'article', lift = Boolean(href), class: className } = Astro.props;
+const { colourway, href, as = 'article', lift = Boolean(href), class: className, ...rest } = Astro.props;
 const Tag = href ? 'a' : as;
 ---
 
-<Tag href={href} data-card={colourway} class:list={['card', { 'card--lift': lift, 'card--link': href }, className]}>
+<Tag
+  href={href}
+  data-card={colourway}
+  class:list={['card', { 'card--lift': lift, 'card--link': href }, className]}
+  {...rest}
+>
   {Astro.slots.has('media') && <div class="card__media"><slot name="media" /></div>}
   <div class="card__body">
     {Astro.slots.has('icon') && <div class="card__icon"><slot name="icon" /></div>}
@@ -42,10 +48,16 @@ const Tag = href ? 'a' : as;
     color: var(--card-heading);
   }
 
-  .card--lift:hover,
   .card--lift:focus-within {
     transform: translateY(var(--lift));
     box-shadow: var(--shadow-card-hover);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .card--lift:hover {
+      transform: translateY(var(--lift));
+      box-shadow: var(--shadow-card-hover);
+    }
   }
 
   .card--link:focus-visible {

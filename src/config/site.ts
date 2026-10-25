@@ -34,6 +34,9 @@ export const WHATSAPP_MESSAGES = {
   gifts: "Hi Laughing Earth! I'd like a quote for eco-friendly return gifts.",
 } as const;
 
+/** Formspree form endpoint. Replace YOUR_FORM_ID once the client's form is set up. */
+export const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
+
 export const NAV = {
   landscaping: { href: '/landscaping', label: 'Landscaping' },
   gifts: { href: '/return-gifts', label: 'Return Gifts' },

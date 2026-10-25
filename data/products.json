@@ -1,0 +1,117 @@
+{
+  "_note": "Prices from BRIEF.md (current site, October 2026). Descriptions are drafts for client review. image is the path without size suffix or extension: <image>.webp (800px) and <image>-400.webp.",
+  "categories": [
+    {
+      "slug": "seeded-return-gifts",
+      "name": "Seeded return gifts",
+      "blurb": "Saplings and seeded keepsakes your guests can plant at home."
+    },
+    {
+      "slug": "seed-paper-invitations",
+      "name": "Seed-paper invitations",
+      "blurb": "Wedding cards made with seeds that sprout once they're planted."
+    },
+    {
+      "slug": "thamboolam-bags",
+      "name": "Thamboolam bags",
+      "blurb": "Eco-friendly bags, customised with names and dates."
+    },
+    {
+      "slug": "plants",
+      "name": "Plants in jute & ceramic",
+      "blurb": "Succulents and jade, wrapped in jute and ready to gift."
+    }
+  ],
+  "products": [
+    {
+      "name": "Succulent in ceramic pot wrapped with jute",
+      "slug": "succulent-ceramic-pot-jute",
+      "category": "plants",
+      "price": 150,
+      "mrp": 170,
+      "image": "/images/product-succulent-ceramic-pot-jute",
+      "description": "A hardy succulent in a ceramic pot with a hand-tied jute wrap."
+    },
+    {
+      "name": "Succulent in plastic pot wrapped with jute",
+      "slug": "succulent-plastic-pot-jute",
+      "category": "plants",
+      "price": 99,
+      "mrp": 120,
+      "image": "/images/product-succulent-plastic-pot-jute",
+      "description": "Our lightest succulent gift: easy to carry home, easy to care for."
+    },
+    {
+      "name": "Jade wrapped with jute",
+      "slug": "jade-plant-jute",
+      "category": "plants",
+      "price": 85,
+      "mrp": 95,
+      "image": "/images/product-jade-plant-jute",
+      "description": "A jade plant, often given for good luck, in a simple jute wrap."
+    },
+    {
+      "name": "Sapling with paper bag and thank-you card",
+      "slug": "sapling-paper-bag-thank-you-card",
+      "category": "seeded-return-gifts",
+      "price": 35,
+      "mrp": 40,
+      "image": "/images/product-sapling-paper-bag-thank-you-card",
+      "description": "A young sapling in a paper bag with a thank-you card for your guests."
+    },
+    {
+      "name": "Sapling with eco-friendly customised bag",
+      "slug": "sapling-eco-customised-bag",
+      "category": "thamboolam-bags",
+      "price": 55,
+      "mrp": 60,
+      "image": "/images/product-sapling-eco-customised-bag",
+      "description": "A sapling in an eco-friendly bag printed with your names or event."
+    },
+    {
+      "name": "Customisable thamboolam bag 8.8×6×3",
+      "slug": "thamboolam-bag-8-8x6x3",
+      "category": "thamboolam-bags",
+      "price": 35,
+      "mrp": 40,
+      "image": "/images/product-thamboolam-bag-8-8x6x3",
+      "description": "Our smallest thamboolam bag, for betel, fruit and a small gift."
+    },
+    {
+      "name": "Customisable thamboolam bag 8.8×10.5×3",
+      "slug": "thamboolam-bag-8-8x10-5x3",
+      "category": "thamboolam-bags",
+      "price": 40,
+      "mrp": 45,
+      "image": "/images/product-thamboolam-bag-8-8x10-5x3",
+      "description": "A taller thamboolam bag with room for a coconut and sweets."
+    },
+    {
+      "name": "Customisable thamboolam bag 10.5×12×4",
+      "slug": "thamboolam-bag-10-5x12x4",
+      "category": "thamboolam-bags",
+      "price": 50,
+      "mrp": 55,
+      "image": "/images/product-thamboolam-bag-10-5x12x4",
+      "description": "A roomy thamboolam bag for fuller return gift sets."
+    },
+    {
+      "name": "Customisable thamboolam bag 12×14×4",
+      "slug": "thamboolam-bag-12x14x4",
+      "category": "thamboolam-bags",
+      "price": 60,
+      "mrp": 65,
+      "image": "/images/product-thamboolam-bag-12x14x4",
+      "description": "Our largest thamboolam bag, for a sapling plus traditional items."
+    },
+    {
+      "name": "Aesthetic wedding card",
+      "slug": "aesthetic-seed-paper-wedding-card",
+      "category": "seed-paper-invitations",
+      "price": 50,
+      "mrp": 90,
+      "image": "/images/product-aesthetic-seed-paper-wedding-card",
+      "description": "A seed-paper wedding invitation that grows into flowers once it's planted."
+    }
+  ]
+}

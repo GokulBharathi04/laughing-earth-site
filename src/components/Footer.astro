@@ -63,6 +63,10 @@ const a = SITE.address;
     </div>
   </div>
 
+  {Astro.slots.has('credits') && <div class="container site-footer__credits"><slot name="credits" /></div>}
+
+  <p class="site-footer__wordmark" aria-hidden="true">{SITE.name}</p>
+
   <div class="container site-footer__base">
     <p>&copy; <span data-current-year>{year}</span> {SITE.name}. All rights reserved.</p>
     <p>{SITE.credit.label}</p>
@@ -171,5 +175,61 @@ const a = SITE.address;
     padding-top: var(--space-5);
     border-top: 1px solid var(--border);
     color: var(--muted);
+  }
+
+  .site-footer__credits {
+    margin-top: var(--space-7);
+    color: var(--muted);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  .site-footer__credits :global(p) {
+    max-width: 75ch;
+  }
+
+  .site-footer__credits :global(a) {
+    color: inherit;
+  }
+
+  /* The giant name only closes the Landscaping page */
+  .site-footer__wordmark {
+    display: none;
+  }
+
+  /* ---- Landscaping: the name returns at full width, no rules or tracked caps ---- */
+  :global([data-theme='landscaping']) .site-footer {
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    padding-block: var(--space-8) var(--space-4);
+  }
+
+  :global([data-theme='landscaping']) .site-footer__heading {
+    font-size: var(--text-18);
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  :global([data-theme='landscaping']) .site-footer__wordmark {
+    display: block;
+    padding-inline: var(--gutter);
+    margin-top: auto;
+    padding-top: var(--space-8);
+    font-family: var(--font-heading);
+    font-weight: var(--weight-heading);
+    /* "LAUGHING EARTH" sets about 5.9× its size wide: fill the margins exactly */
+    font-size: calc((100vw - 2 * var(--gutter)) / 6);
+    line-height: 0.8;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--heading);
+  }
+
+  :global([data-theme='landscaping']) .site-footer__base {
+    margin-top: var(--space-4);
+    padding-top: 0;
+    border-top: 0;
   }
 </style>

@@ -1,0 +1,99 @@
+---
+import Icon from './Icon.astro';
+
+// Accessible accordion on native <details>. Answers may contain inline HTML
+// (e.g. <mark class="tbc"> for values the client still has to confirm).
+// Opening animates its height where the browser supports ::details-content.
+interface Props {
+  items: { q: string; a: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="faq" data-stagger>
+  {
+    items.map((item) => (
+      <details class="faq__item">
+        <summary>
+          <span>{item.q}</span>
+          <Icon name="plus" class="faq__icon" />
+        </summary>
+        <div class="faq__answer" set:html={item.a} />
+      </details>
+    ))
+  }
+</div>
+
+<style>
+  .faq {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .faq__item {
+    border-radius: var(--radius-card);
+    background: color-mix(in srgb, var(--text) 7%, transparent);
+    box-shadow: var(--highlight-inner);
+    interpolate-size: allow-keywords;
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    min-height: var(--tap-target);
+    padding: var(--space-4) var(--space-5);
+    font-family: var(--font-heading);
+    font-size: clamp(1.125rem, 1rem + 0.4vw, 1.35rem);
+    font-weight: var(--weight-heading);
+    color: var(--heading);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary:focus-visible {
+    border-radius: var(--radius-card);
+    outline-offset: -3px;
+  }
+
+  summary :global(.faq__icon) {
+    flex: none;
+    color: var(--icon);
+    transition: transform 250ms var(--ease-out);
+  }
+
+  .faq__item[open] summary :global(.faq__icon) {
+    transform: rotate(45deg);
+  }
+
+  .faq__answer {
+    padding: 0 var(--space-5) var(--space-5);
+    color: var(--text);
+    max-width: 68ch;
+  }
+
+  .faq__answer :global(p + p) {
+    margin-top: var(--space-3);
+  }
+
+  /* Progressive: smooth height where ::details-content is supported */
+  @media (prefers-reduced-motion: no-preference) {
+    .faq__item::details-content {
+      block-size: 0;
+      overflow: clip;
+      transition:
+        block-size 280ms var(--ease-out),
+        content-visibility 280ms allow-discrete;
+    }
+
+    .faq__item[open]::details-content {
+      block-size: auto;
+    }
+  }
+</style>

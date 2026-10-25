@@ -15,6 +15,11 @@
   --peach: #e8b98a;
   --ink: #1e1e1a;
 
+  /* Stone neutrals for the Landscaping page: weathered sandstone flags.
+     Low-chroma on purpose so the paving photographs carry the colour. */
+  --stone: #e3ddd3;
+  --flag: #d2c9bb;
+
   /* Derived shades (mixed only from palette colours) */
   --forest-deep: color-mix(in srgb, var(--forest) 78%, var(--ink));
   --chocolate-deep: color-mix(in srgb, var(--chocolate) 80%, var(--ink));

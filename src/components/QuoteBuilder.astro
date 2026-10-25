@@ -1,0 +1,296 @@
+---
+import Icon from './Icon.astro';
+
+// Bulk quote form in a morph dialog. Any element with
+// data-morph-open="quote-builder" opens it, growing out of that element.
+// Submitting builds a WhatsApp message (src/scripts/return-gifts/quote-builder.ts).
+interface Props {
+  gifts: string[];
+}
+
+const { gifts } = Astro.props;
+
+const occasions = ['Wedding', 'Engagement', 'Housewarming', 'Birthday', 'Baby shower', 'Corporate event', 'Something else'];
+const quantities = ['Under 50', '50–100', '100–250', '250–500', '500+'];
+---
+
+<dialog id="quote-builder" class="morph-dialog quote" data-morph-dialog data-tone="alt" aria-labelledby="quote-title" data-lenis-prevent>
+  <div class="quote__inner" data-morph-content>
+    <header class="quote__head">
+      <div>
+        <p class="eyebrow">Bulk orders</p>
+        <h2 id="quote-title">Build your quote</h2>
+      </div>
+      <button class="quote__close" type="button" data-morph-close>
+        <Icon name="close" />
+        <span class="sr-only">Close</span>
+      </button>
+    </header>
+
+    <form class="quote__form" data-quote-form>
+      <fieldset>
+        <legend>What's the occasion?</legend>
+        <div class="chips">
+          {
+            occasions.map((o, i) => (
+              <label class="chip">
+                <input type="radio" name="occasion" value={o} required={i === 0} />
+                <span>{o}</span>
+              </label>
+            ))
+          }
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Which gifts? <span class="quote__hint">(pick any)</span></legend>
+        <div class="chips">
+          {
+            [...gifts, 'Not sure yet'].map((g) => (
+              <label class="chip">
+                <input type="checkbox" name="gifts" value={g} />
+                <span>{g}</span>
+              </label>
+            ))
+          }
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>How many guests?</legend>
+        <div class="chips">
+          {
+            quantities.map((q, i) => (
+              <label class="chip">
+                <input type="radio" name="quantity" value={q} required={i === 0} />
+                <span>{q}</span>
+              </label>
+            ))
+          }
+        </div>
+      </fieldset>
+
+      <div class="quote__row">
+        <label class="field">
+          <span>Event date</span>
+          <input type="date" name="event-date" />
+        </label>
+        <label class="field">
+          <span>Delivery area</span>
+          <input type="text" name="area" autocomplete="address-level2" placeholder="e.g. Anna Nagar" maxlength="80" />
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Customisation <span class="quote__hint">(optional)</span></span>
+        <textarea name="customisation" rows="3" maxlength="400" placeholder="Names, date or a logo to print on the bags or cards"></textarea>
+      </label>
+
+      <label class="field">
+        <span>Your name <span class="quote__hint">(optional)</span></span>
+        <input type="text" name="name" autocomplete="name" maxlength="60" />
+      </label>
+
+      <button class="quote__submit" type="submit" data-event="whatsapp_click" data-event-label="quote_builder">
+        <Icon name="whatsapp" size={22} />
+        <span>Send on WhatsApp</span>
+      </button>
+      <p class="quote__note">Opens WhatsApp with your answers filled in. Nothing is sent until you press send there.</p>
+    </form>
+  </div>
+</dialog>
+
+<style>
+  .quote__inner {
+    display: grid;
+    gap: var(--space-5);
+    padding: var(--space-5);
+  }
+
+  @media (min-width: 768px) {
+    .quote__inner {
+      padding: var(--space-6) var(--space-7);
+    }
+  }
+
+  .quote__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .quote__head h2 {
+    font-size: var(--text-h3);
+  }
+
+  .quote__close {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: var(--tap-target);
+    height: var(--tap-target);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text);
+    transition: transform 160ms var(--ease-out);
+  }
+
+  .quote__close:active {
+    transform: scale(0.94);
+  }
+
+  .quote__close:focus-visible {
+    border-radius: 50%;
+  }
+
+  .quote__form {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  fieldset {
+    border: 0;
+    padding: 0;
+    min-width: 0;
+  }
+
+  legend,
+  .field > span {
+    display: block;
+    margin-bottom: var(--space-2);
+    font-weight: var(--weight-semibold);
+    color: var(--heading);
+  }
+
+  .quote__hint {
+    font-weight: var(--weight-body);
+    color: var(--muted);
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .chip {
+    position: relative;
+  }
+
+  .chip input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .chip span {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    padding: 0.4em 1.1em;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-16);
+    transition:
+      background-color var(--duration-fast) var(--ease-out),
+      color var(--duration-fast) var(--ease-out),
+      transform 160ms var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .chip:hover span {
+      background: color-mix(in srgb, var(--text) 10%, transparent);
+    }
+  }
+
+  .chip input:active + span {
+    transform: scale(0.97);
+  }
+
+  .chip input:checked + span {
+    border-color: var(--btn-bg);
+    background: var(--btn-bg);
+    color: var(--btn-text);
+  }
+
+  .chip input:focus-visible + span {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .quote__row {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 560px) {
+    .quote__row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .field input,
+  .field textarea {
+    width: 100%;
+    min-height: var(--tap-target);
+    padding: 0.65em 0.9em;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--text) 8%, transparent);
+    color: var(--text);
+    font-size: var(--text-16);
+    color-scheme: dark; /* the gifts theme is dark: native date picker matches */
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+  }
+
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: color-mix(in srgb, var(--text) 72%, transparent);
+  }
+
+  .field input:focus-visible,
+  .field textarea:focus-visible {
+    outline: none;
+    border-color: var(--text);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--text) 25%, transparent);
+  }
+
+  .field textarea {
+    resize: vertical;
+  }
+
+  .quote__submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: 3.5rem;
+    padding: 0 2em;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--btn-bg);
+    color: var(--btn-text);
+    font-size: var(--text-18);
+    font-weight: var(--weight-semibold);
+    box-shadow: var(--shadow-small), var(--highlight-inner);
+    transition: transform 160ms var(--ease-out);
+  }
+
+  .quote__submit:active {
+    transform: scale(0.97);
+  }
+
+  .quote__submit:focus-visible {
+    border-radius: var(--radius-pill);
+  }
+
+  .quote__note {
+    margin-top: calc(-1 * var(--space-3));
+    font-size: var(--text-16);
+    color: var(--muted);
+  }
+</style>

@@ -233,4 +233,20 @@ const isCurrent = (href: string) => path === href;
       color: var(--header-text);
     }
   }
+  /* ---- Landscaping: a plain bar, separated by tone only ---- */
+  :global([data-theme='landscaping']) .site-header {
+    border-bottom: 0;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  :global([data-theme='landscaping']) .switch,
+  :global([data-theme='landscaping']) .switch__option[aria-current='page'] {
+    box-shadow: none;
+  }
+
+  :global([data-theme='landscaping']) .site-nav__toggle {
+    border-color: transparent;
+    background: var(--switch-track);
+  }
 </style>

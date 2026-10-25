@@ -1,19 +1,1840 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PagePlaceholder from '../components/PagePlaceholder.astro';
-import { WHATSAPP_MESSAGES } from '../config/site';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import BgVideo from '../components/BgVideo.astro';
+import BeforeAfter from '../components/BeforeAfter.astro';
+import credits from '../../data/landscaping-credits.json';
+import { PATTERNS, VIEW, type Pattern } from '../lib/paving-patterns';
+import { SITE, FORMSPREE_ENDPOINT, whatsappLink, WHATSAPP_MESSAGES } from '../config/site';
+
+// Photographs: open-licence pictures of paving and stonework (credited in the
+// footer) until the client's own project photos arrive; see IMAGES-NEEDED.md.
+const img = (name: string) => ({ src: `/images/land/${name}.webp`, srcset: `/images/land/${name}-800.webp 800w, /images/land/${name}.webp 1600w` });
+
+// Video stills from the landscaping clips (Mixkit), used as photographs.
+const still = (clip: string) => ({ src: `/images/poster-${clip}.webp` });
+
+// Hero facts, carried over from the first landscaping page.
+const facts = [
+  { title: 'Across Chennai', text: 'Working from our nursery in Villivakkam.' },
+  { title: 'Design to upkeep', text: 'One team from the first sketch to regular care.' },
+  { title: 'Plants that suit Chennai', text: 'Chosen for local heat, monsoon and shade.' },
+  { title: 'Site visit', text: 'We see the space before we quote. Fee <mark class="tbc">to confirm</mark>.' },
+];
+
+// Garden services (client to review once their service list and pricing arrive).
+const gardenRows = [
+  {
+    title: 'Garden design',
+    text: 'A layout drawn for your plot, light and budget: paths, beds, seating, and plants that thrive in Chennai.',
+    media: still('gallery-land-garden-stream'),
+    alt: 'A stone-lined stream running past red and yellow flowering plants',
+    size: 'wide',
+  },
+  {
+    title: 'Lawn setup',
+    text: 'Soil preparation, levelling and grass planting, with watering arranged so the lawn takes root.',
+    media: still('gallery-land-sprinkler-lawn'),
+    alt: 'A sprinkler watering a green lawn',
+    size: 'tall',
+  },
+  {
+    title: 'Vertical gardens',
+    text: 'Living green walls for balconies, facades and indoor spaces, planted to stay full and easy to water.',
+    media: still('gallery-land-watering-garden'),
+    alt: 'Potted plants being watered on a balcony',
+    size: 'square',
+  },
+  {
+    title: 'Terrace gardens',
+    text: 'Planters, light soil mixes and plants that handle rooftop sun and wind, for flats and offices alike.',
+    media: still('gallery-land-nursery'),
+    alt: 'Hanging baskets of pink flowers in a plant nursery',
+    size: 'mid',
+  },
+  {
+    title: 'Garden maintenance',
+    text: 'Regular visits for mowing, pruning, feeding and replanting. Plans <mark class="tbc">to confirm</mark>.',
+    media: still('gallery-land-garden-sunset'),
+    alt: 'A planted garden at sunset with hills behind',
+    size: 'tall',
+    pos: 'center 85%',
+  },
+] as const;
+
+const rows = [
+  {
+    title: 'Sandstone patios',
+    text: 'Indian sandstone or Kota flags on a compacted, levelled base, laid with a slight fall so monsoon rain runs off instead of pooling at the door.',
+    photo: 'patio-barn',
+    alt: 'A wide patio of sandstone flags with benches and planting beside a lawn',
+    size: 'wide',
+  },
+  {
+    title: 'Brick paths',
+    text: 'Clay brick paviours in herringbone, basketweave or running bond, held by a firm edge so the pattern never creeps into the lawn.',
+    photo: 'brick-herringbone',
+    alt: 'Close-up of brick paviours in brown, grey and tan laid in herringbone',
+    size: 'tall',
+  },
+  {
+    title: 'Crazy paving and stepping stones',
+    text: 'Broken flags fitted like a puzzle with tight joints, or single stones set into the grass along the line people really walk.',
+    photo: 'crazy-paving',
+    alt: 'Irregular flagstones fitted together as crazy paving up to a doorway',
+    size: 'square',
+  },
+  {
+    title: 'Granite drives',
+    text: "Granite setts, the hard stone Tamil Nadu is known for, laid on a deep base so a driveway takes a car every day.",
+    photo: 'granite-setts',
+    alt: 'A long avenue paved in small grey granite setts under trees',
+    size: 'mid',
+  },
+  {
+    title: 'Steps, walls and edging',
+    text: 'Stone steps, low retaining walls and raised beds that hold a slope, frame a border and give you somewhere to sit.',
+    photo: 'temple-granite',
+    alt: 'Large dressed granite blocks fitted in courses, at the Big Temple in Thanjavur',
+    size: 'tall',
+  },
+] as const;
+
+// The paving chooser. Facts are general properties of each material; prices
+// wait for the client. Colours are the materials' own tones for the drawing.
+const materials = [
+  {
+    id: 'brick',
+    name: 'Clay brick paviours',
+    photo: 'brick-moss',
+    alt: 'Old clay brick paviours with moss growing in the joints',
+    looks: 'Warm terracotta reds that deepen with age.',
+    sun: 'Stays warm, never scorching.',
+    rain: 'Textured faces grip; shaded joints need an occasional sweep.',
+    best: 'Paths, courtyards and edging.',
+  },
+  {
+    id: 'sandstone',
+    name: 'Indian sandstone',
+    photo: 'sandstone-wet-panel',
+    alt: 'Wet sandstone flags in rust, grey and buff tones',
+    looks: 'Riven flags in mixed buffs, greys and rust.',
+    sun: 'Light tones stay cooler underfoot.',
+    rain: 'The riven face grips; sealing keeps stains out.',
+    best: 'Patios, terraces and wide paths.',
+  },
+  {
+    id: 'crazy',
+    name: 'Crazy paving',
+    photo: 'crazy-paving-panel',
+    alt: 'Irregular grey flagstones fitted together with narrow joints',
+    looks: 'Irregular flags of sandstone, Kota or granite offcuts.',
+    sun: 'Depends on the stone; pale offcuts stay cooler.',
+    rain: 'Plenty of joints, so water drains quickly.',
+    best: 'Informal paths and spaces around trees.',
+  },
+  {
+    id: 'granite',
+    name: 'Granite setts',
+    photo: 'granite-setts-panel',
+    alt: 'Small grey granite setts in curved rows',
+    looks: 'Small, hard blocks in greys, flamed or split.',
+    sun: 'Dark granite heats up, so we suggest the paler greys.',
+    rain: 'Flamed and split faces grip in heavy rain.',
+    best: 'Driveways and anything a car drives on.',
+  },
+] as const;
+
+const patternOrder: Pattern[] = ['herringbone', 'basketweave', 'running-bond', 'random-flags'];
+
+const curtain = [
+  { video: 'land-rain-stones', caption: 'Rain on stone: a good base lets it run off, not under.' },
+  { video: 'gallery-land-sprinkler-lawn', caption: 'Lawns set up with watering, so they root before the heat.' },
+  { video: 'land-stone-water', caption: "Stone at the water's edge, laid to stay put." },
+];
+
+const steps = [
+  {
+    lead: 'On the first visit,',
+    text: 'we walk the site, measure it, and look at where water stands after rain. You see real stone samples, not a catalogue.',
+    photo: 'kota-slabs',
+    alt: 'Four grey-green Kota stone slabs laid out on the ground',
+  },
+  {
+    lead: 'Then a drawing.',
+    text: 'You get a plan and a written quote: every square foot of paving, every step and every plant, priced line by line.',
+    photo: 'pavers-study',
+    alt: "A 1914 pen study by Umberto Boccioni of a man laying paving stones",
+  },
+  {
+    lead: 'On site,',
+    text: 'our team digs out, lays and compacts the base, sets each stone to a fall and fills the joints. Then the planting goes in.',
+    photo: 'setts-laying',
+    alt: 'A worker kneeling to set granite setts along the edge of a path',
+  },
+  {
+    lead: 'After the first monsoon,',
+    text: 'we check levels and joints, and regular garden care keeps lawns cut, beds weeded and paving swept.',
+    video: 'land-slab-cut',
+  },
+];
+
+const faqs = [
+  {
+    q: 'How much does a garden or patio cost?',
+    a: 'It depends on the size of the space, the stone or plants, and how deep the base must be. After the site visit we send a written quote with every item listed. Typical rates are <mark class="tbc">to confirm</mark>.',
+  },
+  {
+    q: 'How long does a project take?',
+    a: 'A balcony, small patio or path can be ready in days; a full garden with paving, lawn and planting takes longer. You get a timeline with the quote. Typical durations are <mark class="tbc">to confirm</mark>.',
+  },
+  {
+    q: 'Which areas do you cover?',
+    a: 'We are based in Villivakkam and work across Chennai. Projects outside the city are <mark class="tbc">to confirm</mark>; ask us with your location.',
+  },
+  {
+    q: 'Do you offer maintenance plans?',
+    a: 'Yes. We can visit regularly to mow, prune, feed, replant and sweep the paving, for gardens we built and ones we did not. Visit frequency and plan prices are <mark class="tbc">to confirm</mark>.',
+  },
+  {
+    q: 'Which plants and stone suit Chennai?',
+    a: 'Plants that handle heat, humidity and heavy rain: hardy shrubs, palms, flowering creepers and native species. Underfoot, pale sandstone or Kota for patios, brick for paths, granite setts for drives.',
+  },
+  {
+    q: 'Will paving be slippery in the monsoon?',
+    a: 'We use riven, flamed or textured faces outside, never polished ones, and lay every surface to a fall so water runs off quickly.',
+  },
+  {
+    q: 'Will the paving sink or crack?',
+    a: 'Most failures start underneath. We dig out, compact a proper sub-base, and go deeper wherever a car will drive.',
+  },
+  {
+    q: 'Can you work on a terrace or a small balcony?',
+    a: 'Yes. We plan planters, soil and any paving for the weight and drainage a terrace can take, and choose plants that cope with rooftop sun and wind.',
+  },
+];
+
+const propertyTypes = ['Independent house', 'Villa', 'Apartment balcony or terrace', 'Office or commercial', 'Other'];
+const a = SITE.address;
 ---
 
 <BaseLayout
-  title="Landscaping Services & Garden Design in Chennai"
-  description="Garden design, lawn setup, vertical and terrace gardens, and garden maintenance in Chennai by Laughing Earth, Villivakkam."
+  title="Landscaping Services, Garden Design & Stone Paving in Chennai"
+  description="Landscaping services in Chennai by Laughing Earth: garden design, lawns, vertical and terrace gardens and maintenance, plus stone paving: sandstone patios, brick paths, crazy paving and granite drives. Book a site visit."
   theme="landscaping"
+  whatsappMessage={WHATSAPP_MESSAGES.landscaping}
 >
-  <PagePlaceholder
-    eyebrow="Landscaping · Chennai"
-    title="Gardens designed to grow with you"
-    lead="Garden design, lawns, vertical and terrace gardens, and ongoing care for homes and offices across Chennai."
-    phase="Phase 3"
-    whatsappMessage={WHATSAPP_MESSAGES.landscaping}
-  />
+  <!-- Hero: the garden on screen, the promise set large beneath it -->
+  <section class="lh" data-tone="deep" data-hero-intro aria-labelledby="lh-title">
+    <div class="lh__media" data-hero-media>
+      <BgVideo id="lh-video" src="/videos/land-hero-villa-garden" poster="/images/poster-land-hero-villa-garden.webp" eager />
+      <button class="lh__toggle" type="button" data-video-toggle aria-controls="lh-video" aria-pressed="false">
+        <Icon name="pause" size={18} class="lh__pause" />
+        <Icon name="play" size={18} class="lh__play" />
+        <span class="sr-only">Pause background video</span>
+      </button>
+    </div>
+    <div class="wrap lh__band">
+      <h1 id="lh-title" class="lh__name">Gardens designed to grow with you</h1>
+      <div class="lh__row" data-hero-item>
+        <p class="lh__lead">Garden design, lawns, vertical and terrace gardens, stone paving and ongoing care for homes and offices across Chennai.</p>
+        <div class="lh__actions">
+          <Button href="#visit" size="lg" icon="arrow-right">Plan my garden</Button>
+          <Button
+            href={whatsappLink(WHATSAPP_MESSAGES.landscaping)}
+            variant="outline"
+            size="lg"
+            icon="whatsapp"
+            iconPosition="start"
+            external
+            data-event="whatsapp_click"
+            data-event-label="landscaping_hero"
+          >
+            Chat on WhatsApp
+          </Button>
+        </div>
+      </div>
+      <ul class="lh__facts" role="list" data-hero-item>
+        {
+          facts.map((f) => (
+            <li>
+              <strong>{f.title}</strong>
+              <span set:html={f.text} />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Intro: the claim, beside the finished thing -->
+  <section class="intro" data-tone="base" aria-labelledby="intro-title">
+    <div class="wrap intro__grid">
+      <div class="intro__copy" data-stagger>
+        <h2 id="intro-title">Paving first.<br />Then the green.</h2>
+        <p class="statement">
+          A garden is only as good as the ground you walk on. We lay the patio, the paths and the steps first, then
+          plant around them.
+        </p>
+        <p class="intro__more">
+          From a single balcony to a villa lawn, we design the space around how you live, plant it with species that
+          suit Chennai's climate, and stay on to keep it healthy.
+        </p>
+      </div>
+      <figure class="intro__tall" data-clip-reveal>
+        <BgVideo src="/videos/land-story-gardener-soil" poster="/images/poster-land-story-gardener-soil.webp" />
+      </figure>
+      <figure class="intro__small" data-clip-reveal>
+        <img {...img('brick-path-1945')} sizes="(min-width: 1024px) 30vw, 50vw" width="1600" height="1147" alt="Black and white photograph of a brick path curving through a wooded garden" loading="lazy" decoding="async" />
+        <figcaption>A winding brick path, 1945. Brick laid along a curve still goes down the same way.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- What we grow: an even zig-zag of picture and text -->
+  <section class="lay" data-tone="alt" id="services" aria-labelledby="grow-title">
+    <div class="wrap">
+      <h2 id="grow-title" class="lay__head" data-split>What we grow</h2>
+      <ul class="lay__rows" role="list">
+        {
+          gardenRows.map((r) => (
+            <li class="lay__row" data-stagger>
+              <div class="lay__text">
+                <h3>{r.title}</h3>
+                <p set:html={r.text} />
+              </div>
+              <figure class="lay__photo">
+                <img
+                  {...r.media}
+                  width="1280"
+                  height="720"
+                  alt={r.alt}
+                  style={'pos' in r ? `object-position: ${r.pos}` : undefined}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </figure>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Lawn care: a video band that widens from an inset card as it scrolls past -->
+  <section class="band" data-tone="deep" data-expand aria-labelledby="band-title">
+    <div class="band__media" data-expand-media>
+      <BgVideo src="/videos/land-band-lawn-mowing" poster="/images/poster-land-band-lawn-mowing.webp" />
+    </div>
+    <div class="wrap band__copy">
+      <h2 id="band-title">A garden is never finished</h2>
+      <p>Edges trimmed, lawns fed, plants replaced when they tire. We look after it so you can enjoy it.</p>
+    </div>
+  </section>
+
+  <!-- What we pave: the same zig-zag, starting on the other side -->
+  <section class="lay lay--mirror" data-tone="base" id="stonework" aria-labelledby="lay-title">
+    <div class="wrap">
+      <h2 id="lay-title" class="lay__head" data-split>What we pave</h2>
+      <ul class="lay__rows" role="list">
+        {
+          rows.map((r) => (
+            <li class="lay__row" data-stagger>
+              <div class="lay__text">
+                <h3>{r.title}</h3>
+                <p>{r.text}</p>
+              </div>
+              <figure class="lay__photo">
+                <img {...img(r.photo)} sizes="(min-width: 768px) 40vw, 100vw" width="1600" height="1200" alt={r.alt} loading="lazy" decoding="async" />
+              </figure>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- The live thing: choose a material, then a pattern, and see the path laid -->
+  <section class="pave" data-tone="alt" id="paving" aria-labelledby="pave-title">
+    <div class="wrap">
+      <h2 id="pave-title" class="pave__head">Choose your paving</h2>
+    </div>
+
+    <fieldset class="pave__band">
+      <legend class="sr-only">Paving material</legend>
+      {
+        materials.map((m, i) => (
+          <label class="pave__panel">
+            <input class="pave__radio" type="radio" name="material" value={m.id} checked={i === 0} />
+            <img {...img(m.photo)} sizes="(min-width: 768px) 40vw, 60vw" width="1600" height="1200" alt={m.alt} loading="lazy" decoding="async" />
+            <span class="pave__name">{m.name}</span>
+          </label>
+        ))
+      }
+    </fieldset>
+
+    <div class="wrap pave__detail">
+      <div class="pave__infos" aria-live="polite">
+        {
+          materials.map((m) => (
+            <div class="pave__info" data-material={m.id}>
+              <h3>{m.name}</h3>
+              <dl>
+                <div><dt>Looks</dt><dd>{m.looks}</dd></div>
+                <div><dt>In May sun</dt><dd>{m.sun}</dd></div>
+                <div><dt>In the monsoon</dt><dd>{m.rain}</dd></div>
+                <div><dt>Best for</dt><dd>{m.best}</dd></div>
+                <div><dt>Price</dt><dd>Per square foot, <mark class="tbc">to confirm</mark></dd></div>
+              </dl>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="pave__drawing">
+        <fieldset class="pave__patterns">
+          <legend>Pattern</legend>
+          {
+            patternOrder.map((p, i) => (
+              <label class="pave__chip">
+                <input type="radio" name="pattern" value={p} checked={i === 0} />
+                <span>{PATTERNS[p].label}</span>
+              </label>
+            ))
+          }
+        </fieldset>
+        <svg class="pave__svg" viewBox={`0 0 ${VIEW.w} ${VIEW.h}`} role="img" aria-label="Drawing of the chosen paving laid in the chosen pattern">
+          {
+            patternOrder.map((p) => (
+              <g class="pave__layout" data-pattern={p}>
+                {PATTERNS[p].units.map((u) => (
+                  <rect x={u.x} y={u.y} width={u.w} height={u.h} class={`t${u.shade}`} />
+                ))}
+              </g>
+            ))
+          }
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Monsoon: three full-screen clips, each sliding over the last -->
+  <section class="curtain" data-tone="deep" aria-labelledby="curtain-title">
+    <div class="wrap curtain__intro">
+      <h2 id="curtain-title" data-split>Sun and monsoon</h2>
+      <p>Chennai gardens sit two exams a year: May heat and the northeast monsoon. We choose plants that take both, and lay every stone to a fall so rain runs off instead of sitting on top.</p>
+    </div>
+    <div class="curtain__track">
+      {
+        curtain.map((c) => (
+          <figure class="curtain__frame">
+            <BgVideo src={`/videos/${c.video}`} poster={`/images/poster-${c.video}.webp`} />
+            <figcaption>{c.caption}</figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Before / after -->
+  <section class="ba-section" data-tone="base" aria-labelledby="ba-title">
+    <div class="wrap ba-section__grid">
+      <div class="ba-section__copy" data-stagger>
+        <h2 id="ba-title">Before and after</h2>
+        <p>Drag the line across the picture, or focus it and use the arrow keys, to compare the bare plot with the finished terrace and lawn.</p>
+      </div>
+      <div class="ba-section__slider">
+        <BeforeAfter
+          before="/images/landscaping-sample-before"
+          after="/images/landscaping-sample-after"
+          beforeAlt="A bare, dry plot behind a house before landscaping"
+          afterAlt="The same plot with a lawn, paving and a pool after landscaping"
+          label="Compare before and after landscaping"
+          sample
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works: four stages down a diagonal -->
+  <section class="steps" data-tone="alt" id="process" aria-labelledby="steps-title">
+    <div class="wrap steps__grid">
+      <h2 id="steps-title" class="steps__head" data-split>From visit to first rain</h2>
+      {
+        steps.map((s, i) => (
+          <div class:list={['step', `step--${i + 1}`]} data-stagger>
+            <figure class="step__media">
+              {s.video ? (
+                <BgVideo src={`/videos/${s.video}`} poster={`/images/poster-${s.video}.webp`} />
+              ) : (
+                <img {...img(s.photo!)} sizes="(min-width: 1024px) 36vw, 90vw" width="1600" height="1200" alt={s.alt} loading="lazy" decoding="async" />
+              )}
+            </figure>
+            <p class="step__text">
+              <strong>{s.lead}</strong> {s.text}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Questions beside a tall photograph -->
+  <section class="qa" data-tone="base" aria-labelledby="qa-title">
+    <div class="wrap qa__grid">
+      <div class="qa__copy">
+        <h2 id="qa-title" data-split>Questions</h2>
+        <ul class="qa__facts" role="list">
+          <li>{a.street}, {a.locality}, {a.city} {a.postalCode}</li>
+          <li><a href={SITE.phoneHref}>{SITE.phoneDisplay}</a>, call or WhatsApp</li>
+          <li>Working across Chennai</li>
+        </ul>
+        <div class="qa__list" data-stagger>
+          {
+            faqs.map((f) => (
+              <details class="qa__item">
+                <summary>{f.q}</summary>
+                <p set:html={f.a} />
+              </details>
+            ))
+          }
+        </div>
+        <div class="qa__actions">
+          <Button href="#visit" size="lg">Book a site visit</Button>
+          <a
+            class="qa__link"
+            href={whatsappLink(WHATSAPP_MESSAGES.landscaping)}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-event="whatsapp_click"
+            data-event-label="landscaping_faq"
+          >Ask on WhatsApp</a>
+        </div>
+      </div>
+      <div class="qa__photos">
+        <figure class="qa__tall">
+          <img {...img('path-hedge')} sizes="(min-width: 1024px) 50vw, 100vw" width="1600" height="1067" alt="A flagstone path leading between two clipped yew hedges into a walled garden" loading="lazy" decoding="async" />
+        </figure>
+        <figure class="qa__square">
+          <img {...img('sandstone-wet')} sizes="(min-width: 1024px) 16vw, 38vw" width="1024" height="926" alt="Wet sandstone flags in rust, grey and buff tones" loading="lazy" decoding="async" />
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- Visit card on a photograph -->
+  <section class="visit" id="visit" data-tone="base" aria-labelledby="visit-title">
+    <img class="visit__photo" {...img('patio-barn')} sizes="100vw" width="1600" height="900" alt="A sandstone patio with benches and parasols beside a lawn on a summer day" loading="lazy" decoding="async" />
+    <div class="wrap visit__wrap">
+      <div class="visit__card">
+        <h2 id="visit-title">Book a site visit</h2>
+        <p class="visit__addr">{a.street},<br />{a.locality}, {a.city} {a.postalCode}</p>
+        <form
+          class="visit__form"
+          action={FORMSPREE_ENDPOINT}
+          method="POST"
+          data-enquiry-form
+          data-event="form_submit"
+          data-event-label="landscaping_enquiry"
+        >
+          <input type="hidden" name="_subject" value="New landscaping enquiry" />
+          <label class="field">
+            <span>Name</span>
+            <input type="text" name="name" autocomplete="name" required maxlength="80" />
+          </label>
+          <label class="field">
+            <span>Phone</span>
+            <input type="tel" name="phone" autocomplete="tel" inputmode="tel" required maxlength="20" pattern="[0-9+ \(\)\-]{8,20}" />
+          </label>
+          <label class="field field--select">
+            <span>Property</span>
+            <select name="property" required>
+              <option value="" disabled selected>Choose one</option>
+              {propertyTypes.map((p) => <option>{p}</option>)}
+            </select>
+            <Icon name="chevron-right" size={18} class="field__chevron" />
+          </label>
+          <label class="field">
+            <span>What would you like laid or planted?</span>
+            <textarea name="message" rows="3" maxlength="1000" placeholder="e.g. A sandstone patio and a brick path to the gate"></textarea>
+          </label>
+          <button class="visit__submit" type="submit">Send and book a visit</button>
+          <p class="visit__status" data-enquiry-status role="status" aria-live="polite"></p>
+        </form>
+        <p class="visit__alt">
+          Or call <a href={SITE.phoneHref}>{SITE.phoneDisplay}</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <Fragment slot="credits">
+    <p class="credits">
+      Photographs of paving and stonework from Wikimedia Commons and Openverse:
+      {
+        credits.map((c, i) => (
+          <>
+            <a href={c.page} target="_blank" rel="noopener noreferrer">{c.title}</a>
+            {c.creator ? ` by ${c.creator}` : ''}, {c.licenseUrl ? <a href={c.licenseUrl} target="_blank" rel="noopener noreferrer">{c.license}</a> : c.license}
+            {i < credits.length - 1 ? '; ' : '. '}
+          </>
+        ))
+      }
+      Video clips from Mixkit (free licence).
+    </p>
+  </Fragment>
 </BaseLayout>
+
+<script>
+  import { init as enquiry } from '../scripts/landscaping/enquiry';
+
+  enquiry();
+</script>
+
+<style>
+  /* ---------- Frame: one pair of tight margins for the whole page ---------- */
+  .wrap {
+    --m: clamp(1.25rem, 3vw, 2.5rem);
+    width: min(100% - 2 * var(--m), 90rem);
+    margin-inline: auto;
+  }
+
+  section {
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  h2 {
+    font-size: clamp(2.5rem, 1.2rem + 5vw, 5.5rem);
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+
+  h3 {
+    font-size: clamp(1.75rem, 1.2rem + 1.6vw, 2.75rem);
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+  }
+
+  p,
+  dd,
+  li {
+    font-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+    line-height: 1.55;
+  }
+
+  figure {
+    margin: 0;
+  }
+
+  .credits {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  figure img,
+  figure :global(video) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ---------- Hero ---------- */
+  .lh {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    height: calc(100svh - 4.8rem);
+    min-height: 34rem;
+  }
+
+  .lh__media {
+    position: relative;
+    overflow: clip;
+    min-height: 16rem;
+  }
+
+  .lh__media :global(.bg-video) {
+    position: absolute;
+    inset: 0;
+    object-position: center 60%;
+  }
+
+  .lh__toggle {
+    position: absolute;
+    top: var(--space-4);
+    right: clamp(1.25rem, 3vw, 2.5rem);
+    display: grid;
+    place-items: center;
+    width: var(--tap-target);
+    height: var(--tap-target);
+    border: 0;
+    border-radius: 50%;
+    background: var(--bg);
+    color: var(--text);
+    transition: transform 160ms var(--ease-out), background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .lh__toggle:active {
+    transform: scale(0.92);
+  }
+
+  .lh__toggle:focus-visible {
+    border-radius: 50%;
+  }
+
+  .lh__toggle :global(.lh__play),
+  .lh__toggle[aria-pressed='true'] :global(.lh__pause) {
+    display: none;
+  }
+
+  .lh__toggle[aria-pressed='true'] :global(.lh__play) {
+    display: block;
+  }
+
+  .lh__band {
+    display: grid;
+    gap: var(--space-5);
+    padding-block: var(--space-4) var(--space-5);
+  }
+
+  /* Room under the facts so the floating WhatsApp button never sits on them */
+  @media (min-width: 1024px) {
+    .lh__band {
+      padding-bottom: 5.5rem;
+    }
+  }
+
+  .lh__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .lh__facts {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-5);
+    padding: 0;
+    list-style: none;
+  }
+
+  .lh__facts li {
+    display: grid;
+    gap: var(--space-1);
+    font-size: var(--text-16);
+    line-height: 1.45;
+    color: var(--muted);
+  }
+
+  .lh__facts strong {
+    font-weight: var(--weight-semibold);
+    color: var(--heading);
+  }
+
+  /* Sentence and action together on the left, clear of the floating WhatsApp button */
+  .lh__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4) var(--space-7);
+  }
+
+  .lh__lead {
+    max-width: 46ch;
+    color: var(--text);
+  }
+
+  .lh__name {
+    font-size: 6.7vw;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--heading);
+    transform-origin: left bottom;
+  }
+
+  @media (max-width: 1023px) {
+    .lh__row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .lh__name {
+      font-size: 10.5vw;
+      white-space: normal;
+      text-wrap: balance;
+    }
+
+    .lh__facts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 767px) {
+    .lh {
+      height: auto;
+      min-height: calc(100svh - 7.5rem);
+      grid-template-rows: 40svh auto;
+    }
+
+    .lh__band {
+      gap: var(--space-4);
+    }
+
+    .lh__name {
+      font-size: 12.4vw;
+    }
+  }
+
+  /* Signature move: the title settles a few percent as the hero leaves */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .lh__name {
+        animation: lh-settle linear both;
+        animation-timeline: view();
+        animation-range: exit 0% exit 100%;
+      }
+
+      @keyframes lh-settle {
+        to {
+          transform: scale(0.94);
+          opacity: 0.6;
+        }
+      }
+    }
+  }
+
+  /* ---------- Intro ---------- */
+  .intro {
+    padding-block: clamp(5rem, 10vw, 10rem);
+    overflow: clip;
+  }
+
+  .intro__grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-5);
+    row-gap: var(--space-7);
+  }
+
+  .intro__copy {
+    grid-column: 1 / span 6;
+    align-self: start;
+    display: grid;
+    gap: var(--space-6);
+    padding-top: clamp(2rem, 8vw, 9rem);
+  }
+
+  .statement {
+    max-width: 30ch;
+    font-size: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
+    line-height: 1.4;
+  }
+
+  /* Tall picture, flush to the right edge of the screen */
+  .intro__tall {
+    grid-column: 7 / -1;
+    grid-row: 1 / span 2;
+    aspect-ratio: 4 / 5;
+    margin-right: calc(-1 * var(--m));
+  }
+
+  .intro__more {
+    max-width: 44ch;
+  }
+
+  .intro__tall {
+    position: relative;
+    overflow: clip;
+  }
+
+  .intro__small {
+    grid-column: 1 / span 4;
+    grid-row: 2;
+    align-self: end;
+  }
+
+  .intro__small img {
+    aspect-ratio: 9 / 10;
+    filter: grayscale(1);
+  }
+
+  .intro__small figcaption {
+    margin-top: var(--space-3);
+    font-size: var(--text-16);
+    color: var(--muted);
+    max-width: 36ch;
+  }
+
+  @media (max-width: 1023px) {
+    .intro__copy,
+    .intro__small {
+      grid-column: 1 / -1;
+      padding-top: 0;
+    }
+
+    .intro__tall {
+      grid-column: 4 / -1;
+      grid-row: auto;
+    }
+
+    .intro__small {
+      grid-row: auto;
+      grid-column: 1 / span 7;
+    }
+  }
+
+  /* ---------- What we grow / What we pave: an even zig-zag ---------- */
+  .lay {
+    padding-block: clamp(5rem, 9vw, 8rem);
+  }
+
+  .lay__head {
+    margin-bottom: clamp(2.5rem, 4vw, 4rem);
+  }
+
+  .lay__rows {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4.5rem);
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Every row the same: a 3:2 picture on five columns, its text on the other side */
+  .lay__row {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-5);
+    align-items: center;
+  }
+
+  .lay__photo {
+    grid-row: 1;
+    grid-column: 1 / span 5;
+    aspect-ratio: 3 / 2;
+    overflow: clip;
+  }
+
+  .lay__text {
+    grid-row: 1;
+    grid-column: 7 / span 5;
+    display: grid;
+    gap: var(--space-3);
+    max-width: 42ch;
+  }
+
+  /* Zig-zag: every other row swaps sides */
+  .lay__row:nth-child(even) .lay__photo {
+    grid-column: 8 / span 5;
+  }
+
+  .lay__row:nth-child(even) .lay__text {
+    grid-column: 2 / span 5;
+  }
+
+  /* What we pave starts on the other foot, so the two lists read differently */
+  .lay--mirror .lay__row:nth-child(odd) .lay__photo {
+    grid-column: 8 / span 5;
+  }
+
+  .lay--mirror .lay__row:nth-child(odd) .lay__text {
+    grid-column: 2 / span 5;
+  }
+
+  .lay--mirror .lay__row:nth-child(even) .lay__photo {
+    grid-column: 1 / span 5;
+  }
+
+  .lay--mirror .lay__row:nth-child(even) .lay__text {
+    grid-column: 7 / span 5;
+  }
+
+  @media (max-width: 767px) {
+    .lay__row {
+      grid-template-columns: 1fr;
+      row-gap: var(--space-4);
+    }
+
+    .lay__row .lay__photo,
+    .lay__row:nth-child(n) .lay__photo,
+    .lay--mirror .lay__row:nth-child(n) .lay__photo {
+      grid-row: 1;
+      grid-column: 1;
+    }
+
+    .lay__row .lay__text,
+    .lay__row:nth-child(n) .lay__text,
+    .lay--mirror .lay__row:nth-child(n) .lay__text {
+      grid-row: 2;
+      grid-column: 1;
+    }
+  }
+
+  /* ---------- Lawn-care band ---------- */
+  /* The copy sits outside the clipped frame, so the widening never hides it */
+  .band {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    align-items: end;
+    min-height: min(90svh, 52rem);
+  }
+
+  .band__media {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: clip;
+  }
+
+  .band__media :global(.bg-video) {
+    position: absolute;
+    inset: 0;
+  }
+
+  .band__copy {
+    position: relative;
+    display: grid;
+    gap: var(--space-4);
+    padding-block: var(--space-9) var(--space-7);
+    color: #fff;
+  }
+
+  .band__copy::before {
+    content: '';
+    position: absolute;
+    inset: 0 calc(-1 * var(--m));
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(to top, rgb(0 0 0 / 0.6), rgb(0 0 0 / 0)); /* taste-skill-ignore: neutral scrim under text on a video */
+  }
+
+  .band__copy h2 {
+    max-width: 14ch;
+    color: #fff;
+  }
+
+  .band__copy p {
+    max-width: 44ch;
+  }
+
+  /* ---------- Choose your paving ---------- */
+  .pave {
+    padding-block: clamp(5rem, 10vw, 10rem);
+  }
+
+  .pave__head {
+    margin-left: calc(100% / 6);
+    margin-bottom: var(--space-8);
+  }
+
+  .pave__band {
+    display: flex;
+    height: 68svh;
+    min-height: 26rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .pave__panel {
+    position: relative;
+    flex: 2 1 0;
+    min-width: 0;
+    overflow: hidden;
+    cursor: pointer;
+    transition: flex-grow 500ms var(--ease-out);
+  }
+
+  .pave__panel:first-of-type {
+    flex-grow: 5;
+  }
+
+  .pave__panel:nth-of-type(3) {
+    flex-grow: 3;
+  }
+
+  /* The chosen stone takes the room, whichever it is */
+  .pave__band:has(.pave__radio:checked) .pave__panel {
+    flex-grow: 2;
+  }
+
+  .pave__band .pave__panel:has(.pave__radio:checked) {
+    flex-grow: 6;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .pave__band .pave__panel:hover {
+      flex-grow: 4;
+    }
+
+    .pave__band .pave__panel:has(.pave__radio:checked):hover {
+      flex-grow: 6;
+    }
+  }
+
+  .pave__panel img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 600ms var(--ease-out);
+  }
+
+  .pave__panel:has(.pave__radio:checked) img {
+    transform: scale(1.03);
+  }
+
+  .pave__radio {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Name in the top-left corner, over a neutral scrim limited to that corner */
+  .pave__name {
+    position: absolute;
+    left: 0;
+    top: 0;
+    max-width: 100%;
+    padding: var(--space-4) var(--space-5) var(--space-6);
+    background: linear-gradient(to bottom, rgb(0 0 0 / 0.55), rgb(0 0 0 / 0)); /* taste-skill-ignore: neutral scrim under text on a photo */
+    color: #fff;
+    font-weight: var(--weight-semibold);
+    font-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+    line-height: 1.25;
+  }
+
+  .pave__panel:has(.pave__radio:focus-visible) {
+    outline: 3px solid var(--focus);
+    outline-offset: -6px;
+  }
+
+  .pave__detail {
+    display: grid;
+    gap: var(--space-7);
+    margin-top: var(--space-7);
+  }
+
+  @media (min-width: 900px) {
+    .pave__detail {
+      grid-template-columns: 5fr 7fr;
+      align-items: start;
+    }
+  }
+
+  .pave__info {
+    display: none;
+    gap: var(--space-4);
+  }
+
+  /* Without :has() support the first stone's details still show */
+  .pave__info:first-child {
+    display: grid;
+  }
+
+  .pave:has(.pave__radio:checked) .pave__info {
+    display: none;
+  }
+
+  .pave:has(.pave__radio[value='brick']:checked) [data-material='brick'],
+  .pave:has(.pave__radio[value='sandstone']:checked) [data-material='sandstone'],
+  .pave:has(.pave__radio[value='crazy']:checked) [data-material='crazy'],
+  .pave:has(.pave__radio[value='granite']:checked) [data-material='granite'] {
+    display: grid;
+  }
+
+  .pave__info dl {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .pave__info dl div {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: var(--space-4);
+  }
+
+  .pave__info dt {
+    font-weight: var(--weight-semibold);
+    color: var(--heading);
+  }
+
+  .pave__drawing {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .pave__patterns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .pave__patterns legend {
+    margin-bottom: var(--space-2);
+    font-weight: var(--weight-semibold);
+    color: var(--heading);
+  }
+
+  .pave__chip {
+    position: relative;
+  }
+
+  .pave__chip input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .pave__chip span {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    padding: 0.4em 1.1em;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--text) 8%, transparent);
+    font-weight: var(--weight-medium);
+    transition:
+      background-color var(--duration-fast) var(--ease-out),
+      color var(--duration-fast) var(--ease-out),
+      transform 160ms var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .pave__chip:hover span {
+      background: color-mix(in srgb, var(--text) 16%, transparent);
+    }
+  }
+
+  .pave__chip input:active + span {
+    transform: scale(0.96);
+  }
+
+  .pave__chip input:checked + span {
+    background: var(--btn-bg);
+    color: var(--btn-text);
+  }
+
+  .pave__chip input:focus-visible + span {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  /* The drawing takes the chosen material's tones */
+  .pave__svg {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 480 / 300;
+    background: var(--joint);
+    --t0: #9a4b30;
+    --t1: #b4623f;
+    --t2: #7f3b26;
+    --joint: #cdbfa9;
+  }
+
+  .pave__svg rect {
+    stroke: var(--joint);
+    stroke-width: 2.5;
+    transition: fill 300ms var(--ease-out);
+  }
+
+  .pave__svg .t0 {
+    fill: var(--t0);
+  }
+  .pave__svg .t1 {
+    fill: var(--t1);
+  }
+  .pave__svg .t2 {
+    fill: var(--t2);
+  }
+
+  .pave__layout {
+    display: none;
+  }
+
+  .pave__layout[data-pattern='herringbone'] {
+    display: inline;
+  }
+
+  .pave:has([name='pattern']:checked) .pave__layout {
+    display: none;
+  }
+
+  .pave:has([value='herringbone']:checked) [data-pattern='herringbone'],
+  .pave:has([value='basketweave']:checked) [data-pattern='basketweave'],
+  .pave:has([value='running-bond']:checked) [data-pattern='running-bond'],
+  .pave:has([value='random-flags']:checked) [data-pattern='random-flags'] {
+    display: inline;
+  }
+
+  .pave:has([value='sandstone']:checked) .pave__svg {
+    --t0: #b98c63;
+    --t1: #8f8a80;
+    --t2: #c7a27a;
+    --joint: #5d5348;
+  }
+
+  .pave:has([value='crazy']:checked) .pave__svg {
+    --t0: #9d9a90;
+    --t1: #b7b0a2;
+    --t2: #837f76;
+    --joint: #8a6a4c;
+  }
+
+  .pave:has([value='granite']:checked) .pave__svg {
+    --t0: #6f6d68;
+    --t1: #8b8984;
+    --t2: #5b5955;
+    --joint: #b2aa9c;
+  }
+
+  @media (max-width: 767px) {
+    .pave__head {
+      margin-left: 0;
+      margin-bottom: var(--space-6);
+    }
+
+    .pave__band {
+      flex-wrap: wrap;
+      height: 84svh;
+    }
+
+    .pave__band .pave__panel,
+    .pave__band .pave__panel:has(.pave__radio:checked) {
+      flex: none;
+      height: 50%;
+      width: 36%;
+    }
+
+    .pave__band .pave__panel:nth-of-type(1),
+    .pave__band .pave__panel:nth-of-type(4) {
+      width: 64%;
+    }
+
+    .pave__info dl div {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+  }
+
+  /* ---------- Monsoon curtain ---------- */
+  .curtain {
+    padding-top: clamp(5rem, 10vw, 10rem);
+  }
+
+  .curtain__intro {
+    display: grid;
+    gap: var(--space-5);
+    margin-bottom: clamp(3rem, 6vw, 6rem);
+  }
+
+  @media (min-width: 900px) {
+    .curtain__intro {
+      grid-template-columns: 7fr 5fr;
+      align-items: end;
+    }
+  }
+
+  .curtain__intro p {
+    max-width: 44ch;
+  }
+
+  .curtain__track {
+    position: relative;
+  }
+
+  .curtain__frame {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: clip;
+  }
+
+  .curtain__frame :global(.bg-video) {
+    position: absolute;
+    inset: 0;
+  }
+
+  .curtain__frame figcaption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: var(--space-8) clamp(1.25rem, 3vw, 2.5rem) var(--space-5);
+    background: linear-gradient(to top, rgb(0 0 0 / 0.6), rgb(0 0 0 / 0)); /* taste-skill-ignore: neutral scrim under text on a photo */
+    color: #fff;
+    font-size: var(--text-16);
+  }
+
+  @media (max-width: 767px) {
+    .curtain__frame {
+      height: 88svh;
+    }
+  }
+
+  /* ---------- Before / after ---------- */
+  .ba-section {
+    padding-block: clamp(5rem, 10vw, 10rem);
+  }
+
+  .ba-section__grid {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 1024px) {
+    .ba-section__grid {
+      grid-template-columns: 4fr 8fr;
+      align-items: end;
+    }
+  }
+
+  .ba-section__copy {
+    display: grid;
+    gap: var(--space-4);
+    max-width: 36ch;
+  }
+
+  .ba-section :global(.ba__frame) {
+    border-radius: 0;
+  }
+
+  .ba-section :global(.ba__tag),
+  .ba-section :global(.ba__sample) {
+    border-radius: 0;
+  }
+
+  /* ---------- Steps down a diagonal ---------- */
+  .steps {
+    padding-block: clamp(5rem, 10vw, 10rem);
+  }
+
+  .steps__grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-5);
+    row-gap: var(--space-7);
+  }
+
+  .steps__head {
+    grid-column: 7 / -1;
+    grid-row: 1;
+    align-self: start;
+  }
+
+  .step {
+    display: grid;
+    gap: var(--space-4);
+    align-items: start;
+  }
+
+  .step__text {
+    max-width: 36ch;
+  }
+
+  .step__text strong {
+    font-weight: var(--weight-semibold);
+    color: var(--heading);
+  }
+
+  .step--1 {
+    grid-column: 1 / span 6;
+    grid-row: 1 / span 2;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .step--1 .step__media {
+    aspect-ratio: 3 / 4;
+  }
+
+  .step--2 {
+    grid-column: 7 / -1;
+    grid-row: 2;
+    grid-template-columns: 1fr 1fr;
+    margin-top: var(--space-6);
+  }
+
+  .step--2 .step__media {
+    aspect-ratio: 1;
+  }
+
+  .step--3 {
+    grid-column: 4 / -1;
+    grid-row: 3;
+    grid-template-columns: 3fr 5fr;
+  }
+
+  .step--3 .step__media {
+    order: 2;
+    aspect-ratio: 16 / 10;
+  }
+
+  .step--4 {
+    grid-column: 1 / span 8;
+    grid-row: 4;
+    grid-template-columns: 5fr 3fr;
+  }
+
+  .step__media {
+    position: relative;
+    overflow: clip;
+  }
+
+  .step--4 .step__media {
+    aspect-ratio: 16 / 10;
+  }
+
+  .step--4 .step__media :global(.bg-video) {
+    position: absolute;
+    inset: 0;
+  }
+
+  @media (max-width: 767px) {
+    .steps__head,
+    .step--1,
+    .step--2,
+    .step--3,
+    .step--4 {
+      grid-column: 1 / -1;
+      grid-row: auto;
+      grid-template-columns: 1fr;
+      margin-top: 0;
+    }
+
+    .step--2 .step__media {
+      width: 62%;
+      justify-self: end;
+    }
+
+    .step--3 .step__media {
+      order: 0;
+      width: 78%;
+    }
+  }
+
+  /* ---------- Questions ---------- */
+  .qa {
+    padding-bottom: clamp(5rem, 10vw, 10rem);
+  }
+
+  .qa__grid {
+    display: grid;
+    gap: var(--space-7);
+  }
+
+  @media (min-width: 1024px) {
+    .qa__grid {
+      grid-template-columns: 5fr 7fr;
+      column-gap: var(--space-8);
+    }
+  }
+
+  .qa__copy {
+    display: grid;
+    gap: var(--space-5);
+    align-content: start;
+    padding-top: clamp(5rem, 10vw, 10rem);
+  }
+
+  .qa__facts {
+    display: grid;
+    gap: var(--space-1);
+    padding: 0;
+    list-style: none;
+  }
+
+  .qa__facts a {
+    color: var(--link);
+    font-weight: var(--weight-semibold);
+  }
+
+  .qa__list {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .qa__item summary {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    padding: var(--space-3) var(--space-7) var(--space-3) 0;
+    font-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+    font-weight: var(--weight-semibold);
+    color: var(--heading);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .qa__item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* Chevron drawn from two 2px strokes */
+  .qa__item summary::after {
+    content: '';
+    position: absolute;
+    right: var(--space-2);
+    top: 50%;
+    width: 0.65rem;
+    height: 0.65rem;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-70%) rotate(45deg);
+    transition: transform 250ms var(--ease-out);
+  }
+
+  .qa__item[open] summary::after {
+    transform: translateY(-30%) rotate(225deg);
+  }
+
+  .qa__item summary:focus-visible {
+    outline-offset: 2px;
+  }
+
+  .qa__item p {
+    padding-bottom: var(--space-4);
+    max-width: 52ch;
+  }
+
+  .qa__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-6);
+    margin-top: var(--space-3);
+  }
+
+  .qa__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    color: var(--link);
+    font-weight: var(--weight-semibold);
+  }
+
+  .qa__photos {
+    position: relative;
+    padding-bottom: var(--space-8);
+  }
+
+  .qa__tall {
+    aspect-ratio: 3 / 4;
+  }
+
+  .qa__square {
+    position: absolute;
+    left: calc(-1 * var(--space-7));
+    bottom: 0;
+    width: 34%;
+    aspect-ratio: 1;
+  }
+
+  @media (max-width: 1023px) {
+    .qa__photos {
+      order: -1;
+    }
+
+    .qa__copy {
+      padding-top: 0;
+    }
+
+    .qa {
+      padding-top: clamp(4rem, 10vw, 6rem);
+    }
+
+    .qa__tall {
+      aspect-ratio: 4 / 5;
+    }
+
+    .qa__square {
+      left: auto;
+      right: 0;
+      width: 38%;
+    }
+  }
+
+  /* ---------- Visit card on a photograph ---------- */
+  .visit {
+    position: relative;
+    min-height: 100svh;
+  }
+
+  .visit__photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .visit__wrap {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    padding-block: 3.75rem;
+  }
+
+  .visit__card {
+    position: sticky;
+    top: 6rem;
+    display: grid;
+    gap: var(--space-4);
+    width: min(100%, 27rem);
+    padding: var(--space-6);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    align-self: start;
+  }
+
+  .visit__card h2 {
+    font-size: clamp(1.75rem, 1.2rem + 1.6vw, 2.75rem);
+  }
+
+  .visit__addr {
+    font-size: var(--text-16);
+  }
+
+  .visit__form {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .field {
+    position: relative;
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .field > span {
+    font-size: var(--text-16);
+    font-weight: var(--weight-semibold);
+    color: var(--heading);
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    min-height: var(--tap-target);
+    padding: 0.6em 0.8em;
+    border: 1.5px solid color-mix(in srgb, var(--text) 30%, transparent);
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--text);
+    font-size: var(--text-16);
+    color-scheme: light;
+    transition: border-color 150ms ease;
+  }
+
+  .field select {
+    padding-right: 2.5em;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+  }
+
+  .field :global(.field__chevron) {
+    position: absolute;
+    right: 0.8em;
+    bottom: 0.75em;
+    transform: rotate(90deg);
+    pointer-events: none;
+  }
+
+  .field textarea {
+    resize: vertical;
+  }
+
+  .field input:focus-visible,
+  .field select:focus-visible,
+  .field textarea:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 1px;
+    border-color: var(--text);
+  }
+
+  .visit__submit {
+    min-height: 3.25rem;
+    margin-top: var(--space-2);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--btn-bg);
+    color: var(--btn-text);
+    font-size: var(--text-18);
+    font-weight: var(--weight-semibold);
+    transition: transform 160ms var(--ease-out), background-color var(--duration-fast) var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .visit__submit:hover {
+      background: color-mix(in srgb, var(--btn-bg) 86%, var(--text));
+    }
+  }
+
+  .visit__submit:active {
+    transform: scale(0.98);
+  }
+
+  .visit__submit:disabled {
+    opacity: 0.7;
+    cursor: progress;
+  }
+
+  .visit__submit:focus-visible {
+    border-radius: var(--radius-pill);
+  }
+
+  .visit__status:empty {
+    display: none;
+  }
+
+  .visit__status {
+    padding: var(--space-3);
+    background: color-mix(in srgb, var(--heading) 10%, transparent);
+    font-size: var(--text-16);
+  }
+
+  .visit__alt {
+    font-size: var(--text-16);
+  }
+
+  .visit__alt a {
+    font-weight: var(--weight-semibold);
+  }
+
+  @media (max-width: 767px) {
+    .visit {
+      min-height: 0;
+      padding-top: 70svh;
+    }
+
+    .visit__photo {
+      height: 70svh;
+    }
+
+    .visit__wrap {
+      padding-block: 0 var(--space-7);
+      margin-top: -5rem;
+    }
+
+    .visit__card {
+      position: relative;
+      top: 0;
+      width: 100%;
+      padding: var(--space-5);
+    }
+  }
+</style>

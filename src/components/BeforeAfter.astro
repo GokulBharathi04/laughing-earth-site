@@ -1,0 +1,232 @@
+---
+import Icon from './Icon.astro';
+
+// Before/after comparison. A transparent native range input sits over the
+// photos, so mouse, touch and keyboard (arrow keys, Home/End) all work with
+// no custom drag code; the script only mirrors its value into --pos.
+interface Props {
+  /** Image paths without size suffix: <image>-640.webp / <image>.webp */
+  before: string;
+  after: string;
+  beforeAlt: string;
+  afterAlt: string;
+  label: string;
+  caption?: string;
+  /** Shows a "Sample images" tag while the photos are placeholders */
+  sample?: boolean;
+}
+
+const { before, after, beforeAlt, afterAlt, label, caption, sample = false } = Astro.props;
+const srcset = (img: string) => `${img}-640.webp 640w, ${img}.webp 1280w`;
+const sizes = '(min-width: 1200px) 1100px, 92vw';
+---
+
+<figure class="ba" data-before-after style="--pos: 50%">
+  <div class="ba__frame" data-tone="deep">
+    <img
+      class="ba__img"
+      src={`${after}.webp`}
+      srcset={srcset(after)}
+      sizes={sizes}
+      width="1280"
+      height="720"
+      alt={afterAlt}
+      loading="lazy"
+      decoding="async"
+      draggable="false"
+    />
+    <img
+      class="ba__img ba__img--before"
+      src={`${before}.webp`}
+      srcset={srcset(before)}
+      sizes={sizes}
+      width="1280"
+      height="720"
+      alt={beforeAlt}
+      loading="lazy"
+      decoding="async"
+      draggable="false"
+    />
+
+    <span class="ba__tag ba__tag--before" aria-hidden="true">Before</span>
+    <span class="ba__tag ba__tag--after" aria-hidden="true">After</span>
+    {sample && <span class="ba__sample">Sample images</span>}
+
+    <div class="ba__handle" aria-hidden="true">
+      <span class="ba__knob">
+        <Icon name="chevron-left" size={18} />
+        <Icon name="chevron-right" size={18} />
+      </span>
+    </div>
+
+    <input
+      class="ba__range"
+      type="range"
+      min="0"
+      max="100"
+      step="1"
+      value="50"
+      aria-label={label}
+      aria-valuetext="Showing half before, half after"
+      data-before-after-range
+    />
+  </div>
+  {caption && <figcaption class="ba__caption">{caption}</figcaption>}
+</figure>
+
+<script>
+  // Mirrors the slider into --pos and keeps the spoken value meaningful.
+  document.querySelectorAll<HTMLElement>('[data-before-after]').forEach((root) => {
+    const range = root.querySelector<HTMLInputElement>('[data-before-after-range]');
+    if (!range) return;
+
+    const update = () => {
+      const pos = Number(range.value);
+      root.style.setProperty('--pos', `${pos}%`);
+      range.setAttribute(
+        'aria-valuetext',
+        pos <= 0 ? 'Showing only after' : pos >= 100 ? 'Showing only before' : `${pos}% before, ${100 - pos}% after`,
+      );
+    };
+
+    range.addEventListener('input', update);
+    update();
+  });
+</script>
+
+<style>
+  .ba {
+    /* Resolved here, in the section's tone, before the frame switches to deep */
+    --ba-focus: var(--focus);
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .ba__frame {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-card);
+    background: color-mix(in srgb, var(--text) 10%, transparent);
+    user-select: none;
+  }
+
+  .ba__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
+  /* The before photo is on top, clipped to the left of the handle */
+  .ba__img--before {
+    clip-path: inset(0 calc(100% - var(--pos)) 0 0);
+  }
+
+  .ba__tag,
+  .ba__sample {
+    position: absolute;
+    top: var(--space-4);
+    padding: 0.3em 0.9em;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-16);
+    font-weight: var(--weight-semibold);
+    pointer-events: none;
+  }
+
+  .ba__tag {
+    background: color-mix(in srgb, var(--bg) 78%, transparent);
+    color: var(--text);
+  }
+
+  .ba__tag--before {
+    left: var(--space-4);
+  }
+
+  .ba__tag--after {
+    right: var(--space-4);
+  }
+
+  .ba__sample {
+    left: 50%;
+    top: auto;
+    bottom: var(--space-4);
+    transform: translateX(-50%);
+    background: var(--text);
+    color: var(--bg);
+    white-space: nowrap;
+  }
+
+  .ba__handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--pos);
+    width: 3px;
+    margin-left: -1.5px;
+    background: var(--text);
+    pointer-events: none;
+  }
+
+  .ba__knob {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 50%;
+    background: var(--text);
+    color: var(--bg);
+    transform: translate(-50%, -50%);
+    transition: transform 160ms var(--ease-out);
+  }
+
+  .ba__knob :global(svg) {
+    margin-inline: -3px;
+  }
+
+  /* Invisible native slider covering the whole photo */
+  .ba__range {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: ew-resize;
+    touch-action: pan-y;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .ba__range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: var(--tap-target);
+    height: 40rem;
+  }
+
+  .ba__range::-moz-range-thumb {
+    width: var(--tap-target);
+    height: 40rem;
+    border: 0;
+  }
+
+  .ba__frame:has(.ba__range:active) .ba__knob {
+    transform: translate(-50%, -50%) scale(0.92);
+  }
+
+  /* The input is invisible, so the focus ring goes on the frame */
+  .ba__frame:has(.ba__range:focus-visible) {
+    outline: 3px solid var(--ba-focus);
+    outline-offset: 4px;
+  }
+
+  .ba__caption {
+    color: var(--muted);
+  }
+</style>

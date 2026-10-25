@@ -94,17 +94,26 @@ const externalAttrs = external ? { target: '_blank', rel: 'noopener noreferrer' 
     border-color: currentColor;
   }
 
-  .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-soft), var(--highlight-inner);
+  /* Hover lift only where hover exists, so taps don't leave buttons stuck up */
+  @media (hover: hover) and (pointer: fine) {
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-soft), var(--highlight-inner);
+    }
+
+    .btn--outline:hover {
+      background: color-mix(in srgb, var(--text) 8%, transparent);
+    }
+
+    .btn:hover :global(.btn__icon-end) {
+      transform: translateX(3px);
+    }
   }
 
-  .btn--outline:hover {
-    background: color-mix(in srgb, var(--text) 8%, transparent);
-  }
-
+  /* Press feedback on every device */
   .btn:active {
-    transform: translateY(0);
+    transform: scale(0.97);
+    transition-duration: 120ms;
   }
 
   .btn:focus-visible {
@@ -115,8 +124,19 @@ const externalAttrs = external ? { target: '_blank', rel: 'noopener noreferrer' 
   .btn :global(.btn__icon-end) {
     transition: transform var(--duration-fast) var(--ease-out);
   }
+  /* ---- Landscaping: flat fills, feedback by tone instead of lift ---- */
+  :global([data-theme='landscaping']) .btn {
+    box-shadow: none;
+  }
 
-  .btn:hover :global(.btn__icon-end) {
-    transform: translateX(3px);
+  @media (hover: hover) and (pointer: fine) {
+    :global([data-theme='landscaping']) .btn:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    :global([data-theme='landscaping']) .btn--primary:hover {
+      background: color-mix(in srgb, var(--btn-bg) 86%, var(--text));
+    }
   }
 </style>

@@ -87,4 +87,10 @@ const { message = WHATSAPP_MESSAGES.general } = Astro.props;
     outline-offset: 5px;
     border-radius: var(--radius-pill);
   }
+  /* Landscaping: flat, ringed by a solid border instead of a shadow */
+  :global([data-theme='landscaping']) .wa-float,
+  :global([data-theme='landscaping']) .wa-float:hover {
+    border: 3px solid var(--wa-ring);
+    box-shadow: none;
+  }
 </style>

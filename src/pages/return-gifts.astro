@@ -1,19 +1,781 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PagePlaceholder from '../components/PagePlaceholder.astro';
-import { WHATSAPP_MESSAGES } from '../config/site';
+import Section from '../components/Section.astro';
+import Button from '../components/Button.astro';
+import Card from '../components/Card.astro';
+import Icon from '../components/Icon.astro';
+import Leaves from '../components/Leaves.astro';
+import ProductCard from '../components/ProductCard.astro';
+import LoopGallery from '../components/LoopGallery.astro';
+import Faq from '../components/Faq.astro';
+import QuoteBuilder from '../components/QuoteBuilder.astro';
+import BgVideo from '../components/BgVideo.astro';
+import catalogue from '../../data/products.json';
+import { SITE, whatsappLink, WHATSAPP_MESSAGES } from '../config/site';
+
+const { categories, products } = catalogue;
+const categoryName = Object.fromEntries(categories.map((c) => [c.slug, c.name]));
+const countIn = (slug: string) => products.filter((p) => p.category === slug).length;
+
+const categoryCards = [
+  { slug: 'seeded-return-gifts', icon: 'sprout', colourway: 'sage' },
+  { slug: 'seed-paper-invitations', icon: 'invite', colourway: 'earth' },
+  { slug: 'thamboolam-bags', icon: 'bag', colourway: 'sand' },
+  { slug: 'plants', icon: 'pot', colourway: 'earth' },
+] as const;
+
+const bulk = [
+  { icon: 'boxes', title: 'Minimum order', text: 'From <mark class="tbc">to confirm</mark> pieces for customised gifts.' },
+  { icon: 'pen', title: 'Customisation', text: 'Names, dates and logos printed on bags, cards and tags.' },
+  { icon: 'clock', title: 'Lead time', text: 'Order <mark class="tbc">to confirm</mark> before your event.' },
+  { icon: 'truck', title: 'Delivery', text: 'Across Chennai. Other areas <mark class="tbc">to confirm</mark>.' },
+] as const;
+
+// Stock footage (Mixkit free licence) until the client's own event videos
+// arrive; see IMAGES-NEEDED.md.
+const clip = (name: string) => ({ video: `/videos/${name}`, poster: `/images/poster-${name}.webp` });
+const gallery = [
+  { ...clip('gallery-wedding-table'), caption: 'Weddings', alt: 'A wedding table decorated with flowers' },
+  { ...clip('gallery-gifts-at-the-door'), caption: 'Housewarmings', alt: 'Guests arriving at a front door with gifts' },
+  { ...clip('gallery-giving-a-gift'), caption: 'Birthdays & thank-yous', alt: 'One person handing a small wrapped gift to another' },
+  { ...clip('gallery-succulent-closeup'), caption: 'Plants that last', alt: 'Close-up of succulent leaves' },
+  { ...clip('gallery-planting-seeds'), caption: 'Seeds that sprout', alt: 'Hands planting seeds in garden soil' },
+  { ...clip('gallery-flower-shop'), caption: 'Made to order', alt: 'Shelves of fresh flowers and plants in a shop' },
+];
+
+const faqs = [
+  {
+    q: 'Is there a minimum order?',
+    a: '<p>For customised gifts, yes: from <mark class="tbc">to confirm</mark> pieces, depending on the gift. Plain plants and saplings can be ordered in smaller numbers. Tell us your guest count and we will suggest what works.</p>',
+  },
+  {
+    q: 'Can you print our names and wedding date?',
+    a: '<p>Yes. Thamboolam bags, thank-you cards and seed-paper invitations can carry your names, the date or a logo. Share the wording on WhatsApp and we will send a preview before printing.</p>',
+  },
+  {
+    q: 'How early should we place the order?',
+    a: '<p>Ideally <mark class="tbc">to confirm</mark> before the event, so plants are fresh and printing is checked. For large orders, reach out as soon as your date is fixed.</p>',
+  },
+  {
+    q: 'Do you deliver to the venue?',
+    a: '<p>We deliver across Chennai. Delivery to other cities and venue drop-offs are <mark class="tbc">to confirm</mark>; ask us with your area and date.</p>',
+  },
+  {
+    q: 'How do seed-paper invitations grow?',
+    a: '<p>Soak the card in water for a few hours, lay it on moist soil, cover it lightly and keep it damp in a sunny spot. Sprouts usually appear within a couple of weeks. <mark class="tbc">Client to review</mark></p>',
+  },
+  {
+    q: 'How do we pay?',
+    a: '<p>There is no online checkout. Once your quote is confirmed on WhatsApp, we share payment details directly.</p>',
+  },
+];
 ---
 
 <BaseLayout
   title="Eco-friendly Return Gifts, Seed-paper Invitations & Thamboolam Bags in Chennai"
-  description="Seeded return gifts, seed-paper wedding invitations, customisable thamboolam bags and potted plants for weddings and events in Chennai."
+  description="Seeded return gifts, seed-paper wedding invitations, customisable thamboolam bags and potted plants for weddings and events in Chennai. Prices per piece; bulk quotes on WhatsApp."
   theme="gifts"
 >
-  <PagePlaceholder
-    eyebrow="Return Gifts · Chennai"
-    title="Return gifts that keep growing"
-    lead="Seeded gifts, seed-paper invitations, thamboolam bags and potted plants for weddings and events."
-    phase="Phase 2"
-    whatsappMessage={WHATSAPP_MESSAGES.gifts}
-  />
+  <!-- Hero: full-bleed video -->
+  <section class="gifts-hero" data-tone="base" data-hero-intro aria-labelledby="gifts-hero-title">
+    <div class="gifts-hero__media" data-hero-media>
+      <BgVideo id="gifts-hero-video" src="/videos/gifts-hero-watering-plant" poster="/images/poster-gifts-hero-watering-plant.webp" eager />
+    </div>
+    <div class="gifts-hero__shade" aria-hidden="true"></div>
+    <div class="gifts-hero__leaves" data-parallax="0.25" aria-hidden="true">
+      <div data-sway><Leaves /></div>
+    </div>
+
+    <div class="container gifts-hero__inner">
+      <div class="gifts-hero__copy">
+        <p class="eyebrow" data-hero-item>Return gifts · Chennai</p>
+        <h1 id="gifts-hero-title" data-split="load">Return gifts that keep on growing</h1>
+        <p class="lead" data-hero-item>
+          Seeded gifts, seed-paper invitations, thamboolam bags and potted plants for weddings, housewarmings and every
+          celebration in between.
+        </p>
+        <div class="gifts-hero__actions" data-hero-item>
+          <Button
+            href={whatsappLink(WHATSAPP_MESSAGES.gifts)}
+            size="lg"
+            icon="whatsapp"
+            iconPosition="start"
+            external
+            data-event="whatsapp_click"
+            data-event-label="gifts_hero"
+          >
+            Get a quote on WhatsApp
+          </Button>
+          <Button href="#catalogue" variant="outline" size="lg">Browse gifts</Button>
+        </div>
+        <ul class="gifts-hero__facts" data-hero-item>
+          <li>Priced per piece</li>
+          <li>Customised with your names</li>
+          <li>Bulk orders welcome</li>
+        </ul>
+      </div>
+    </div>
+
+    <button class="video-toggle" type="button" data-video-toggle aria-controls="gifts-hero-video" aria-pressed="false">
+      <Icon name="pause" size={18} class="video-toggle__pause" />
+      <Icon name="play" size={18} class="video-toggle__play" />
+      <span class="sr-only">Pause background video</span>
+    </button>
+  </section>
+
+  <!-- Marquee: drifts on its own, speeds up with scroll -->
+  <div class="marquee" data-tone="deep" data-marquee aria-hidden="true">
+    <div class="marquee__track" data-marquee-track>
+      {
+        [0, 1].map(() => (
+          <div class="marquee__group">
+            {['Seeded return gifts', 'Seed-paper invitations', 'Thamboolam bags', 'Plants in jute', 'Made in Chennai'].map((word) => (
+              <span class="marquee__item">
+                {word}
+                <Icon name="leaf" size={22} />
+              </span>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- Categories -->
+  <Section tone="alt" labelledby="categories-title">
+    <div class="section-head">
+      <p class="eyebrow">Four ways to say thank you</p>
+      <h2 id="categories-title" data-split>Choose your kind of gift</h2>
+    </div>
+    <ul class="categories" role="list" data-stagger>
+      {
+        categoryCards.map((c) => (
+          <li>
+            <Card colourway={c.colourway} href="#catalogue" class="category" data-filter-link={c.slug}>
+              <span slot="icon" class="pop-wrap" data-pop>
+                <Icon name={c.icon} size={28} />
+              </span>
+              <h3>{categoryName[c.slug]}</h3>
+              <p>{categories.find((x) => x.slug === c.slug)?.blurb}</p>
+              <span class="category__more">
+                See {countIn(c.slug)} {countIn(c.slug) === 1 ? 'gift' : 'gifts'}
+                <Icon name="arrow-right" size={18} />
+              </span>
+            </Card>
+          </li>
+        ))
+      }
+    </ul>
+  </Section>
+
+  <!-- Catalogue -->
+  <Section tone="base" id="catalogue" labelledby="catalogue-title">
+    <div class="catalogue" data-catalogue>
+      <div class="section-head section-head--row">
+        <div>
+          <p class="eyebrow">Catalogue</p>
+          <h2 id="catalogue-title" data-split>Gifts and prices</h2>
+        </div>
+        <p class="catalogue__status" data-catalogue-status aria-live="polite">Showing {products.length} gifts</p>
+      </div>
+
+      <div class="filters" role="group" aria-label="Filter by category">
+        <button type="button" class="filter" data-filter="all" aria-pressed="true">All</button>
+        {
+          categories.map((c) => (
+            <button type="button" class="filter" data-filter={c.slug} aria-pressed="false">
+              {c.name}
+            </button>
+          ))
+        }
+      </div>
+
+      <ul class="products" role="list" data-stagger>
+        {products.map((p) => <ProductCard product={p} categoryName={categoryName[p.category]} />)}
+      </ul>
+      <p class="catalogue__note">Prices are per piece and include the jute or paper wrap shown. Bulk quotes may differ.</p>
+    </div>
+  </Section>
+
+  <!-- Bulk orders -->
+  <Section tone="base" class="bulk-section" labelledby="bulk-title">
+    <div class="bulk" data-tone="alt">
+      <div class="bulk__intro">
+        <p class="eyebrow">Weddings & events</p>
+        <h2 id="bulk-title" data-split>Ordering for a crowd?</h2>
+        <p>Tell us the occasion, guest count and date. We'll suggest gifts that suit your budget and send a quote.</p>
+      </div>
+      <ul class="bulk__grid" role="list" data-stagger>
+        {
+          bulk.map((b) => (
+            <li class="bulk__item">
+              <span class="bulk__icon" data-pop>
+                <Icon name={b.icon} size={26} />
+              </span>
+              <h3>{b.title}</h3>
+              <p set:html={b.text} />
+            </li>
+          ))
+        }
+      </ul>
+      <div class="bulk__actions">
+        <Button size="lg" icon="arrow-right" data-morph-open="quote-builder">Build a bulk quote</Button>
+        <p>or call <a href={SITE.phoneHref}>{SITE.phoneDisplay}</a></p>
+      </div>
+    </div>
+  </Section>
+
+  <!-- Video band: grows from an inset card to full width as it scrolls past -->
+  <section class="band" data-tone="deep" data-expand aria-labelledby="band-title">
+    <div class="band__media" data-expand-media>
+      <BgVideo src="/videos/gifts-band-planting-seedling" poster="/images/poster-gifts-band-planting-seedling.webp" />
+      <div class="band__shade" aria-hidden="true"></div>
+      <div class="container band__copy">
+        <p class="eyebrow">From a seed to a smile</p>
+        <h2 id="band-title" data-split>Every gift we make starts with something that grows.</h2>
+        <p class="lead">Your guests take home a sapling, a seed or a plant, and a reason to remember the day.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Event gallery -->
+  <section class="section gallery-section" data-tone="alt" aria-labelledby="gallery-title">
+    <div class="container section-head section-head--row" data-reveal>
+      <div>
+        <p class="eyebrow">Event gallery</p>
+        <h2 id="gallery-title" data-split>Gifts for every celebration</h2>
+      </div>
+      <p class="gallery-section__hint">Drag, swipe or use the arrows.</p>
+    </div>
+    <LoopGallery label="Photos of Laughing Earth return gifts at events" items={gallery} />
+  </section>
+
+  <!-- FAQ -->
+  <Section tone="base" width="narrow" labelledby="faq-title">
+    <div class="section-head">
+      <p class="eyebrow">Good to know</p>
+      <h2 id="faq-title" data-split>Questions about bulk orders</h2>
+    </div>
+    <Faq items={faqs} />
+  </Section>
+
+  <!-- Closing CTA -->
+  <Section tone="deep" class="gifts-cta" reveal={false} labelledby="gifts-cta-title">
+    <div class="gifts-cta__leaves" data-parallax="0.2" aria-hidden="true">
+      <div data-sway><Leaves flip /></div>
+    </div>
+    <div class="gifts-cta__copy">
+      <h2 id="gifts-cta-title" data-split>Planning a wedding or a big celebration?</h2>
+      <p class="lead">Send us the date and guest count. We'll reply on WhatsApp with ideas and a quote.</p>
+      <div class="gifts-hero__actions">
+        <Button
+          href={whatsappLink(WHATSAPP_MESSAGES.gifts)}
+          size="lg"
+          icon="whatsapp"
+          iconPosition="start"
+          external
+          data-event="whatsapp_click"
+          data-event-label="gifts_cta"
+        >
+          Get a quote on WhatsApp
+        </Button>
+        <Button variant="outline" size="lg" data-morph-open="quote-builder">Build a bulk quote</Button>
+      </div>
+    </div>
+  </Section>
+
+  <QuoteBuilder gifts={categories.map((c) => c.name)} />
 </BaseLayout>
+
+<script>
+  import { init as catalogue } from '../scripts/return-gifts/catalogue';
+  import { init as quoteBuilder } from '../scripts/return-gifts/quote-builder';
+
+  catalogue();
+  quoteBuilder();
+</script>
+
+<style>
+  /* ---------- Shared section heading ---------- */
+  .section-head {
+    display: grid;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+  }
+
+  .section-head--row {
+    grid-template-columns: 1fr;
+    align-items: end;
+  }
+
+  @media (min-width: 768px) {
+    .section-head--row {
+      grid-template-columns: 1fr auto;
+      gap: var(--space-5);
+    }
+  }
+
+  /* ---------- Hero: full-bleed video ---------- */
+  .gifts-hero {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    align-items: end;
+    min-height: max(36rem, calc(100svh - 7rem));
+    overflow: clip;
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  .gifts-hero__media,
+  .gifts-hero__shade {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+
+  .gifts-hero__media {
+    will-change: clip-path, transform;
+  }
+
+  /* Darkens the video under the copy so cream text keeps AA contrast */
+  .gifts-hero__shade {
+    z-index: -1;
+    background:
+      linear-gradient(to top, color-mix(in srgb, var(--bg) 92%, transparent) 0%, color-mix(in srgb, var(--bg) 55%, transparent) 55%, transparent 100%),
+      linear-gradient(to right, color-mix(in srgb, var(--bg) 70%, transparent), transparent 70%);
+  }
+
+  .gifts-hero__inner {
+    padding-block: var(--space-9) var(--space-8);
+  }
+
+  .gifts-hero__copy {
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+    max-width: 40rem;
+  }
+
+  .video-toggle {
+    position: absolute;
+    left: var(--gutter);
+    top: var(--space-5);
+    display: grid;
+    place-items: center;
+    width: var(--tap-target);
+    height: var(--tap-target);
+    border: 1px solid color-mix(in srgb, var(--text) 40%, transparent);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--bg) 45%, transparent);
+    color: var(--text);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    transition: transform 160ms var(--ease-out);
+  }
+
+  .video-toggle:active {
+    transform: scale(0.94);
+  }
+
+  .video-toggle:focus-visible {
+    border-radius: 50%;
+  }
+
+  .video-toggle :global(.video-toggle__play),
+  .video-toggle[aria-pressed='true'] :global(.video-toggle__pause) {
+    display: none;
+  }
+
+  .video-toggle[aria-pressed='true'] :global(.video-toggle__play) {
+    display: block;
+  }
+
+  @media (min-width: 768px) {
+    .video-toggle {
+      left: auto;
+      right: var(--gutter);
+      top: auto;
+      bottom: var(--space-6);
+    }
+  }
+
+  /* ---------- Marquee ---------- */
+  .marquee {
+    overflow: clip;
+    padding-block: var(--space-4);
+    background: var(--bg);
+    color: var(--heading);
+    border-block: 1px solid var(--border);
+  }
+
+  .marquee__track {
+    display: flex;
+    width: max-content;
+  }
+
+  .marquee__group {
+    display: flex;
+    flex: none;
+  }
+
+  .marquee__item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-5);
+    padding-right: var(--space-5);
+    font-family: var(--font-heading);
+    font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.5rem);
+    font-weight: var(--weight-heading);
+    white-space: nowrap;
+  }
+
+  .marquee__item :global(svg) {
+    color: var(--icon);
+  }
+
+  /* ---------- Video band ---------- */
+  .band {
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  .band__media {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    align-items: end;
+    min-height: min(90svh, 52rem);
+    overflow: clip;
+  }
+
+  .band__media :global(.bg-video),
+  .band__shade {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+
+  .band__shade {
+    z-index: -1;
+    background: linear-gradient(to top, color-mix(in srgb, var(--bg) 90%, transparent) 10%, color-mix(in srgb, var(--bg) 30%, transparent) 70%);
+  }
+
+  .band__copy {
+    display: grid;
+    gap: var(--space-4);
+    padding-block: var(--space-9) var(--space-8);
+  }
+
+  .band__copy h2 {
+    max-width: 18ch;
+    font-size: clamp(2.25rem, 1.4rem + 3.4vw, 4.5rem);
+  }
+
+  .band__copy .lead {
+    color: var(--text);
+  }
+
+  .pop-wrap {
+    display: grid;
+    place-items: center;
+  }
+
+  .gifts-hero__copy h1 {
+    max-width: 12ch;
+  }
+
+  .gifts-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+  }
+
+  .gifts-hero__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+    padding: 0;
+    margin-top: var(--space-3);
+    list-style: none;
+    color: var(--muted);
+  }
+
+  .gifts-hero__facts li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .gifts-hero__facts li::before {
+    content: '';
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--icon);
+  }
+
+  .gifts-hero__leaves {
+    position: absolute;
+    z-index: -1;
+    right: -5rem;
+    top: -3rem;
+    width: clamp(12rem, 30vw, 28rem);
+    opacity: 0.9;
+    pointer-events: none;
+  }
+
+  /* ---------- Categories ---------- */
+  .categories {
+    display: grid;
+    gap: var(--space-4);
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 640px) {
+    .categories {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .categories {
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-5);
+    }
+  }
+
+  .categories li {
+    display: grid;
+  }
+
+  .categories :global(.category .card__body) {
+    height: 100%;
+  }
+
+  .categories :global(.category h3) {
+    font-size: var(--text-24);
+  }
+
+  .category__more {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: auto;
+    padding-top: var(--space-2);
+    font-weight: var(--weight-semibold);
+  }
+
+  .categories :global(.category .category__more svg) {
+    transition: transform var(--duration-fast) var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .categories :global(.category:hover .category__more svg) {
+      transform: translateX(3px);
+    }
+  }
+
+  /* ---------- Catalogue ---------- */
+  .catalogue__status {
+    color: var(--muted);
+  }
+
+  .filters {
+    display: flex;
+    gap: var(--space-2);
+    margin: 0 calc(-1 * var(--gutter)) var(--space-6);
+    padding: var(--space-1) var(--gutter);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  @media (min-width: 768px) {
+    .filters {
+      flex-wrap: wrap;
+      margin-inline: 0;
+      padding-inline: 0;
+      overflow: visible;
+    }
+  }
+
+  .filter {
+    flex: none;
+    min-height: var(--tap-target);
+    padding: 0.5em 1.25em;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--text);
+    font-weight: var(--weight-medium);
+    white-space: nowrap;
+    transition:
+      background-color var(--duration-fast) var(--ease-out),
+      color var(--duration-fast) var(--ease-out),
+      transform 160ms var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .filter:hover {
+      background: color-mix(in srgb, var(--text) 10%, transparent);
+    }
+  }
+
+  .filter:active {
+    transform: scale(0.97);
+  }
+
+  .filter[aria-pressed='true'] {
+    border-color: var(--btn-bg);
+    background: var(--btn-bg);
+    color: var(--btn-text);
+  }
+
+  .filter:focus-visible {
+    border-radius: var(--radius-pill);
+  }
+
+  .products {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 768px) {
+    .products {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-5);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .products {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .catalogue__note {
+    margin-top: var(--space-6);
+    color: var(--muted);
+  }
+
+  /* ---------- Bulk orders panel (mockup's rounded feature panel) ---------- */
+  :global(.bulk-section) {
+    padding-top: 0;
+  }
+
+  .bulk {
+    display: grid;
+    gap: var(--space-6);
+    padding: var(--space-6) var(--space-5);
+    border-radius: var(--radius-panel);
+    background: var(--bg);
+    color: var(--text);
+    box-shadow: var(--shadow-card);
+  }
+
+  @media (min-width: 768px) {
+    .bulk {
+      padding: var(--space-7);
+    }
+  }
+
+  .bulk__intro {
+    display: grid;
+    gap: var(--space-3);
+    max-width: 40rem;
+  }
+
+  .bulk__grid {
+    display: grid;
+    gap: var(--space-5);
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 640px) {
+    .bulk__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .bulk__grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .bulk__item + .bulk__item {
+      border-left: 1px solid var(--border);
+      padding-left: var(--space-5);
+    }
+  }
+
+  .bulk__item {
+    display: grid;
+    gap: var(--space-2);
+    align-content: start;
+  }
+
+  .bulk__item h3 {
+    font-size: var(--text-24);
+  }
+
+  .bulk__icon {
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    color: var(--icon);
+  }
+
+  .bulk__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-5);
+  }
+
+  .bulk__actions a {
+    color: var(--text);
+    font-weight: var(--weight-semibold);
+  }
+
+  /* ---------- Gallery ---------- */
+  .gallery-section {
+    background: var(--bg);
+    color: var(--text);
+    padding-block: var(--section-pad-y);
+  }
+
+  .gallery-section__hint {
+    color: var(--muted);
+  }
+
+  /* ---------- Closing CTA ---------- */
+  :global(.gifts-cta) {
+    position: relative;
+    overflow: clip;
+  }
+
+  .gifts-cta__copy {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: var(--space-4);
+    max-width: 40rem;
+  }
+
+  .gifts-cta__leaves {
+    position: absolute;
+    right: -6rem;
+    bottom: -8rem;
+    width: clamp(16rem, 36vw, 30rem);
+    opacity: 0.55;
+  }
+</style>

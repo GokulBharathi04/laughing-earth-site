@@ -204,6 +204,88 @@ a:hover {
   }
 }
 
+/* Values the client still has to confirm (see BRIEF.md §4 "Still to come") */
+mark.tbc {
+  padding: 0.05em 0.45em;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--text) 14%, transparent);
+  color: inherit;
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+}
+
+/* ---------- Motion layer (src/scripts/motion) ---------- */
+
+/* Split headlines wait for their line masks; a 1.5s timeout always lifts this. */
+@media (prefers-reduced-motion: no-preference) {
+  .is-loading [data-split]:not(.is-split),
+  .is-loading [data-hero-item] {
+    visibility: hidden;
+  }
+}
+
+/* Masked lines: keep descenders visible inside the clip */
+.split-line {
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+/* Pointer sticker for drag areas */
+.cursor-label {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 90;
+  padding: 0.55em 1.1em;
+  border-radius: var(--radius-pill);
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  box-shadow: var(--shadow-small);
+  font-size: var(--text-16);
+  font-weight: var(--weight-semibold);
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Morph dialog: a native modal that grows out of its trigger button */
+.morph-dialog {
+  margin: auto; /* the reset's margin: 0 would pin the modal top-left */
+  width: min(100% - 2 * var(--space-4), 40rem);
+  max-height: min(100dvh - 2 * var(--space-4), 52rem);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-panel);
+  background: var(--bg);
+  color: var(--text);
+  box-shadow: var(--shadow-lifted);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.morph-dialog::backdrop {
+  background: rgb(0 0 0 / 0.45);
+  opacity: 0;
+  transition: opacity 300ms var(--ease-out);
+}
+
+.morph-dialog.is-open::backdrop {
+  opacity: 1;
+}
+
+html:has(.morph-dialog[open]) {
+  overflow: hidden;
+}
+
+@media (max-width: 767px) {
+  .morph-dialog {
+    width: 100%;
+    max-width: none;
+    max-height: calc(100dvh - var(--space-6));
+    margin: auto 0 0;
+    border-radius: var(--radius-panel) var(--radius-panel) 0 0;
+  }
+}
+
 /* ---------- Cross-page transition (native view transitions) ---------- */
 @media (prefers-reduced-motion: no-preference) {
   @view-transition {

@@ -1,0 +1,43 @@
+---
+// Muted, looping background video. Phones get the 360p file, larger screens
+// 720p. Playback is managed by src/scripts/motion/video.ts: it plays only while
+// on screen and never autoplays for reduced motion (the poster shows instead).
+interface Props {
+  /** Path without suffix, e.g. /videos/gifts-hero-watering-plant → -720.mp4 / -360.mp4 */
+  src: string;
+  poster: string;
+  class?: string;
+  /** Load straight away (hero) instead of when near the viewport */
+  eager?: boolean;
+  /** Needed when a pause button points at it (aria-controls) */
+  id?: string;
+}
+
+const { src, poster, class: className, eager = false, id } = Astro.props;
+---
+
+<video
+  id={id}
+  class:list={['bg-video', className]}
+  data-video
+  poster={poster}
+  muted
+  loop
+  playsinline
+  disablepictureinpicture
+  preload={eager ? 'auto' : 'none'}
+  aria-hidden="true"
+  tabindex="-1"
+>
+  <source src={`${src}-720.mp4`} type="video/mp4" media="(min-width: 768px)" />
+  <source src={`${src}-360.mp4`} type="video/mp4" />
+</video>
+
+<style>
+  .bg-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+</style>

@@ -11,32 +11,38 @@
  * Tan (2.4 on beige) and sage (2.4 under cream) are never used for text.
  */
 
-/* ---------- Landscaping: muddy brown and beige ---------- */
+/* ---------- Landscaping: muddy brown and stone ---------- */
 [data-theme='landscaping'] {
-  /* base — beige */
-  --base-bg: var(--beige);
+  /* Road-sign condensed display with its normal-width sibling for text */
+  --font-heading: 'Barlow Condensed', 'Arial Narrow', 'Roboto Condensed', sans-serif;
+  --font-body: 'Barlow', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --weight-heading: 700;
+  --line-height-heading: 0.92;
+
+  /* base — stone */
+  --base-bg: var(--stone);
   --base-text: var(--ink);
   --base-heading: var(--chocolate);
   --base-muted: var(--ink-soft);
   --base-link: var(--chocolate);
   --base-btn-bg: var(--chocolate);
-  --base-btn-text: var(--cream);
-  --base-card-bg: var(--cream);
+  --base-btn-text: var(--stone);
+  --base-card-bg: var(--stone);
   --base-card-text: var(--ink);
   --base-card-heading: var(--chocolate);
   --base-border: color-mix(in srgb, var(--chocolate) 22%, transparent);
   --base-icon: var(--tan);
   --base-focus: var(--chocolate);
 
-  /* alt — cream */
-  --alt-bg: var(--cream);
+  /* alt — weathered flag */
+  --alt-bg: var(--flag);
   --alt-text: var(--ink);
   --alt-heading: var(--chocolate);
   --alt-muted: var(--ink-soft);
   --alt-link: var(--chocolate);
   --alt-btn-bg: var(--chocolate);
-  --alt-btn-text: var(--cream);
-  --alt-card-bg: var(--beige);
+  --alt-btn-text: var(--stone);
+  --alt-card-bg: var(--stone);
   --alt-card-text: var(--ink);
   --alt-card-heading: var(--chocolate);
   --alt-border: color-mix(in srgb, var(--chocolate) 20%, transparent);
@@ -45,37 +51,37 @@
 
   /* deep — chocolate brown (hero bands, CTA bands, footer) */
   --deep-bg: var(--chocolate);
-  --deep-text: var(--cream);
-  --deep-heading: var(--cream);
-  --deep-muted: color-mix(in srgb, var(--cream) 86%, var(--chocolate));
+  --deep-text: var(--stone);
+  --deep-heading: var(--stone);
+  --deep-muted: color-mix(in srgb, var(--stone) 86%, var(--chocolate));
   --deep-link: var(--peach);
   --deep-btn-bg: var(--peach);
   --deep-btn-text: var(--ink);
   --deep-card-bg: var(--chocolate-soft);
-  --deep-card-text: var(--cream);
-  --deep-card-heading: var(--cream);
-  --deep-border: color-mix(in srgb, var(--cream) 20%, transparent);
+  --deep-card-text: var(--stone);
+  --deep-card-heading: var(--stone);
+  --deep-border: color-mix(in srgb, var(--stone) 20%, transparent);
   --deep-icon: var(--peach);
   --deep-focus: var(--peach);
 
   /* chrome */
-  --header-bg: color-mix(in srgb, var(--cream) 94%, transparent);
+  --header-bg: var(--stone);
   --header-text: var(--ink);
   --header-border: color-mix(in srgb, var(--chocolate) 16%, transparent);
-  --switch-track: var(--beige);
+  --switch-track: var(--flag);
   --switch-text: var(--ink);
   --switch-active-bg: var(--chocolate);
-  --switch-active-text: var(--cream);
+  --switch-active-text: var(--stone);
   --wa-bg: var(--chocolate);
-  --wa-icon: var(--cream);
-  --wa-ring: var(--cream);
+  --wa-icon: var(--stone);
+  --wa-ring: var(--stone);
 
   /* decorative leaves: dried tan and brown, sage only as a small accent */
   --leaf-1: var(--tan);
   --leaf-2: var(--chocolate-soft);
   --leaf-3: color-mix(in srgb, var(--tan) 55%, var(--beige));
   --leaf-accent: var(--sage);
-  --leaf-vein: color-mix(in srgb, var(--cream) 55%, transparent);
+  --leaf-vein: color-mix(in srgb, var(--stone) 55%, transparent);
 }
 
 /* ---------- Return Gifts: green ---------- */

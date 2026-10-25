@@ -1,0 +1,246 @@
+---
+import Icon from './Icon.astro';
+
+// Endless photo/video carousel driven by src/scripts/motion/loop-gallery.ts.
+// Video slides play only while centred. Without JS or with reduced motion it
+// is a native scroll-snap row showing posters.
+interface Props {
+  label: string;
+  items: {
+    /** Image path without size suffix: <image>-600.webp / <image>.webp */
+    image?: string;
+    /** Video path without suffix (-720.mp4 / -360.mp4); needs `poster` */
+    video?: string;
+    poster?: string;
+    alt: string;
+    caption: string;
+  }[];
+}
+
+const { label, items } = Astro.props;
+---
+
+<div class="loop" data-loop>
+  <div
+    class="loop__stage"
+    data-loop-stage
+    data-cursor="Drag"
+    role="region"
+    aria-roledescription="carousel"
+    aria-label={label}
+    tabindex="0"
+  >
+    <ul class="loop__track" data-loop-track>
+      {
+        items.map((item, i) => (
+          <li
+            class="loop__item"
+            data-loop-item
+            data-caption={item.caption}
+            aria-roledescription="slide"
+            aria-label={`${i + 1} of ${items.length}: ${item.caption}`}
+          >
+            {item.video ? (
+              <video
+                class="loop__media"
+                poster={item.poster}
+                muted
+                loop
+                playsinline
+                disablepictureinpicture
+                preload="none"
+                aria-label={item.alt}
+              >
+                <source src={`${item.video}-720.mp4`} type="video/mp4" media="(min-width: 768px)" />
+                <source src={`${item.video}-360.mp4`} type="video/mp4" />
+              </video>
+            ) : (
+              <img
+                class="loop__media"
+                src={`${item.image}-600.webp`}
+                srcset={`${item.image}-600.webp 600w, ${item.image}.webp 1200w`}
+                sizes="(min-width: 768px) 36rem, 80vw"
+                width="1200"
+                height="900"
+                alt={item.alt}
+                loading="lazy"
+                decoding="async"
+                draggable="false"
+              />
+            )}
+            <p class="loop__fallback-caption">{item.caption}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <div class="loop__ui container">
+    <p class="loop__caption" data-loop-caption aria-live="polite">{items[0]?.caption}</p>
+    <div class="loop__controls">
+      <span class="loop__counter" data-loop-counter>1 / {items.length}</span>
+      <div class="loop__bar" aria-hidden="true">
+        <span data-loop-progress style={`width: ${100 / items.length}%`}></span>
+      </div>
+      <button class="loop__btn" type="button" data-loop-prev>
+        <Icon name="chevron-left" />
+        <span class="sr-only">Previous photo</span>
+      </button>
+      <button class="loop__btn" type="button" data-loop-next>
+        <Icon name="chevron-right" />
+        <span class="sr-only">Next photo</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .loop {
+    --loop-w: min(80vw, 36rem);
+    overflow: clip;
+  }
+
+  .loop__stage {
+    outline-offset: -6px;
+  }
+
+  .loop__media {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: color-mix(in srgb, var(--text) 10%, transparent);
+    pointer-events: none;
+    object-fit: cover;
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  /* ---- Fallback: native scroll-snap row ---- */
+  .loop__track {
+    display: flex;
+    gap: var(--space-4);
+    overflow-x: auto;
+    padding: var(--space-2) var(--gutter) var(--space-4);
+    list-style: none;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: thin;
+  }
+
+  .loop__item {
+    flex: 0 0 var(--loop-w);
+    scroll-snap-align: center;
+  }
+
+  .loop__fallback-caption {
+    margin-top: var(--space-2);
+    color: var(--muted);
+  }
+
+  .loop__ui {
+    display: none;
+  }
+
+  /* ---- Live carousel ---- */
+  .loop.is-live .loop__stage {
+    cursor: grab;
+    touch-action: pan-y;
+  }
+
+  .loop.is-live.is-dragging .loop__stage {
+    cursor: grabbing;
+  }
+
+  .loop.is-live .loop__track {
+    position: relative;
+    display: block;
+    height: calc(var(--loop-w) * 0.75 + var(--space-6));
+    overflow: visible;
+    padding: var(--space-3) 0;
+  }
+
+  .loop.is-live .loop__item {
+    position: absolute;
+    left: 50%;
+    top: var(--space-3);
+    width: var(--loop-w);
+    margin-left: calc(var(--loop-w) / -2);
+    will-change: transform, opacity;
+  }
+
+  .loop.is-live .loop__fallback-caption {
+    display: none;
+  }
+
+  .loop.is-live .loop__ui {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-5);
+    margin-top: var(--space-3);
+  }
+
+  .loop__caption {
+    font-family: var(--font-heading);
+    font-size: var(--text-24);
+    color: var(--heading);
+    min-height: 1.3em;
+  }
+
+  .loop__controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .loop__counter {
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+    min-width: 3.5ch;
+  }
+
+  .loop__bar {
+    width: clamp(5rem, 14vw, 10rem);
+    height: 3px;
+    border-radius: 3px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--text) 22%, transparent);
+  }
+
+  .loop__bar span {
+    display: block;
+    height: 100%;
+    border-radius: 3px;
+    background: var(--btn-bg);
+  }
+
+  .loop__btn {
+    display: grid;
+    place-items: center;
+    width: var(--tap-target);
+    height: var(--tap-target);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text);
+    transition:
+      transform 160ms var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .loop__btn:hover {
+      background: color-mix(in srgb, var(--text) 10%, transparent);
+    }
+  }
+
+  .loop__btn:active {
+    transform: scale(0.94);
+  }
+
+  .loop__btn:focus-visible {
+    border-radius: 50%;
+  }
+</style>
