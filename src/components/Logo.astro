@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../lib/url';
 // Placeholder logo (sprout mark + wordmark) until the client supplies final
 // logo files — see IMAGES-NEEDED.md. Colours follow the current theme.
 interface Props {
@@ -7,7 +8,7 @@ interface Props {
   class?: string;
 }
 
-const { href = '/', size = 'sm', class: className } = Astro.props;
+const { href = withBase('/'), size = 'sm', class: className } = Astro.props;
 const Tag = href ? 'a' : 'span';
 ---
 

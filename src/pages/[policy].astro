@@ -6,7 +6,7 @@ import { POLICIES, WHATSAPP_MESSAGES } from '../config/site';
 // Policy pages so footer links resolve. Placeholder copy until the client
 // supplies final text (Phase 4).
 export function getStaticPaths() {
-  return POLICIES.map((p) => ({ params: { policy: p.href.slice(1) }, props: { label: p.label } }));
+  return POLICIES.map((p) => ({ params: { policy: p.slug }, props: { label: p.label } }));
 }
 
 const { label } = Astro.props;

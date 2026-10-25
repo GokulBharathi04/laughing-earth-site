@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../lib/url';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Button from '../components/Button.astro';
 import Icon from '../components/Icon.astro';
@@ -10,10 +11,13 @@ import { SITE, FORMSPREE_ENDPOINT, whatsappLink, WHATSAPP_MESSAGES } from '../co
 
 // Photographs: open-licence pictures of paving and stonework (credited in the
 // footer) until the client's own project photos arrive; see IMAGES-NEEDED.md.
-const img = (name: string) => ({ src: `/images/land/${name}.webp`, srcset: `/images/land/${name}-800.webp 800w, /images/land/${name}.webp 1600w` });
+const img = (name: string) => ({
+  src: withBase(`/images/land/${name}.webp`),
+  srcset: `${withBase(`/images/land/${name}-800.webp`)} 800w, ${withBase(`/images/land/${name}.webp`)} 1600w`,
+});
 
 // Video stills from the landscaping clips (Mixkit), used as photographs.
-const still = (clip: string) => ({ src: `/images/poster-${clip}.webp` });
+const still = (clip: string) => ({ src: withBase(`/images/poster-${clip}.webp`) });
 
 // Hero facts, carried over from the first landscaping page.
 const facts = [

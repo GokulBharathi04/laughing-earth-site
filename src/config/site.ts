@@ -1,4 +1,5 @@
 // Business details and shared links — single source for every component.
+import { withBase } from '../lib/url';
 
 export const SITE = {
   name: 'Laughing Earth',
@@ -38,15 +39,15 @@ export const WHATSAPP_MESSAGES = {
 export const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
 
 export const NAV = {
-  landscaping: { href: '/landscaping', label: 'Landscaping' },
-  gifts: { href: '/return-gifts', label: 'Return Gifts' },
-  about: { href: '/about', label: 'About' },
-  contact: { href: '/contact', label: 'Contact' },
+  landscaping: { href: withBase('/landscaping'), label: 'Landscaping' },
+  gifts: { href: withBase('/return-gifts'), label: 'Return Gifts' },
+  about: { href: withBase('/about'), label: 'About' },
+  contact: { href: withBase('/contact'), label: 'Contact' },
 } as const;
 
 export const POLICIES = [
-  { href: '/terms', label: 'Terms & Conditions' },
-  { href: '/privacy', label: 'Privacy Policy' },
-  { href: '/returns', label: 'Returns & Refunds' },
-  { href: '/disclaimer', label: 'Disclaimer' },
+  { slug: 'terms', href: withBase('/terms'), label: 'Terms & Conditions' },
+  { slug: 'privacy', href: withBase('/privacy'), label: 'Privacy Policy' },
+  { slug: 'returns', href: withBase('/returns'), label: 'Returns & Refunds' },
+  { slug: 'disclaimer', href: withBase('/disclaimer'), label: 'Disclaimer' },
 ] as const;
