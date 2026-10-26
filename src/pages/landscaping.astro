@@ -231,35 +231,42 @@ const a = SITE.address;
 >
   <!-- Hero: the garden on screen, the promise set large beneath it -->
   <section class="lh" data-tone="deep" data-hero-intro aria-labelledby="lh-title">
-    <div class="lh__media" data-hero-media>
-      <BgVideo id="lh-video" src="/videos/land-hero-villa-garden" poster="/images/poster-land-hero-villa-garden.webp" eager />
+    <!-- The video runs from the very top of the page, under the glass header -->
+    <div class="lh__stage">
+      <div class="lh__media" data-hero-media>
+        <BgVideo id="lh-video" src="/videos/land-hero-villa-garden" poster="/images/poster-land-hero-villa-garden.webp" eager />
+      </div>
       <button class="lh__toggle" type="button" data-video-toggle aria-controls="lh-video" aria-pressed="false">
         <Icon name="pause" size={18} class="lh__pause" />
         <Icon name="play" size={18} class="lh__play" />
         <span class="sr-only">Pause background video</span>
       </button>
-    </div>
-    <div class="wrap lh__band">
-      <h1 id="lh-title" class="lh__name">Gardens designed to grow with you</h1>
-      <div class="lh__row" data-hero-item>
-        <p class="lh__lead">Garden design, lawns, vertical and terrace gardens, stone paving and ongoing care for homes and offices across Chennai.</p>
-        <div class="lh__actions">
-          <Button href="#visit" size="lg" icon="arrow-right" class="glass-btn">Plan my garden</Button>
-          <Button
-            href={whatsappLink(WHATSAPP_MESSAGES.landscaping)}
-            variant="outline"
-            class="glass-btn"
-            size="lg"
-            icon="whatsapp"
-            iconPosition="start"
-            external
-            data-event="whatsapp_click"
-            data-event-label="landscaping_hero"
-          >
-            Chat on WhatsApp
-          </Button>
+      <div class="wrap lh__over">
+        <div class="lh__title glass glass--deep" data-hero-item>
+          <h1 id="lh-title" class="lh__name">Gardens designed to grow with you</h1>
+          <div class="lh__row">
+            <p class="lh__lead">Garden design, lawns, vertical and terrace gardens, stone paving and ongoing care for homes and offices across Chennai.</p>
+            <div class="lh__actions">
+              <Button href="#visit" size="lg" icon="arrow-right" class="glass-btn">Plan my garden</Button>
+              <Button
+                href={whatsappLink(WHATSAPP_MESSAGES.landscaping)}
+                variant="outline"
+                class="glass-btn"
+                size="lg"
+                icon="whatsapp"
+                iconPosition="start"
+                external
+                data-event="whatsapp_click"
+                data-event-label="landscaping_hero"
+              >
+                Chat on WhatsApp
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
+    <div class="wrap lh__band">
       <ul class="lh__facts glass" role="list" data-hero-item>
         {
           facts.map((f) => (
@@ -287,13 +294,13 @@ const a = SITE.address;
           suit Chennai's climate, and stay on to keep it healthy.
         </p>
       </div>
-      <figure class="intro__tall blend" data-clip-reveal>
-        <span class="blend__in">
+      <figure class="intro__tall raised" data-clip-reveal>
+        <span class="raised__in">
           <BgVideo src="/videos/land-story-gardener-soil" poster="/images/poster-land-story-gardener-soil.webp" />
         </span>
       </figure>
       <figure class="intro__small" data-clip-reveal>
-<span class="blend"><span class="blend__in"><img {...img('stonework-chelsea')} sizes="(min-width: 1024px) 30vw, 50vw" width="828" height="920" alt="Honed stone bench set into a curved dry-stone wall, with broad curved stone steps and flowering borders" loading="lazy" decoding="async" /></span></span>
+<span class="raised"><span class="raised__in"><img {...img('stonework-chelsea')} sizes="(min-width: 1024px) 30vw, 50vw" width="828" height="920" alt="Honed stone bench set into a curved dry-stone wall, with broad curved stone steps and flowering borders" loading="lazy" decoding="async" /></span></span>
         <figcaption>
           <span class="intro__cap">Show-garden stonework, RHS Chelsea 2024</span>
           <ul class="intro__specs" role="list">
@@ -318,8 +325,8 @@ const a = SITE.address;
                 <h3>{r.title}</h3>
                 <p set:html={r.text} />
               </div>
-              <figure class="lay__photo blend" data-glass-pop data-drift>
-                <span class="blend__in">
+              <figure class="lay__photo raised" data-glass-pop data-drift>
+                <span class="raised__in">
                 <img
                   {...r.media}
                   width="1280"
@@ -361,8 +368,8 @@ const a = SITE.address;
                 <h3>{r.title}</h3>
                 <p>{r.text}</p>
               </div>
-              <figure class="lay__photo blend" data-glass-pop data-drift>
-                <span class="blend__in">
+              <figure class="lay__photo raised" data-glass-pop data-drift>
+                <span class="raised__in">
                 <img {...img(r.photo)} sizes="(min-width: 768px) 40vw, 100vw" width="1600" height="1200" alt={r.alt} loading="lazy" decoding="async" />
                 </span>
               </figure>
@@ -462,7 +469,7 @@ const a = SITE.address;
         <h2 id="ba-title">Before and after</h2>
         <p>Drag the line across the picture, or focus it and use the arrow keys, to compare the bare plot with the finished terrace and lawn.</p>
       </div>
-      <div class="ba-section__slider blend">
+      <div class="ba-section__slider raised">
         <BeforeAfter
           before="/images/landscaping-sample-before"
           after="/images/landscaping-sample-after"
@@ -482,8 +489,8 @@ const a = SITE.address;
       {
         steps.map((s, i) => (
           <div class:list={['step', `step--${i + 1}`]} data-stagger>
-            <figure class="step__media blend">
-              <span class="blend__in">
+            <figure class="step__media raised">
+              <span class="raised__in">
               {s.video ? (
                 <BgVideo src={`/videos/${s.video}`} poster={`/images/poster-${s.video}.webp`} />
               ) : (
@@ -533,11 +540,11 @@ const a = SITE.address;
         </div>
       </div>
       <div class="qa__photos">
-        <figure class="qa__tall blend">
-          <span class="blend__in"><img {...img('path-hedge')} sizes="(min-width: 1024px) 50vw, 100vw" width="1600" height="1067" alt="A flagstone path leading between two clipped yew hedges into a walled garden" loading="lazy" decoding="async" /></span>
+        <figure class="qa__tall raised">
+          <span class="raised__in"><img {...img('path-hedge')} sizes="(min-width: 1024px) 50vw, 100vw" width="1600" height="1067" alt="A flagstone path leading between two clipped yew hedges into a walled garden" loading="lazy" decoding="async" /></span>
         </figure>
-        <figure class="qa__square blend">
-          <span class="blend__in"><img {...img('sandstone-wet')} sizes="(min-width: 1024px) 16vw, 38vw" width="1024" height="926" alt="Wet sandstone flags in rust, grey and buff tones" loading="lazy" decoding="async" /></span>
+        <figure class="qa__square raised">
+          <span class="raised__in"><img {...img('sandstone-wet')} sizes="(min-width: 1024px) 16vw, 38vw" width="1024" height="926" alt="Wet sandstone flags in rust, grey and buff tones" loading="lazy" decoding="async" /></span>
         </figure>
       </div>
     </div>
@@ -621,7 +628,6 @@ const a = SITE.address;
   }
 
   section {
-    background: var(--bg);
     color: var(--text);
   }
 
@@ -663,37 +669,61 @@ const a = SITE.address;
   }
 
   /* ---------- Hero ---------- */
+  /* The header is sticky and 76px tall (124px on phones, where the switch
+     wraps); the hero slides up under it so the video starts at the top edge. */
   .lh {
+    --header-h: 76px;
+    margin-top: calc(-1 * var(--header-h));
+  }
+
+  .lh__stage {
+    position: relative;
+    isolation: isolate;
     display: grid;
-    grid-template-rows: minmax(0, 1fr) auto;
-    height: calc(100svh - 4.8rem);
-    min-height: 34rem;
+    align-items: end;
+    min-height: 100svh;
+    overflow: clip;
   }
 
   .lh__media {
-    position: relative;
+    position: absolute;
+    inset: 0;
+    z-index: -1;
     overflow: clip;
-    min-height: 16rem;
   }
 
   .lh__media :global(.bg-video) {
     position: absolute;
     inset: 0;
-    object-position: center 60%;
+    object-position: center 55%;
+  }
+
+  /* Title, sentence and actions on one glass panel over the video */
+  .lh__over {
+    padding-block: calc(var(--header-h) + var(--space-7)) clamp(2rem, 5vw, 4rem);
+  }
+
+  .lh__title {
+    display: grid;
+    gap: var(--space-5);
+    padding: clamp(1.25rem, 3vw, 2.5rem);
   }
 
   .lh__toggle {
     position: absolute;
-    top: var(--space-4);
+    top: calc(var(--header-h) + var(--space-4));
     right: clamp(1.25rem, 3vw, 2.5rem);
+    z-index: 1;
     display: grid;
     place-items: center;
     width: var(--tap-target);
     height: var(--tap-target);
-    border: 0;
+    border: 1px solid rgb(255 255 255 / 0.18);
     border-radius: 50%;
-    background: var(--bg);
+    background: rgb(14 29 23 / 0.6);
     color: var(--text);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
     transition: transform 160ms var(--ease-out), background-color var(--duration-fast) var(--ease-out);
   }
 
@@ -717,7 +747,7 @@ const a = SITE.address;
   .lh__band {
     display: grid;
     gap: var(--space-5);
-    padding-block: var(--space-4) var(--space-5);
+    padding-block: var(--space-6) var(--space-6);
   }
 
   /* Room under the facts so the floating WhatsApp button never sits on them */
@@ -768,7 +798,7 @@ const a = SITE.address;
   }
 
   .lh__name {
-    font-size: 6.7vw;
+    font-size: 6.2vw; /* one line inside the padded glass panel */
     line-height: 0.9;
     letter-spacing: -0.02em;
     text-transform: uppercase;
@@ -796,9 +826,7 @@ const a = SITE.address;
 
   @media (max-width: 767px) {
     .lh {
-      height: auto;
-      min-height: calc(100svh - 7.5rem);
-      grid-template-rows: 40svh auto;
+      --header-h: 124px;
     }
 
     .lh__band {
@@ -806,7 +834,7 @@ const a = SITE.address;
     }
 
     .lh__name {
-      font-size: 12.4vw;
+      font-size: 11.2vw; /* two lines inside the padded panel at 390px */
     }
   }
 
@@ -866,7 +894,7 @@ const a = SITE.address;
     max-width: 44ch;
   }
 
-  .intro__tall .blend__in :global(.bg-video) {
+  .intro__tall .raised__in :global(.bg-video) {
     position: absolute;
     inset: 0;
   }
@@ -877,7 +905,7 @@ const a = SITE.address;
     align-self: end;
   }
 
-  .intro__small .blend__in img {
+  .intro__small .raised__in img {
     aspect-ratio: 9 / 10;
   }
 
@@ -1949,58 +1977,51 @@ const a = SITE.address;
   }
 
   /* ---------- Flagstone ground ---------- */
-  /* Natural flagstone paving behind every section below the hero: irregular
-     flat slabs with mortar joints and a rustic grain, drawn in translucent
-     light and shadow so it takes each section's fern tone. It stays still (it
-     is texture, not content) and low enough in contrast that text over it
-     keeps its AA ratios. Pictures feather into it rather than sit on it. */
-  .intro,
-  .lay,
-  .pave,
-  .curtain,
-  .ba-section,
-  .steps,
-  .qa {
-    background-image: url('../assets/land/flagstone-ground.svg');
-    background-size: 720px;
-    background-position: center top;
+  /* One continuous floor of natural flagstone for the whole page, painted on
+     <main> so it runs unbroken from below the hero video to the footer: no
+     section restarts it or shifts its tone. Sections are transparent over it;
+     full-bleed video and photos cover it where they sit. It stays still and
+     low in contrast, so text over it keeps its AA ratios. */
+  :global(body[data-theme='landscaping'] main) {
+    background: var(--fern) url('../assets/land/flagstone-ground.svg') center top / 720px;
   }
 
-  /* Neighbouring sections start the pattern at different offsets, so the
-     same slabs never line up across a section edge */
-  .lay--mirror,
-  .ba-section,
-  .qa {
-    background-position: 300px 200px;
-  }
-
-  /* Pictures dissolve into the flagstone ground: no border, shadow or corner.
-     Two edge fades (across and down) are intersected, so all four sides
-     feather by the same amount while the middle stays at full strength. */
-  .blend {
-    --feather: 9%;
+  /* Pictures sit raised above the stone: crisp rounded edges, a layered drop
+     shadow (a tight contact shadow under a wide soft one) and a faint light
+     rim on the top edge, like a slab lifted off the paving. */
+  .raised {
     display: block;
     position: relative;
-    -webkit-mask-image:
-      linear-gradient(to right, transparent, #000 var(--feather), #000 calc(100% - var(--feather)), transparent),
-      linear-gradient(to bottom, transparent, #000 var(--feather), #000 calc(100% - var(--feather)), transparent);
-    -webkit-mask-composite: source-in;
-    mask-image:
-      linear-gradient(to right, transparent, #000 var(--feather), #000 calc(100% - var(--feather)), transparent),
-      linear-gradient(to bottom, transparent, #000 var(--feather), #000 calc(100% - var(--feather)), transparent);
-    mask-composite: intersect;
+    border-radius: 20px;
+    box-shadow:
+      0 2px 4px rgb(0 0 0 / 0.35),
+      0 14px 28px rgb(0 0 0 / 0.38),
+      0 36px 70px rgb(0 0 0 / 0.42);
   }
 
-  .blend__in {
+  .raised__in {
     position: relative;
     display: block;
     width: 100%;
     height: 100%;
     overflow: clip;
+    border-radius: inherit;
   }
 
-  .blend__in > img,
-  .blend__in :global(video) {
+  /* Light catching the top edge of the lifted slab */
+  .raised__in::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.22),
+      inset 0 0 0 1px rgb(255 255 255 / 0.06);
+    pointer-events: none;
+  }
+
+  .raised__in > img,
+  .raised__in :global(video) {
     display: block;
     width: 100%;
     height: 100%;
@@ -2014,17 +2035,12 @@ const a = SITE.address;
     overflow: visible;
   }
 
-  .step__media .blend__in :global(.bg-video) {
+  .step__media .raised__in :global(.bg-video) {
     position: absolute;
     inset: 0;
   }
 
-  /* The comparison slider keeps its handles and labels readable: a gentler fade */
-  .ba-section__slider.blend {
-    --feather: 4%;
-  }
-
   .ba-section__slider :global(.ba__frame) {
-    border-radius: 0;
+    border-radius: 20px;
   }
 </style>
