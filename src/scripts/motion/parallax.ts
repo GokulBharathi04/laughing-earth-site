@@ -19,7 +19,7 @@ export function init() {
             trigger: el.closest('section') ?? el,
             start: 'top bottom',
             end: 'bottom top',
-            scrub: true,
+            scrub: 0.8, // catch up over 0.8s instead of locking to the scrollbar
           },
         },
       );

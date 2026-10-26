@@ -244,10 +244,11 @@ const a = SITE.address;
       <div class="lh__row" data-hero-item>
         <p class="lh__lead">Garden design, lawns, vertical and terrace gardens, stone paving and ongoing care for homes and offices across Chennai.</p>
         <div class="lh__actions">
-          <Button href="#visit" size="lg" icon="arrow-right">Plan my garden</Button>
+          <Button href="#visit" size="lg" icon="arrow-right" class="glass-btn">Plan my garden</Button>
           <Button
             href={whatsappLink(WHATSAPP_MESSAGES.landscaping)}
             variant="outline"
+            class="glass-btn"
             size="lg"
             icon="whatsapp"
             iconPosition="start"
@@ -259,7 +260,7 @@ const a = SITE.address;
           </Button>
         </div>
       </div>
-      <ul class="lh__facts" role="list" data-hero-item>
+      <ul class="lh__facts glass" role="list" data-hero-item>
         {
           facts.map((f) => (
             <li>
@@ -275,7 +276,7 @@ const a = SITE.address;
   <!-- Intro: the claim, beside the finished thing -->
   <section class="intro" data-tone="base" aria-labelledby="intro-title">
     <div class="wrap intro__grid">
-      <div class="intro__copy" data-stagger>
+      <div class="intro__copy glass" data-glass-pop>
         <h2 id="intro-title">Paving first.<br />Then the green.</h2>
         <p class="statement">
           A garden is only as good as the ground you walk on. We lay the patio, the paths and the steps first, then
@@ -286,12 +287,21 @@ const a = SITE.address;
           suit Chennai's climate, and stay on to keep it healthy.
         </p>
       </div>
-      <figure class="intro__tall" data-clip-reveal>
-        <BgVideo src="/videos/land-story-gardener-soil" poster="/images/poster-land-story-gardener-soil.webp" />
+      <figure class="intro__tall blend" data-clip-reveal>
+        <span class="blend__in">
+          <BgVideo src="/videos/land-story-gardener-soil" poster="/images/poster-land-story-gardener-soil.webp" />
+        </span>
       </figure>
       <figure class="intro__small" data-clip-reveal>
-        <img {...img('brick-path-1945')} sizes="(min-width: 1024px) 30vw, 50vw" width="1600" height="1147" alt="Black and white photograph of a brick path curving through a wooded garden" loading="lazy" decoding="async" />
-        <figcaption>A winding brick path, 1945. Brick laid along a curve still goes down the same way.</figcaption>
+<span class="blend"><span class="blend__in"><img {...img('stonework-chelsea')} sizes="(min-width: 1024px) 30vw, 50vw" width="828" height="920" alt="Honed stone bench set into a curved dry-stone wall, with broad curved stone steps and flowering borders" loading="lazy" decoding="async" /></span></span>
+        <figcaption>
+          <span class="intro__cap">Show-garden stonework, RHS Chelsea 2024</span>
+          <ul class="intro__specs" role="list">
+            <li>Honed stone benches set into the wall</li>
+            <li>Curved steps with split-face edges</li>
+            <li>Dry-stone walling under smooth coping</li>
+          </ul>
+        </figcaption>
       </figure>
     </div>
   </section>
@@ -303,12 +313,13 @@ const a = SITE.address;
       <ul class="lay__rows" role="list">
         {
           gardenRows.map((r) => (
-            <li class="lay__row" data-stagger>
-              <div class="lay__text">
+            <li class="lay__row">
+              <div class="lay__text glass" data-glass-pop>
                 <h3>{r.title}</h3>
                 <p set:html={r.text} />
               </div>
-              <figure class="lay__photo">
+              <figure class="lay__photo blend" data-glass-pop data-drift>
+                <span class="blend__in">
                 <img
                   {...r.media}
                   width="1280"
@@ -318,6 +329,7 @@ const a = SITE.address;
                   loading="lazy"
                   decoding="async"
                 />
+                </span>
               </figure>
             </li>
           ))
@@ -344,13 +356,15 @@ const a = SITE.address;
       <ul class="lay__rows" role="list">
         {
           rows.map((r) => (
-            <li class="lay__row" data-stagger>
-              <div class="lay__text">
+            <li class="lay__row">
+              <div class="lay__text glass" data-glass-pop>
                 <h3>{r.title}</h3>
                 <p>{r.text}</p>
               </div>
-              <figure class="lay__photo">
+              <figure class="lay__photo blend" data-glass-pop data-drift>
+                <span class="blend__in">
                 <img {...img(r.photo)} sizes="(min-width: 768px) 40vw, 100vw" width="1600" height="1200" alt={r.alt} loading="lazy" decoding="async" />
+                </span>
               </figure>
             </li>
           ))
@@ -379,7 +393,7 @@ const a = SITE.address;
     </fieldset>
 
     <div class="wrap pave__detail">
-      <div class="pave__infos" aria-live="polite">
+      <div class="pave__infos glass" aria-live="polite" data-glass-pop>
         {
           materials.map((m) => (
             <div class="pave__info" data-material={m.id}>
@@ -396,7 +410,7 @@ const a = SITE.address;
         }
       </div>
 
-      <div class="pave__drawing">
+      <div class="pave__drawing glass" data-glass-pop>
         <fieldset class="pave__patterns">
           <legend>Pattern</legend>
           {
@@ -444,11 +458,11 @@ const a = SITE.address;
   <!-- Before / after -->
   <section class="ba-section" data-tone="base" aria-labelledby="ba-title">
     <div class="wrap ba-section__grid">
-      <div class="ba-section__copy" data-stagger>
+      <div class="ba-section__copy glass" data-glass-pop>
         <h2 id="ba-title">Before and after</h2>
         <p>Drag the line across the picture, or focus it and use the arrow keys, to compare the bare plot with the finished terrace and lawn.</p>
       </div>
-      <div class="ba-section__slider">
+      <div class="ba-section__slider blend">
         <BeforeAfter
           before="/images/landscaping-sample-before"
           after="/images/landscaping-sample-after"
@@ -468,14 +482,16 @@ const a = SITE.address;
       {
         steps.map((s, i) => (
           <div class:list={['step', `step--${i + 1}`]} data-stagger>
-            <figure class="step__media">
+            <figure class="step__media blend">
+              <span class="blend__in">
               {s.video ? (
                 <BgVideo src={`/videos/${s.video}`} poster={`/images/poster-${s.video}.webp`} />
               ) : (
                 <img {...img(s.photo!)} sizes="(min-width: 1024px) 36vw, 90vw" width="1600" height="1200" alt={s.alt} loading="lazy" decoding="async" />
               )}
+              </span>
             </figure>
-            <p class="step__text">
+            <p class="step__text glass">
               <strong>{s.lead}</strong> {s.text}
             </p>
           </div>
@@ -497,7 +513,7 @@ const a = SITE.address;
         <div class="qa__list" data-stagger>
           {
             faqs.map((f) => (
-              <details class="qa__item">
+              <details class="qa__item glass">
                 <summary>{f.q}</summary>
                 <p set:html={f.a} />
               </details>
@@ -517,11 +533,11 @@ const a = SITE.address;
         </div>
       </div>
       <div class="qa__photos">
-        <figure class="qa__tall">
-          <img {...img('path-hedge')} sizes="(min-width: 1024px) 50vw, 100vw" width="1600" height="1067" alt="A flagstone path leading between two clipped yew hedges into a walled garden" loading="lazy" decoding="async" />
+        <figure class="qa__tall blend">
+          <span class="blend__in"><img {...img('path-hedge')} sizes="(min-width: 1024px) 50vw, 100vw" width="1600" height="1067" alt="A flagstone path leading between two clipped yew hedges into a walled garden" loading="lazy" decoding="async" /></span>
         </figure>
-        <figure class="qa__square">
-          <img {...img('sandstone-wet')} sizes="(min-width: 1024px) 16vw, 38vw" width="1024" height="926" alt="Wet sandstone flags in rust, grey and buff tones" loading="lazy" decoding="async" />
+        <figure class="qa__square blend">
+          <span class="blend__in"><img {...img('sandstone-wet')} sizes="(min-width: 1024px) 16vw, 38vw" width="1024" height="926" alt="Wet sandstone flags in rust, grey and buff tones" loading="lazy" decoding="async" /></span>
         </figure>
       </div>
     </div>
@@ -531,7 +547,7 @@ const a = SITE.address;
   <section class="visit" id="visit" data-tone="base" aria-labelledby="visit-title">
     <img class="visit__photo" {...img('patio-barn')} sizes="100vw" width="1600" height="900" alt="A sandstone patio with benches and parasols beside a lawn on a summer day" loading="lazy" decoding="async" />
     <div class="wrap visit__wrap">
-      <div class="visit__card">
+      <div class="visit__card glass glass--deep" data-glass-pop>
         <h2 id="visit-title">Book a site visit</h2>
         <p class="visit__addr">{a.street},<br />{a.locality}, {a.city} {a.postalCode}</p>
         <form
@@ -844,16 +860,15 @@ const a = SITE.address;
     grid-column: 7 / -1;
     grid-row: 1 / span 2;
     aspect-ratio: 4 / 5;
-    margin-right: calc(-1 * var(--m));
   }
 
   .intro__more {
     max-width: 44ch;
   }
 
-  .intro__tall {
-    position: relative;
-    overflow: clip;
+  .intro__tall .blend__in :global(.bg-video) {
+    position: absolute;
+    inset: 0;
   }
 
   .intro__small {
@@ -862,9 +877,43 @@ const a = SITE.address;
     align-self: end;
   }
 
-  .intro__small img {
+  .intro__small .blend__in img {
     aspect-ratio: 9 / 10;
-    filter: grayscale(1);
+  }
+
+  .intro__small figcaption {
+    margin-top: var(--space-4);
+  }
+
+  .intro__cap {
+    display: block;
+    color: var(--heading);
+    font-weight: var(--weight-semibold);
+  }
+
+  .intro__specs {
+    display: grid;
+    gap: var(--space-1);
+    margin-top: var(--space-2);
+    padding: 0;
+    list-style: none;
+  }
+
+  .intro__specs li {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+  }
+
+  /* A small mint square marks each detail, like a stone sample */
+  .intro__specs li::before {
+    content: '';
+    flex: none;
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 2px;
+    background: var(--icon);
+    transform: translateY(-0.1em);
   }
 
   .intro__small figcaption {
@@ -1697,8 +1746,6 @@ const a = SITE.address;
     gap: var(--space-4);
     width: min(100%, 27rem);
     padding: var(--space-6);
-    border-radius: 8px;
-    background: var(--bg);
     color: var(--text);
     align-self: start;
   }
@@ -1735,11 +1782,11 @@ const a = SITE.address;
     min-height: var(--tap-target);
     padding: 0.6em 0.8em;
     border: 1.5px solid color-mix(in srgb, var(--text) 30%, transparent);
-    border-radius: 6px;
-    background: var(--bg);
+    border-radius: 10px;
+    background: rgb(0 0 0 / 0.24); /* a dark well inside the glass card */
     color: var(--text);
     font-size: var(--text-16);
-    color-scheme: light;
+    color-scheme: dark; /* dark grounds: native pickers match */
     transition: border-color 150ms ease;
   }
 
@@ -1840,5 +1887,144 @@ const a = SITE.address;
       width: 100%;
       padding: var(--space-5);
     }
+  }
+
+  /* ---------- Glass and spheres ---------- */
+  /* Glass panels sit above their section's ground */
+  .lh,
+  .intro,
+  .lay,
+  .pave,
+  .ba-section,
+  .steps,
+  .qa {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+  }
+
+  .lh__band,
+  .intro > .wrap,
+  .lay > .wrap,
+  .pave > .wrap,
+  .pave__band,
+  .ba-section > .wrap,
+  .steps > .wrap,
+  .qa > .wrap {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Panel padding: the glass needs room around its words */
+  .lh__facts.glass {
+    padding: var(--space-5) var(--space-6);
+  }
+
+  .intro__copy.glass,
+  .lay__text.glass,
+  .ba-section__copy.glass {
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .lay__text.glass {
+    max-width: none;
+  }
+
+  .pave__infos.glass,
+  .pave__drawing.glass {
+    padding: clamp(1.25rem, 2.5vw, 2rem);
+  }
+
+  .step__text.glass {
+    padding: var(--space-5);
+  }
+
+  .qa__item.glass {
+    padding-inline: var(--space-5);
+    border-radius: 18px;
+  }
+
+  .qa__list {
+    gap: var(--space-3);
+  }
+
+  /* ---------- Flagstone ground ---------- */
+  /* Natural flagstone paving behind every section below the hero: irregular
+     flat slabs with mortar joints and a rustic grain, drawn in translucent
+     light and shadow so it takes each section's fern tone. It stays still (it
+     is texture, not content) and low enough in contrast that text over it
+     keeps its AA ratios. Pictures feather into it rather than sit on it. */
+  .intro,
+  .lay,
+  .pave,
+  .curtain,
+  .ba-section,
+  .steps,
+  .qa {
+    background-image: url('../assets/land/flagstone-ground.svg');
+    background-size: 720px;
+    background-position: center top;
+  }
+
+  /* Neighbouring sections start the pattern at different offsets, so the
+     same slabs never line up across a section edge */
+  .lay--mirror,
+  .ba-section,
+  .qa {
+    background-position: 300px 200px;
+  }
+
+  /* Pictures dissolve into the flagstone ground: no border, shadow or corner.
+     Two edge fades (across and down) are intersected, so all four sides
+     feather by the same amount while the middle stays at full strength. */
+  .blend {
+    --feather: 9%;
+    display: block;
+    position: relative;
+    -webkit-mask-image:
+      linear-gradient(to right, transparent, #000 var(--feather), #000 calc(100% - var(--feather)), transparent),
+      linear-gradient(to bottom, transparent, #000 var(--feather), #000 calc(100% - var(--feather)), transparent);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(to right, transparent, #000 var(--feather), #000 calc(100% - var(--feather)), transparent),
+      linear-gradient(to bottom, transparent, #000 var(--feather), #000 calc(100% - var(--feather)), transparent);
+    mask-composite: intersect;
+  }
+
+  .blend__in {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: clip;
+  }
+
+  .blend__in > img,
+  .blend__in :global(video) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .lay__photo,
+  .step__media,
+  .qa__tall,
+  .qa__square {
+    overflow: visible;
+  }
+
+  .step__media .blend__in :global(.bg-video) {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* The comparison slider keeps its handles and labels readable: a gentler fade */
+  .ba-section__slider.blend {
+    --feather: 4%;
+  }
+
+  .ba-section__slider :global(.ba__frame) {
+    border-radius: 0;
   }
 </style>

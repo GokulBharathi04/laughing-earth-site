@@ -9,6 +9,7 @@ import { init as cursorLabel } from './cursor-label';
 import { init as video } from './video';
 import { init as reveal } from './reveal';
 import { init as marquee } from './marquee';
+import { init as glass } from './glass';
 import { ScrollTrigger } from './gsap';
 
 const fontsReady = Promise.race([
@@ -26,6 +27,7 @@ fontsReady.then(() => {
   video();
   reveal();
   marquee();
+  glass();
   document.documentElement.classList.remove('is-loading');
   ScrollTrigger.refresh();
 });

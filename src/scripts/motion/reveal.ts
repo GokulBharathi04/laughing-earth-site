@@ -116,7 +116,7 @@ function expand() {
       gsap.fromTo(
         inner,
         { scale: 1.2 },
-        { scale: 1, ease: 'none', scrollTrigger: { trigger: band, start: 'top bottom', end: 'bottom top', scrub: true } },
+        { scale: 1, ease: 'none', scrollTrigger: { trigger: band, start: 'top bottom', end: 'bottom top', scrub: 0.8 } },
       );
     }
   });

@@ -8,10 +8,14 @@
  *   ink/beige 10.7 · chocolate/beige 6.0 · cream/chocolate 8.4 · ink/peach 9.4
  *   cream/forest 7.9 · cream/teal 5.2 · ink/sage 5.9 · peach/forest 5.3
  *   peach/chocolate 5.7
+ *   Landscaping (fern + mist + mint): text/fern 12.9 · mint/fern 9.7 · fern/mint 9.7
+ *   text/mist 13.8 · leaf/mist 7.0 · jade/mist 5.3 · mist/fern 13.3
  * Tan (2.4 on beige) and sage (2.4 under cream) are never used for text.
  */
 
-/* ---------- Landscaping: muddy brown and stone ---------- */
+/* ---------- Landscaping: deep fern and mint, under glass ---------- */
+/* Dark fern grounds (never black) carry frosted-glass panels and glossy
+   mint spheres; mint is the one bright accent. */
 [data-theme='landscaping'] {
   /* Road-sign condensed display with its normal-width sibling for text */
   --font-heading: 'Barlow Condensed', 'Arial Narrow', 'Roboto Condensed', sans-serif;
@@ -19,69 +23,69 @@
   --weight-heading: 700;
   --line-height-heading: 0.92;
 
-  /* base — stone */
-  --base-bg: var(--stone);
-  --base-text: var(--ink);
-  --base-heading: var(--chocolate);
-  --base-muted: var(--ink-soft);
-  --base-link: var(--chocolate);
-  --base-btn-bg: var(--chocolate);
-  --base-btn-text: var(--stone);
-  --base-card-bg: var(--stone);
-  --base-card-text: var(--ink);
-  --base-card-heading: var(--chocolate);
-  --base-border: color-mix(in srgb, var(--chocolate) 22%, transparent);
-  --base-icon: var(--tan);
-  --base-focus: var(--chocolate);
+  /* base — deep fern, the predominant ground */
+  --base-bg: var(--fern);
+  --base-text: var(--fern-text);
+  --base-heading: var(--mint-pale);
+  --base-muted: var(--fern-muted);
+  --base-link: var(--mint);
+  --base-btn-bg: var(--mint);
+  --base-btn-text: var(--fern);
+  --base-card-bg: var(--fern-soft);
+  --base-card-text: var(--fern-text);
+  --base-card-heading: var(--mint-pale);
+  --base-border: color-mix(in srgb, var(--fern-text) 20%, transparent);
+  --base-icon: var(--mint);
+  --base-focus: var(--mint);
 
-  /* alt — weathered flag */
-  --alt-bg: var(--flag);
-  --alt-text: var(--ink);
-  --alt-heading: var(--chocolate);
-  --alt-muted: var(--ink-soft);
-  --alt-link: var(--chocolate);
-  --alt-btn-bg: var(--chocolate);
-  --alt-btn-text: var(--stone);
-  --alt-card-bg: var(--stone);
-  --alt-card-text: var(--ink);
-  --alt-card-heading: var(--chocolate);
-  --alt-border: color-mix(in srgb, var(--chocolate) 20%, transparent);
-  --alt-icon: var(--tan);
-  --alt-focus: var(--chocolate);
+  /* alt — raised fern: still dark, so the glass panels read */
+  --alt-bg: var(--fern-raised);
+  --alt-text: var(--fern-text);
+  --alt-heading: var(--mint-pale);
+  --alt-muted: var(--fern-muted);
+  --alt-link: var(--mint);
+  --alt-btn-bg: var(--mint);
+  --alt-btn-text: var(--fern);
+  --alt-card-bg: var(--fern-soft);
+  --alt-card-text: var(--fern-text);
+  --alt-card-heading: var(--mint-pale);
+  --alt-border: color-mix(in srgb, var(--fern-text) 20%, transparent);
+  --alt-icon: var(--mint);
+  --alt-focus: var(--mint);
 
-  /* deep — chocolate brown (hero bands, CTA bands, footer) */
-  --deep-bg: var(--chocolate);
-  --deep-text: var(--stone);
-  --deep-heading: var(--stone);
-  --deep-muted: color-mix(in srgb, var(--stone) 86%, var(--chocolate));
-  --deep-link: var(--peach);
-  --deep-btn-bg: var(--peach);
-  --deep-btn-text: var(--ink);
-  --deep-card-bg: var(--chocolate-soft);
-  --deep-card-text: var(--stone);
-  --deep-card-heading: var(--stone);
-  --deep-border: color-mix(in srgb, var(--stone) 20%, transparent);
-  --deep-icon: var(--peach);
-  --deep-focus: var(--peach);
+  /* deep — darkest fern (hero band, footer) */
+  --deep-bg: var(--fern-deep);
+  --deep-text: var(--fern-text);
+  --deep-heading: var(--mint-pale);
+  --deep-muted: var(--fern-muted);
+  --deep-link: var(--mint);
+  --deep-btn-bg: var(--mint);
+  --deep-btn-text: var(--fern);
+  --deep-card-bg: var(--fern);
+  --deep-card-text: var(--fern-text);
+  --deep-card-heading: var(--mint-pale);
+  --deep-border: color-mix(in srgb, var(--fern-text) 18%, transparent);
+  --deep-icon: var(--mint);
+  --deep-focus: var(--mint);
 
   /* chrome */
-  --header-bg: var(--stone);
-  --header-text: var(--ink);
-  --header-border: color-mix(in srgb, var(--chocolate) 16%, transparent);
-  --switch-track: var(--flag);
-  --switch-text: var(--ink);
-  --switch-active-bg: var(--chocolate);
-  --switch-active-text: var(--stone);
-  --wa-bg: var(--chocolate);
-  --wa-icon: var(--stone);
-  --wa-ring: var(--stone);
+  --header-bg: var(--fern);
+  --header-text: var(--fern-text);
+  --header-border: color-mix(in srgb, var(--fern-text) 14%, transparent);
+  --switch-track: var(--fern-soft);
+  --switch-text: var(--fern-text);
+  --switch-active-bg: var(--mint);
+  --switch-active-text: var(--fern);
+  --wa-bg: var(--mint);
+  --wa-icon: var(--fern);
+  --wa-ring: var(--fern);
 
-  /* decorative leaves: dried tan and brown, sage only as a small accent */
-  --leaf-1: var(--tan);
-  --leaf-2: var(--chocolate-soft);
-  --leaf-3: color-mix(in srgb, var(--tan) 55%, var(--beige));
-  --leaf-accent: var(--sage);
-  --leaf-vein: color-mix(in srgb, var(--stone) 55%, transparent);
+  /* decorative leaves: fern greens with a mint accent */
+  --leaf-1: var(--jade);
+  --leaf-2: var(--fern-soft);
+  --leaf-3: color-mix(in srgb, var(--jade) 55%, var(--mist));
+  --leaf-accent: var(--mint);
+  --leaf-vein: color-mix(in srgb, var(--mist) 45%, transparent);
 }
 
 /* ---------- Return Gifts: green ---------- */

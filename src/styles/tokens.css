@@ -20,6 +20,35 @@
   --stone: #e3ddd3;
   --flag: #d2c9bb;
 
+  /* Landscaping palette (client swatch, Oct 2026): greys lead, lime accents */
+  --charcoal: #44403f;
+  --slate: #5f5b50;
+  --lime: #d7d365;
+  --lime-pale: #e6ef82;
+  --charcoal-deep: color-mix(in srgb, var(--charcoal) 78%, var(--ink));
+
+  /* Landscaping palette, current: green-tinted blacks with sage */
+  --black: #161816;
+  --black-soft: #232723;
+  --black-deep: #0e100e;
+  --sage-pale: #c2d6b2;
+
+  /* Landscaping palette, current: deep fern with mist and mint (fresh, dark-leaning).
+     Accents checked with the dataviz validator (CVD-distinct); text pairs >= 5.3:1 */
+  --fern: #14281f;
+  --fern-deep: #0e1d17;
+  --fern-soft: #1f3a2d;
+  --fern-raised: #1a3328;
+  --mist: #e7f0ea;
+  --mint: #8fdcb4;
+  --mint-pale: #c4ead4;
+  --jade: #1d6e4c;
+  --leaf-ink: #1d5a40;
+  --fern-text: #e4ece6;
+  --fern-muted: #a9bbb0;
+  --mist-ink: #16241d;
+  --mist-muted: #3f5a4c;
+
   /* Derived shades (mixed only from palette colours) */
   --forest-deep: color-mix(in srgb, var(--forest) 78%, var(--ink));
   --chocolate-deep: color-mix(in srgb, var(--chocolate) 80%, var(--ink));

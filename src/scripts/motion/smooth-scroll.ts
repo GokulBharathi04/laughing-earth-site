@@ -9,7 +9,8 @@ export function init() {
   const mm = gsap.matchMedia();
 
   mm.add(`${CONDITIONS.pointer} and (prefers-reduced-motion: no-preference)`, () => {
-    const lenis = new Lenis({ lerp: 0.12, anchors: { offset: -96 } });
+    // A lower lerp glides further after each wheel tick: fluid, never floaty.
+    const lenis = new Lenis({ lerp: 0.08, wheelMultiplier: 0.9, anchors: { offset: -96 } });
     const raf = (time: number) => lenis.raf(time * 1000);
 
     // Modal dialogs pause smoothing so the page behind them stays put.
