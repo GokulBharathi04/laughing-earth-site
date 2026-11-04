@@ -4,16 +4,19 @@ import Card from './Card.astro';
 import Button from './Button.astro';
 import { whatsappLink } from '../config/site';
 
-// One catalogue item: photo, name, price with MRP struck through, and a
-// WhatsApp quote link naming the product. The <li> carries data-category for
-// the client-side filter.
+// One catalogue item: photo, name, price (a "from" price, an MRP struck
+// through, or "price on request"), the minimum order, and a WhatsApp quote link
+// naming the product. The <li> carries data-category for the client-side filter.
 interface Props {
   product: {
     name: string;
     slug: string;
     category: string;
-    price: number;
-    mrp: number;
+    price: number | null;
+    priceFrom?: boolean;
+    mrp?: number;
+    moq?: number;
+    moqNote?: string;
     image: string;
     description: string;
   };
@@ -22,7 +25,8 @@ interface Props {
 
 const { product: p, categoryName } = Astro.props;
 const rupees = (n: number) => `₹${n.toLocaleString('en-IN')}`;
-const message = `Hi Laughing Earth! I'd like a quote for "${p.name}" (${rupees(p.price)} each). Quantity: ___ Event date: ___`;
+const priceText = p.price == null ? '' : ` (${p.priceFrom ? 'from ' : ''}${rupees(p.price)} each)`;
+const message = `Hi Laughing Earth! I'd like a quote for "${p.name}"${priceText}. Quantity: ___ Event date: ___`;
 ---
 
 <li class="product" data-category={p.category}>
@@ -43,17 +47,27 @@ const message = `Hi Laughing Earth! I'd like a quote for "${p.name}" (${rupees(p
     <h3 class="product__name">{p.name}</h3>
     <p class="product__description">{p.description}</p>
     <p class="product__price">
-      <span class="product__now"><span class="sr-only">Price: </span>{rupees(p.price)}</span>
       {
-        p.mrp > p.price && (
+        p.price == null ? (
+          <span class="product__ask">Price on request</span>
+        ) : (
+          <>
+            {p.priceFrom && <span class="product__unit">from</span>}
+            <span class="product__now"><span class="sr-only">Price: </span>{rupees(p.price)}</span>
+          </>
+        )
+      }
+      {
+        p.price != null && p.mrp != null && p.mrp > p.price && (
           <s class="product__mrp">
             <span class="sr-only">MRP: </span>
             {rupees(p.mrp)}
           </s>
         )
       }
-      <span class="product__unit">each</span>
+      {p.price != null && <span class="product__unit">each</span>}
     </p>
+    {p.moq && <p class="product__moq">Minimum order {p.moq.toLocaleString('en-IN')}{p.moqNote ? ` ${p.moqNote}` : ''}</p>}
     <Button
       href={whatsappLink(message)}
       icon="whatsapp"
@@ -120,8 +134,16 @@ const message = `Hi Laughing Earth! I'd like a quote for "${p.name}" (${rupees(p
     color: var(--card-heading);
   }
 
+  .product__ask {
+    font-family: var(--font-heading);
+    font-size: var(--text-18);
+    font-weight: var(--weight-heading);
+    color: var(--card-heading);
+  }
+
   .product__mrp,
-  .product__unit {
+  .product__unit,
+  .product__moq {
     font-size: var(--text-16);
     color: color-mix(in srgb, var(--card-text) 80%, var(--card-bg));
   }

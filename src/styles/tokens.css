@@ -49,6 +49,21 @@
   --mist-ink: #16241d;
   --mist-muted: #3f5a4c;
 
+  /* Landscaping palette, current (client reference, Nov 2026): deep plum / aubergine
+     with a pistachio accent. Plum values sampled from the client's sample screenshot;
+     pistachio replaces its marigold (complement of plum, echoes the lawns in the photos).
+     Contrast: text/plum 12.1 · muted/plum 7.0 · pistachio/plum 9.5 · pistachio/card 8.1
+     · plum-deep on pistachio 11.8 */
+  --plum: #322336;
+  --plum-deep: #200e24;
+  --plum-raised: #3a2840;
+  --plum-soft: #412d46;
+  --plum-text: #ece7f1;
+  --plum-heading: #f4f0f8;
+  --plum-muted: #bcaec4;
+  --pistachio: #b9dc7f;
+  --pistachio-pale: #dcefc0;
+
   /* Derived shades (mixed only from palette colours) */
   --forest-deep: color-mix(in srgb, var(--forest) 78%, var(--ink));
   --chocolate-deep: color-mix(in srgb, var(--chocolate) 80%, var(--ink));

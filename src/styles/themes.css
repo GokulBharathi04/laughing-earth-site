@@ -13,7 +13,7 @@
  * Tan (2.4 on beige) and sage (2.4 under cream) are never used for text.
  */
 
-/* ---------- Landscaping: deep fern and mint, under glass ---------- */
+/* ---------- Landscaping: deep plum with a pistachio accent, under glass ---------- */
 /* Dark fern grounds (never black) carry frosted-glass panels and glossy
    mint spheres; mint is the one bright accent. */
 [data-theme='landscaping'] {
@@ -24,68 +24,96 @@
   --line-height-heading: 0.92;
 
   /* base — deep fern, the predominant ground */
-  --base-bg: var(--fern);
-  --base-text: var(--fern-text);
-  --base-heading: var(--mint-pale);
-  --base-muted: var(--fern-muted);
-  --base-link: var(--mint);
-  --base-btn-bg: var(--mint);
-  --base-btn-text: var(--fern);
-  --base-card-bg: var(--fern-soft);
-  --base-card-text: var(--fern-text);
-  --base-card-heading: var(--mint-pale);
-  --base-border: color-mix(in srgb, var(--fern-text) 20%, transparent);
-  --base-icon: var(--mint);
-  --base-focus: var(--mint);
+  --base-bg: var(--plum);
+  --base-text: var(--plum-text);
+  --base-heading: var(--plum-heading);
+  --base-muted: var(--plum-muted);
+  --base-link: var(--pistachio);
+  --base-btn-bg: var(--pistachio);
+  --base-btn-text: var(--plum);
+  --base-card-bg: var(--plum-soft);
+  --base-card-text: var(--plum-text);
+  --base-card-heading: var(--plum-heading);
+  --base-border: color-mix(in srgb, var(--plum-text) 20%, transparent);
+  --base-icon: var(--pistachio);
+  --base-focus: var(--pistachio);
 
   /* alt — raised fern: still dark, so the glass panels read */
-  --alt-bg: var(--fern-raised);
-  --alt-text: var(--fern-text);
-  --alt-heading: var(--mint-pale);
-  --alt-muted: var(--fern-muted);
-  --alt-link: var(--mint);
-  --alt-btn-bg: var(--mint);
-  --alt-btn-text: var(--fern);
-  --alt-card-bg: var(--fern-soft);
-  --alt-card-text: var(--fern-text);
-  --alt-card-heading: var(--mint-pale);
-  --alt-border: color-mix(in srgb, var(--fern-text) 20%, transparent);
-  --alt-icon: var(--mint);
-  --alt-focus: var(--mint);
+  --alt-bg: var(--plum-raised);
+  --alt-text: var(--plum-text);
+  --alt-heading: var(--plum-heading);
+  --alt-muted: var(--plum-muted);
+  --alt-link: var(--pistachio);
+  --alt-btn-bg: var(--pistachio);
+  --alt-btn-text: var(--plum);
+  --alt-card-bg: var(--plum-soft);
+  --alt-card-text: var(--plum-text);
+  --alt-card-heading: var(--plum-heading);
+  --alt-border: color-mix(in srgb, var(--plum-text) 20%, transparent);
+  --alt-icon: var(--pistachio);
+  --alt-focus: var(--pistachio);
 
   /* deep — darkest fern (hero band, footer) */
-  --deep-bg: var(--fern-deep);
-  --deep-text: var(--fern-text);
-  --deep-heading: var(--mint-pale);
-  --deep-muted: var(--fern-muted);
-  --deep-link: var(--mint);
-  --deep-btn-bg: var(--mint);
-  --deep-btn-text: var(--fern);
-  --deep-card-bg: var(--fern);
-  --deep-card-text: var(--fern-text);
-  --deep-card-heading: var(--mint-pale);
-  --deep-border: color-mix(in srgb, var(--fern-text) 18%, transparent);
-  --deep-icon: var(--mint);
-  --deep-focus: var(--mint);
+  --deep-bg: var(--plum-deep);
+  --deep-text: var(--plum-text);
+  --deep-heading: var(--plum-heading);
+  --deep-muted: var(--plum-muted);
+  --deep-link: var(--pistachio);
+  --deep-btn-bg: var(--pistachio);
+  --deep-btn-text: var(--plum);
+  --deep-card-bg: var(--plum);
+  --deep-card-text: var(--plum-text);
+  --deep-card-heading: var(--plum-heading);
+  --deep-border: color-mix(in srgb, var(--plum-text) 18%, transparent);
+  --deep-icon: var(--pistachio);
+  --deep-focus: var(--pistachio);
 
   /* chrome */
-  --header-bg: var(--fern);
-  --header-text: var(--fern-text);
-  --header-border: color-mix(in srgb, var(--fern-text) 14%, transparent);
-  --switch-track: var(--fern-soft);
-  --switch-text: var(--fern-text);
-  --switch-active-bg: var(--mint);
-  --switch-active-text: var(--fern);
-  --wa-bg: var(--mint);
-  --wa-icon: var(--fern);
-  --wa-ring: var(--fern);
+  --header-bg: var(--plum);
+  --header-text: var(--plum-text);
+  --header-border: color-mix(in srgb, var(--plum-text) 14%, transparent);
+  --switch-track: var(--plum-soft);
+  --switch-text: var(--plum-text);
+  --switch-active-bg: var(--pistachio);
+  --switch-active-text: var(--plum);
+  --wa-bg: var(--pistachio);
+  --wa-icon: var(--plum);
+  --wa-ring: var(--plum);
 
   /* decorative leaves: fern greens with a mint accent */
   --leaf-1: var(--jade);
-  --leaf-2: var(--fern-soft);
+  --leaf-2: var(--plum-soft);
   --leaf-3: color-mix(in srgb, var(--jade) 55%, var(--mist));
-  --leaf-accent: var(--mint);
+  --leaf-accent: var(--pistachio);
   --leaf-vein: color-mix(in srgb, var(--mist) 45%, transparent);
+}
+
+/* shadcn/ui token layer for Landscaping (the "template base"): the same
+   semantic names shadcn components use, mapped onto this theme's tones, plus
+   shadcn's radius scale derived from one --radius. New Landscaping blocks read
+   only these names, so a palette change is one edit here. */
+[data-theme='landscaping'] {
+  --radius: 1rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+}
+
+[data-theme='landscaping'],
+[data-theme='landscaping'] [data-tone] {
+  --background: var(--bg);
+  --foreground: var(--text);
+  --card: rgb(32 14 36 / 0.8);
+  --card-foreground: var(--text);
+  --primary: var(--btn-bg);
+  --primary-foreground: var(--btn-text);
+  --muted-foreground: var(--muted);
+  --accent: rgb(185 220 127 / 0.1);
+  --border: rgb(255 255 255 / 0.12);
+  --input: rgb(255 255 255 / 0.2);
+  --ring: var(--focus);
 }
 
 /* ---------- Return Gifts: green ---------- */

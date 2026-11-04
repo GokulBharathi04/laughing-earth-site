@@ -12,8 +12,6 @@ interface Props {
   theme: Theme;
   /** Pre-filled message for the floating WhatsApp button */
   whatsappMessage?: string;
-  /** Home renders its own full-screen chooser instead of the sticky header */
-  showHeader?: boolean;
 }
 
 const {
@@ -21,7 +19,6 @@ const {
   description,
   theme,
   whatsappMessage = WHATSAPP_MESSAGES[theme === 'gifts' ? 'gifts' : 'landscaping'],
-  showHeader = true,
 } = Astro.props;
 
 const pageTitle = title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
@@ -36,14 +33,16 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
-    <meta name="theme-color" content={theme === 'gifts' ? '#1F4D45' : '#14281F'} />
+    <link rel="icon" href={withBase('/favicon-32.png')} type="image/png" sizes="32x32" />
+    <link rel="icon" href={withBase('/favicon-48.png')} type="image/png" sizes="48x48" />
+    <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
+    <meta name="theme-color" content={theme === 'gifts' ? '#1F4D45' : '#200E24'} />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&family=Barlow+Condensed:wght@700&family=Barlow:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&family=Barlow+Condensed:wght@700&family=Barlow:wght@400;500;600&family=Fredoka:wght@700&display=swap"
     />
 
     <script is:inline>
@@ -58,7 +57,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   </head>
   <body data-theme={theme}>
     <a class="skip-link" href="#main">Skip to content</a>
-    {showHeader && <Header />}
+    <Header />
     <main id="main">
       <slot />
     </main>

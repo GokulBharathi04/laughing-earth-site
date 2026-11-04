@@ -1,9 +1,8 @@
 ---
-import { withBase } from '../lib/url';
 import Section from './Section.astro';
 import Button from './Button.astro';
 import Leaves from './Leaves.astro';
-import { whatsappLink } from '../config/site';
+import { NAV, whatsappLink } from '../config/site';
 
 // Temporary page body for routes that are built in later phases.
 interface Props {
@@ -27,7 +26,7 @@ const { eyebrow, title, lead, phase, whatsappMessage } = Astro.props;
       <Button href={whatsappLink(whatsappMessage)} icon="whatsapp" iconPosition="start" external data-event="whatsapp_click">
         Chat on WhatsApp
       </Button>
-      <Button href={withBase('/')} variant="outline">Back to home</Button>
+      <Button href={NAV.landscaping.href} variant="outline">Back to the site</Button>
     </div>
   </div>
 </Section>

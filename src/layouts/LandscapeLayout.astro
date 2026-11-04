@@ -1,0 +1,127 @@
+---
+// Chapter layout for the Landscaping side only: one-screen chapters, smoothed
+// scrolling and stepped navigation. It stands apart from BaseLayout, global.css
+// and the shared motion layer, so nothing here can reach the Return Gifts side.
+import { withBase } from '../lib/url';
+import '../styles/landscape.css';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+import mark from '../assets/brand/logo-mark.webp';
+import { NAV, SITE, WHATSAPP_MESSAGES } from '../config/site';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const pageTitle = title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+
+const chapterLinks = [
+  { href: '#services', label: 'Services' },
+  { href: '#stonework', label: 'Paving' },
+  { href: '#process', label: 'Process' },
+  { href: '#clients', label: 'Clients' },
+  { href: '#questions', label: 'Questions' },
+];
+const pageLinks = [NAV.about, NAV.contact];
+---
+
+<!doctype html>
+<html lang="en-IN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={withBase('/favicon-32.png')} type="image/png" sizes="32x32" />
+    <link rel="icon" href={withBase('/favicon-48.png')} type="image/png" sizes="48x48" />
+    <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
+    <meta name="theme-color" content="#15140E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&display=swap"
+    />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      // Arriving from the logo film: the curtain lifts without a second logo.
+      try {
+        if (sessionStorage.getItem('le-from-film')) {
+          sessionStorage.removeItem('le-from-film');
+          document.documentElement.classList.add('from-film');
+        }
+      } catch (e) {
+        /* storage blocked: the normal curtain plays */
+      }
+    </script>
+  </head>
+  <body class="land" data-theme="landscaping">
+    <a class="skip-link" href="#visit">Skip to the enquiry form</a>
+
+    <div class="preloader" data-preloader aria-hidden="true">
+      <div class="pl-panels"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="pl-logo"><img src={mark.src} alt="" /><div class="pl-pct" data-pct>0</div></div>
+    </div>
+
+    <header class="site-head" data-header>
+      <div class="head-start">
+        <a class="wordmark" href="#top" aria-label="Laughing Earth: back to the top">
+          <img src={mark.src} width="48" height="48" alt="" /><span>{SITE.name}</span>
+        </a>
+        <nav class="desktop-nav" aria-label="Page sections">
+          {chapterLinks.map((l) => <a href={l.href}>{l.label}</a>)}
+        </nav>
+      </div>
+      <nav class="switch" aria-label="Choose a business">
+        <a href={NAV.landscaping.href} aria-current="page">{NAV.landscaping.label}</a>
+        <a href={NAV.gifts.href}>{NAV.gifts.label}</a>
+      </nav>
+      <div class="head-end">
+        <a class="mbtn" href="#visit">
+          <span class="mbtn-circle"></span><span class="mbtn-dot"></span><span class="mbtn-text">Plan my garden</span>
+        </a>
+      </div>
+    </header>
+    <button class="menu-button" type="button" aria-label="Open navigation" aria-expanded="false" data-menu-button>
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="mobile-menu" data-menu>
+      <div class="mm-panels" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="mm-inner">
+        <nav class="switch switch--menu" aria-label="Choose a business, menu">
+          <a href={NAV.landscaping.href} aria-current="page">{NAV.landscaping.label}</a>
+          <a href={NAV.gifts.href}>{NAV.gifts.label}</a>
+        </nav>
+        <nav class="mm-nav" aria-label="Page sections, menu">
+          {
+            [...chapterLinks, { href: '#visit', label: 'Book a site visit' }].map((l, i) => (
+              <a href={l.href}><span><em>{String(i + 1).padStart(2, '0')}</em>{l.label}</span></a>
+            ))
+          }
+        </nav>
+        <nav class="mm-pages" aria-label="Other pages">
+          {pageLinks.map((l) => <a href={l.href}>{l.label}</a>)}
+        </nav>
+      </div>
+    </div>
+
+    <div id="smooth-wrapper">
+      <div id="smooth-content">
+        <main id="top">
+          <slot />
+        </main>
+      </div>
+    </div>
+
+    <WhatsAppButton message={WHATSAPP_MESSAGES.landscaping} />
+
+    <script>
+      import { init } from '../scripts/landscaping/chapters';
+      init();
+    </script>
+  </body>
+</html>

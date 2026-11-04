@@ -9,7 +9,10 @@
 // the edges are then roughened a little so the stones look hand-laid. Colour is
 // translucent light and shadow only, so the same tile sits on every fern tone.
 //
-// Run with `node scripts/flagstones.mjs` after changing a setting below.
+// Run with `node scripts/flagstones.mjs` after changing a setting below, then
+// flatten the SVG onto --plum at 1080 x 1080 and export it to
+// src/assets/land/flagstone-ground.webp: the page uses that image, because
+// live SVG filters make scrolling lag.
 import { writeFileSync } from 'node:fs';
 
 const SIZE = 720; // tile size in px
@@ -131,7 +134,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${SIZE}" height="${S
 <mask id="stones"><g fill="#fff">${slabs.map((s) => `<path d="${s.d}"/>`).join('')}</g></mask>
 </defs>
 <rect width="${SIZE}" height="${SIZE}" fill="#000" fill-opacity="0.13"/>
-${slabs.map((s) => `<path d="${s.d}" fill="#d9eadf" fill-opacity="${s.tone.toFixed(3)}" stroke="#fff" stroke-opacity="0.035" stroke-width="1"/>`).join('')}
+${slabs.map((s) => `<path d="${s.d}" fill="#ece0f2" fill-opacity="${s.tone.toFixed(3)}" stroke="#fff" stroke-opacity="0.035" stroke-width="1"/>`).join('')}
 <rect width="${SIZE}" height="${SIZE}" filter="url(#grain)" mask="url(#stones)"/>
 </svg>`;
 

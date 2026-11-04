@@ -1,10 +1,15 @@
 {
-  "_note": "Prices from BRIEF.md (current site, October 2026). Descriptions are drafts for client review. image is the path without size suffix or extension: <image>.webp (800px) and <image>-400.webp.",
+  "_note": "Prices and minimum orders from the Laughing Earth WhatsApp catalogue (October 2026); thamboolam bags and the seed-paper card from BRIEF.md. price null = price on request; priceFrom = \"from\" price; moq = minimum order quantity. image is the path without size suffix or extension: <image>.webp (800px) and <image>-400.webp.",
   "categories": [
+    {
+      "slug": "plants",
+      "name": "Saplings & plants",
+      "blurb": "Flowering saplings, succulents, indoor plants and lucky bamboo, wrapped and ready to gift."
+    },
     {
       "slug": "seeded-return-gifts",
       "name": "Seeded return gifts",
-      "blurb": "Saplings and seeded keepsakes your guests can plant at home."
+      "blurb": "Seed balls, seed pens and grow kits your guests can plant at home."
     },
     {
       "slug": "seed-paper-invitations",
@@ -15,58 +20,117 @@
       "slug": "thamboolam-bags",
       "name": "Thamboolam bags",
       "blurb": "Eco-friendly bags, customised with names and dates."
-    },
-    {
-      "slug": "plants",
-      "name": "Plants in jute & ceramic",
-      "blurb": "Succulents and jade, wrapped in jute and ready to gift."
     }
   ],
   "products": [
     {
-      "name": "Succulent in ceramic pot wrapped with jute",
-      "slug": "succulent-ceramic-pot-jute",
+      "name": "Little Smiles",
+      "slug": "little-smiles",
       "category": "plants",
-      "price": 150,
-      "mrp": 170,
-      "image": "/images/product-succulent-ceramic-pot-jute",
-      "description": "A hardy succulent in a ceramic pot with a hand-tied jute wrap."
-    },
-    {
-      "name": "Succulent in plastic pot wrapped with jute",
-      "slug": "succulent-plastic-pot-jute",
-      "category": "plants",
-      "price": 99,
-      "mrp": 120,
-      "image": "/images/product-succulent-plastic-pot-jute",
-      "description": "Our lightest succulent gift: easy to carry home, easy to care for."
-    },
-    {
-      "name": "Jade wrapped with jute",
-      "slug": "jade-plant-jute",
-      "category": "plants",
-      "price": 85,
-      "mrp": 95,
-      "image": "/images/product-jade-plant-jute",
-      "description": "A jade plant, often given for good luck, in a simple jute wrap."
-    },
-    {
-      "name": "Sapling with paper bag and thank-you card",
-      "slug": "sapling-paper-bag-thank-you-card",
-      "category": "seeded-return-gifts",
       "price": 35,
-      "mrp": 40,
-      "image": "/images/product-sapling-paper-bag-thank-you-card",
-      "description": "A young sapling in a paper bag with a thank-you card for your guests."
+      "image": "/images/product-little-smiles",
+      "description": "Flowering saplings in eco-friendly paper bags, each with a card personalised for your event.",
+      "moq": 25
     },
     {
-      "name": "Sapling with eco-friendly customised bag",
-      "slug": "sapling-eco-customised-bag",
-      "category": "thamboolam-bags",
+      "name": "Elite Packing",
+      "slug": "elite-packing",
+      "category": "plants",
+      "price": 50,
+      "image": "/images/product-elite-packing",
+      "description": "Premium flowering saplings in elegant gift packaging, with a customised card.",
+      "moq": 25
+    },
+    {
+      "name": "The Green Hug",
+      "slug": "green-hug",
+      "category": "plants",
       "price": 55,
-      "mrp": 60,
-      "image": "/images/product-sapling-eco-customised-bag",
-      "description": "A sapling in an eco-friendly bag printed with your names or event."
+      "image": "/images/product-green-hug",
+      "description": "A flowering sapling in a bag made from recycled plastic bottles. A gift for a greener tomorrow.",
+      "moq": 25
+    },
+    {
+      "name": "Bamboo Bliss",
+      "slug": "bamboo-bliss",
+      "category": "plants",
+      "price": 100,
+      "image": "/images/product-bamboo-bliss",
+      "description": "A gift box with three lucky bamboo shoots, a glass container, decorative pebbles and a customised thank-you card.",
+      "moq": 25
+    },
+    {
+      "name": "The Minis",
+      "slug": "the-minis",
+      "category": "plants",
+      "price": 100,
+      "image": "/images/product-the-minis",
+      "description": "Succulents in your choice of plastic or ceramic pot, wrapped in rustic jute, with a customised thank-you card.",
+      "priceFrom": true,
+      "moq": 25
+    },
+    {
+      "name": "Indoor Greenies",
+      "slug": "indoor-greenies",
+      "category": "plants",
+      "price": 80,
+      "image": "/images/product-indoor-greenies",
+      "description": "Jade, Syngonium, Money Plant, Pothos and more, in plastic or ceramic pots with a jute wrap or a jute bag.",
+      "priceFrom": true
+    },
+    {
+      "name": "Butterfly Box",
+      "slug": "butterfly-box",
+      "category": "seeded-return-gifts",
+      "price": 30,
+      "image": "/images/product-butterfly-box",
+      "description": "A butterfly-shaped box holding three seed balls. Pick the seeds your guests will grow.",
+      "moq": 100
+    },
+    {
+      "name": "Cotton Potli",
+      "slug": "cotton-potli",
+      "category": "seeded-return-gifts",
+      "price": 40,
+      "image": "/images/product-cotton-potli",
+      "description": "A cotton potli filled with four seed balls of your choice.",
+      "moq": 50
+    },
+    {
+      "name": "Jute Potli",
+      "slug": "jute-potli",
+      "category": "seeded-return-gifts",
+      "price": 55,
+      "image": "/images/product-jute-potli",
+      "description": "A rustic jute potli with four seed balls of your choice.",
+      "moq": 50
+    },
+    {
+      "name": "Single Seed Ball Pack",
+      "slug": "single-seed-ball",
+      "category": "seeded-return-gifts",
+      "price": 8,
+      "image": "/images/product-single-seed-ball",
+      "description": "A single seed ball: plant it and let nature surprise you.",
+      "moq": 1000,
+      "moqNote": "to customise"
+    },
+    {
+      "name": "Seed Pens & Pencils",
+      "slug": "seed-pens-pencils",
+      "category": "seeded-return-gifts",
+      "price": 20,
+      "image": "/images/product-seed-pens-pencils",
+      "description": "Pens and pencils with seeds in the end, to plant once they are used up.",
+      "moq": 100
+    },
+    {
+      "name": "DIY Grow Kit",
+      "slug": "diy-grow-kit",
+      "category": "seeded-return-gifts",
+      "price": null,
+      "image": "/images/product-diy-grow-kit",
+      "description": "A coco peat pot, two coco coir coins, two seed balls, fertiliser, a thank-you card and easy growing instructions."
     },
     {
       "name": "Customisable thamboolam bag 8.8×6×3",
@@ -74,7 +138,7 @@
       "category": "thamboolam-bags",
       "price": 35,
       "mrp": 40,
-      "image": "/images/product-thamboolam-bag-8-8x6x3",
+      "image": "/images/product-thamboolam-bags",
       "description": "Our smallest thamboolam bag, for betel, fruit and a small gift."
     },
     {
@@ -83,7 +147,7 @@
       "category": "thamboolam-bags",
       "price": 40,
       "mrp": 45,
-      "image": "/images/product-thamboolam-bag-8-8x10-5x3",
+      "image": "/images/product-thamboolam-bags",
       "description": "A taller thamboolam bag with room for a coconut and sweets."
     },
     {
@@ -92,7 +156,7 @@
       "category": "thamboolam-bags",
       "price": 50,
       "mrp": 55,
-      "image": "/images/product-thamboolam-bag-10-5x12x4",
+      "image": "/images/product-thamboolam-bags",
       "description": "A roomy thamboolam bag for fuller return gift sets."
     },
     {
@@ -101,7 +165,7 @@
       "category": "thamboolam-bags",
       "price": 60,
       "mrp": 65,
-      "image": "/images/product-thamboolam-bag-12x14x4",
+      "image": "/images/product-thamboolam-bags",
       "description": "Our largest thamboolam bag, for a sapling plus traditional items."
     },
     {

@@ -6,28 +6,31 @@ WebP (quality 75–80); AVIF variants can be added in Phase 4.
 
 | File | Where it's used | What it should show | Ideal size |
 | --- | --- | --- | --- |
-| `home-split-landscaping-garden.webp` | Home: left (Landscaping) half. Arch-shaped photo on desktop, soft tinted backdrop on mobile | A wide, sunlit garden designed by Laughing Earth: lawn, planted borders, warm light. Keep the main subject centred, because the arch crops the sides | 1600 × 2000 px (4:5 portrait), under 250 KB |
-| `home-split-landscaping-garden-800.webp` | Same, small-screen version | Same photo, resized | 800 × 1000 px, under 90 KB |
-| `home-split-return-gifts-products.webp` | Home: right (Return Gifts) half | Return gifts on a natural surface (jute, wood, leaves): potted succulents, sapling with thank-you card, thamboolam bag. Warm light, centred | 1600 × 2000 px (4:5 portrait), under 250 KB |
-| `home-split-return-gifts-products-800.webp` | Same, small-screen version | Same photo, resized | 800 × 1000 px, under 90 KB |
 
 ### Return Gifts page (Phase 2)
 
-All are illustrated stand-ins labelled "Placeholder", generated to match the palette.
-Each has a full-size file plus a smaller variant (`-400` for products, `-600` for the rest).
+Product photos (`-400` small variant beside each 800 × 800 px file). Rows marked
+**Own photo** are Laughing Earth's own pictures (from `Sample Images` in the v3 folder),
+cropped square and lightly enhanced. The rest are **stand-ins from Wikimedia Commons**,
+credited in the Return Gifts footer (`data/gifts-credits.json`); replace each with a
+photo of the real gift, 800 × 800 px square, under 90 KB, same file name.
 
-| File | Where it's used | What it should show | Ideal size |
-| --- | --- | --- | --- |
-| `product-succulent-ceramic-pot-jute.webp` (+ `-400`) | Catalogue card | Succulent in ceramic pot with jute wrap | 800 × 800 px square, under 90 KB |
-| `product-succulent-plastic-pot-jute.webp` (+ `-400`) | Catalogue card | Succulent in plastic pot with jute wrap | 800 × 800 px |
-| `product-jade-plant-jute.webp` (+ `-400`) | Catalogue card | Jade plant with jute wrap | 800 × 800 px |
-| `product-sapling-paper-bag-thank-you-card.webp` (+ `-400`) | Catalogue card | Sapling in paper bag with the thank-you card visible | 800 × 800 px |
-| `product-sapling-eco-customised-bag.webp` (+ `-400`) | Catalogue card | Sapling in a customised eco bag, print visible | 800 × 800 px |
-| `product-thamboolam-bag-8-8x6x3.webp` (+ `-400`) | Catalogue card | Thamboolam bag 8.8×6×3, front-on | 800 × 800 px |
-| `product-thamboolam-bag-8-8x10-5x3.webp` (+ `-400`) | Catalogue card | Thamboolam bag 8.8×10.5×3 | 800 × 800 px |
-| `product-thamboolam-bag-10-5x12x4.webp` (+ `-400`) | Catalogue card | Thamboolam bag 10.5×12×4 | 800 × 800 px |
-| `product-thamboolam-bag-12x14x4.webp` (+ `-400`) | Catalogue card | Thamboolam bag 12×14×4 | 800 × 800 px |
-| `product-aesthetic-seed-paper-wedding-card.webp` (+ `-400`) | Catalogue card | Seed-paper wedding card, seeds visible in the paper | 800 × 800 px |
+| File | Product | Real photo needed |
+| --- | --- | --- |
+| `product-little-smiles.webp` | Little Smiles | **Own photo**: Little Smiles.jpeg |
+| `product-elite-packing.webp` | Elite Packing | Flowering sapling in the elite gift packaging |
+| `product-green-hug.webp` | The Green Hug | Flowering sapling in the recycled-bottle bag |
+| `product-bamboo-bliss.webp` | Bamboo Bliss | The gift box: three bamboo shoots, glass container, pebbles, card |
+| `product-the-minis.webp` | The Minis | **Own photo**: Minis.jpeg |
+| `product-indoor-greenies.webp` | Indoor Greenies | A few of the indoor plants in their pots |
+| `product-butterfly-box.webp` | Butterfly Box | **Own photo**: Butterfly seed box.jpeg |
+| `product-cotton-potli.webp` | Cotton Potli | **Own photo**: Potli Bag.webp (close crop of the coloured potlis) |
+| `product-jute-potli.webp` | Jute Potli | **Own photo**: Potli Bag.webp |
+| `product-single-seed-ball.webp` | Single Seed Ball Pack | One seed ball in its pack |
+| `product-seed-pens-pencils.webp` | Seed Pens & Pencils | The seed pens and pencils |
+| `product-diy-grow-kit.webp` | DIY Grow Kit | The open kit box with all its contents |
+| `product-thamboolam-bags.webp` | All four thamboolam bags | **Own photo**: Thamboolam Bags.jpeg. One photo for every size; add one per size if you have them |
+| `product-aesthetic-seed-paper-wedding-card.webp` | Aesthetic seed-paper wedding card | Still an illustrated placeholder: seed-paper card, seeds visible |
 
 ### Videos (Return Gifts page)
 
@@ -53,12 +56,13 @@ Before launch, check each stock clip's page on mixkit.co for its current licence
 
 ## Logo
 
-The logo is currently a placeholder (a sprout mark plus a "Laughing Earth"
-wordmark) in `src/components/Logo.astro`, with a matching `public/favicon.svg`.
-
-Needed from the client: the final logo as **SVG** (preferred) or a transparent
-PNG at least 1000 px wide, in versions for light and dark backgrounds, plus a
-square icon for the favicon (512 × 512 px).
+Done (Nov 2026): the client's logo (`Laughing Earth Logo.jpeg`, kept in
+`src/assets/brand/logo-original.jpeg`). The globe-and-leaves mark was cut onto
+transparency as `src/assets/brand/logo-mark.webp` (512 px master
+`logo-mark-512.png`), used by `src/components/Logo.astro` with the name as live
+text, plus `public/favicon-32.png`, `favicon-48.png` and `apple-touch-icon.png`.
+The curved "LAUGHING EARTH" lettering in the file is dark grey on black, so it is
+not used on the dark headers. Still nice to have: the logo as **SVG**.
 
 ### Landscaping page (Phase 3, stone and paving restyle)
 
@@ -109,11 +113,25 @@ poster `poster-<name>.webp` in `public/images/`):
 The paving drawing in "Choose your paving" is generated in code
 (`src/lib/paving-patterns.ts`) and needs no images.
 
-**Before/after slider: must be replaced before launch.**
-`landscaping-sample-before.webp` and `landscaping-sample-after.webp` (+ `-640`)
-are one frame of the hero clip, with the "before" colour-graded to look bare.
-They show the slider working and are badged "Sample images" on the page. They
-are not a real before/after. Needed: one real pair from the **same camera
-position**, before work and after planting, at 1280 × 720 px (16:9), under
-150 KB each. Then remove `sample` from `<BeforeAfter>` in
-`src/pages/landscaping.astro`.
+**Our clients logos** (`public/images/clients/*.webp`, trimmed to their
+artwork, 160 px tall at most). Fetched from the internet; please confirm each
+is the right company and that the client is happy to be listed. Swap in the
+client's own logo file where they supply one.
+
+| File | Client | Source |
+| --- | --- | --- |
+| `switch.webp` | Switch Mobility | Wikimedia Commons, Switch-Mobility-logo-blue.png (CC BY-SA 4.0). Small source, replace with a larger file if possible |
+| `pmj.webp` | PMJ Jewels | pmjjewels.com |
+| `tvs.webp` | TVS Motor Company | English Wikipedia, TVS_Motor_logo.svg (non-free logo, trademark of TVS Motor Company). Get the client's permission to show it, or a file from TVS |
+| `lucas-tvs.webp` | Lucas TVS | lucas-tvs.com |
+| `indian-oil.webp` | Indian Oil | Wikimedia Commons (public domain) |
+| `hp.webp` | Hindustan Petroleum | Wikimedia Commons (public domain). Confirm this "HP" is HPCL, not Hewlett-Packard |
+| `ca.webp` | CA India (ICAI) | Wikimedia Commons (CC0). Confirm which "CA" is meant |
+| `zoho.webp` | Zoho | Wikimedia Commons (public domain) |
+| `equitas.webp` | Equitas Small Finance Bank | Wikimedia Commons (CC BY-SA 4.0). Small source |
+| `hdfc.webp` | HDFC Bank | Wikimedia Commons (public domain) |
+| `shriram.webp` | Shriram Group | shriramcapital.com (Shriram Capital, the group holding company) |
+| `lt.webp` | L&T | Wikimedia Commons (public domain) |
+| `idfc.webp` | IDFC First Bank | Wikimedia Commons (public domain) |
+| `parker.webp` | Parker | Wikimedia Commons, Parker Hannifin (public domain) |
+| `eone.webp` | Eone Technologies | eonetechnologies.com |

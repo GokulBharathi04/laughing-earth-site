@@ -26,7 +26,7 @@ export function init() {
         else video.pause();
       });
     },
-    { rootMargin: '200px 0px' },
+    { rootMargin: '0px' }, // decoding off-screen video costs scroll frames
   );
   videos.forEach((v) => io.observe(v));
 

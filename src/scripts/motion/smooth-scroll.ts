@@ -9,8 +9,9 @@ export function init() {
   const mm = gsap.matchMedia();
 
   mm.add(`${CONDITIONS.pointer} and (prefers-reduced-motion: no-preference)`, () => {
-    // A lower lerp glides further after each wheel tick: fluid, never floaty.
-    const lenis = new Lenis({ lerp: 0.08, wheelMultiplier: 0.9, anchors: { offset: -96 } });
+    // Lerp sets how quickly the page catches up with the wheel: 0.1 glides but
+    // still answers straight away, so scrolling never feels behind the hand.
+    const lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 1, anchors: { offset: -96 } });
     const raf = (time: number) => lenis.raf(time * 1000);
 
     // Modal dialogs pause smoothing so the page behind them stays put.
