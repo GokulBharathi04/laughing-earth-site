@@ -1,0 +1,22 @@
+---
+// Rectangular button with a circled arrow. On hover the fill wipes in from the
+// left and the arrow leaves on the right to return on the left. Styled in gifts.css.
+import Icon from './Icon.astro';
+
+interface Props {
+  href?: string;
+  variant?: 'line';
+  class?: string;
+  [attr: string]: unknown;
+}
+
+const { href, variant, class: className, ...attrs } = Astro.props;
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag href={href} type={href ? undefined : 'button'} class:list={['abtn', variant && `abtn--${variant}`, className]} {...attrs}>
+  <span class="abtn__fill" aria-hidden="true"></span>
+  <span class="abtn__arw abtn__arw--in" aria-hidden="true"><Icon name="arrow-right" size={15} /></span>
+  <span class="abtn__label"><slot /></span>
+  <span class="abtn__arw abtn__arw--out" aria-hidden="true"><Icon name="arrow-right" size={15} /></span>
+</Tag>

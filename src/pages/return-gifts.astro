@@ -1,29 +1,37 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Section from '../components/Section.astro';
-import Button from '../components/Button.astro';
-import Card from '../components/Card.astro';
+import GiftsLayout from '../layouts/GiftsLayout.astro';
+import ArrowButton from '../components/ArrowButton.astro';
 import Icon from '../components/Icon.astro';
-import Leaves from '../components/Leaves.astro';
-import ProductCard from '../components/ProductCard.astro';
-import LoopGallery from '../components/LoopGallery.astro';
-import Faq from '../components/Faq.astro';
 import QuoteBuilder from '../components/QuoteBuilder.astro';
 import BgVideo from '../components/BgVideo.astro';
 import catalogue from '../../data/products.json';
 import credits from '../../data/gifts-credits.json';
+import { withBase } from '../lib/url';
 import { SITE, whatsappLink, WHATSAPP_MESSAGES } from '../config/site';
 
 const { categories, products } = catalogue;
 const categoryName = Object.fromEntries(categories.map((c) => [c.slug, c.name]));
 const countIn = (slug: string) => products.filter((p) => p.category === slug).length;
 
-const categoryCards = [
-  { slug: 'plants', icon: 'pot', colourway: 'sage' },
-  { slug: 'seeded-return-gifts', icon: 'sprout', colourway: 'earth' },
-  { slug: 'seed-paper-invitations', icon: 'invite', colourway: 'sand' },
-  { slug: 'thamboolam-bags', icon: 'bag', colourway: 'earth' },
+// One photograph per kind of gift, taken from the catalogue itself.
+const kinds = [
+  { slug: 'plants', image: '/images/product-little-smiles' },
+  { slug: 'seeded-return-gifts', image: '/images/product-butterfly-box' },
+  { slug: 'seed-paper-invitations', image: '/images/product-aesthetic-seed-paper-wedding-card' },
+  { slug: 'thamboolam-bags', image: '/images/product-thamboolam-bags' },
 ] as const;
+
+const facts = ['Priced per piece', 'Customised with your names', 'Bulk orders welcome'];
+const featured = products[0];
+
+type Product = (typeof products)[number];
+const rupees = (n: number) => `₹${n.toLocaleString('en-IN')}`;
+const priceLine = (p: Product) =>
+  [p.price == null ? 'Price on request' : `${'priceFrom' in p && p.priceFrom ? 'from ' : ''}${rupees(p.price)} each`, 'moq' in p && p.moq ? `minimum ${p.moq}` : '']
+    .filter(Boolean)
+    .join(' · ');
+const quoteMessage = (p: Product) =>
+  `Hi Laughing Earth! I'd like a quote for "${p.name}"${p.price == null ? '' : ` (${'priceFrom' in p && p.priceFrom ? 'from ' : ''}${rupees(p.price)} each)`}. Quantity: ___ Event date: ___`;
 
 const bulk = [
   { icon: 'boxes', title: 'Minimum order', text: 'From 25 pieces for plants and saplings, 50 to 100 for seeded gifts. Each gift lists its own.' },
@@ -72,66 +80,113 @@ const faqs = [
 ];
 ---
 
-<BaseLayout
+<GiftsLayout
   title="Eco-friendly Return Gifts, Seed-paper Invitations & Thamboolam Bags in Chennai"
   description="Seeded return gifts, seed-paper wedding invitations, customisable thamboolam bags and potted plants for weddings and events in Chennai. Prices per piece; bulk quotes on WhatsApp."
-  theme="gifts"
 >
-  <!-- Hero: full-bleed video -->
-  <section class="gifts-hero" data-tone="base" data-hero-intro aria-labelledby="gifts-hero-title">
-    <div class="gifts-hero__media" data-hero-media>
-      <BgVideo id="gifts-hero-video" src="/videos/gifts-hero-watering-plant" poster="/images/poster-gifts-hero-watering-plant.webp" eager />
-    </div>
-    <div class="gifts-hero__shade" aria-hidden="true"></div>
-    <div class="gifts-hero__leaves" data-parallax="0.25" aria-hidden="true">
-      <div data-sway><Leaves /></div>
-    </div>
-
-    <div class="container gifts-hero__inner">
-      <div class="gifts-hero__copy">
-        <p class="eyebrow" data-hero-item>Return gifts · Chennai</p>
-        <h1 id="gifts-hero-title" data-split="load">Return gifts that keep on growing</h1>
-        <p class="lead" data-hero-item>
-          Seeded gifts, seed-paper invitations, thamboolam bags and potted plants for weddings, housewarmings and every
-          celebration in between.
-        </p>
-        <div class="gifts-hero__actions" data-hero-item>
-          <Button
-            href={whatsappLink(WHATSAPP_MESSAGES.gifts)}
-            size="lg"
-            icon="whatsapp"
-            iconPosition="start"
-            external
-            data-event="whatsapp_click"
-            data-event-label="gifts_hero"
-          >
-            Get a quote on WhatsApp
-          </Button>
-          <Button href="#catalogue" variant="outline" size="lg">Browse gifts</Button>
+  <!-- Hero: full-bleed film; it stays put while the next section slides over it -->
+  <section class="g-sec g-hero tone-media" data-header="light" aria-labelledby="gifts-hero-title">
+    <BgVideo id="gifts-hero-video" class="g-bleed" src="/videos/gifts-hero-watering-plant" poster="/images/poster-gifts-hero-watering-plant.webp" eager />
+    <div class="g-hero__shade" aria-hidden="true"></div>
+    <button class="g-hero__toggle" type="button" data-video-toggle aria-controls="gifts-hero-video" aria-pressed="false" aria-label="Pause background video">
+      <Icon name="pause" size={16} class="is-pause" />
+      <Icon name="play" size={16} class="is-play" />
+    </button>
+    <div class="g-wrap g-hero__inner">
+      <p class="g-label g-eyebrow">Return gifts · Chennai</p>
+      <h1 id="gifts-hero-title" class="g-h1">Return gifts that keep on growing</h1>
+      <div class="g-hero__cta">
+        <ArrowButton href="#catalogue">Browse the gifts</ArrowButton>
+        <a class="g-textlink" href={whatsappLink(WHATSAPP_MESSAGES.gifts)} target="_blank" rel="noopener noreferrer" data-event="whatsapp_click" data-event-label="gifts_hero">Get a quote on WhatsApp</a>
+      </div>
+      <div class="g-hero__bottom">
+        <div>
+          <p class="g-hero__lead">
+            Seeded gifts, seed-paper invitations, thamboolam bags and potted plants for weddings, housewarmings and every
+            celebration in between.
+          </p>
+          <ul class="g-facts">
+            {facts.map((f) => <li>{f}</li>)}
+          </ul>
         </div>
-        <ul class="gifts-hero__facts" data-hero-item>
-          <li>Priced per piece</li>
-          <li>Customised with your names</li>
-          <li>Bulk orders welcome</li>
-        </ul>
+        <a class="g-feature" href="#catalogue" data-filter-link={featured.category}>
+          <img src={withBase(`${featured.image}-400.webp`)} width="400" height="400" alt="" />
+          <span>
+            <span class="g-label">Featured gift</span>
+            <strong>{featured.name}</strong>
+            <small>{priceLine(featured)}</small>
+          </span>
+          <span class="abtn__arw" aria-hidden="true"><Icon name="arrow-right" size={15} /></span>
+        </a>
       </div>
     </div>
-
-    <button class="video-toggle" type="button" data-video-toggle aria-controls="gifts-hero-video" aria-pressed="false">
-      <Icon name="pause" size={18} class="video-toggle__pause" />
-      <Icon name="play" size={18} class="video-toggle__play" />
-      <span class="sr-only">Pause background video</span>
-    </button>
   </section>
 
-  <!-- Marquee: drifts on its own, speeds up with scroll -->
-  <div class="marquee" data-tone="deep" data-marquee aria-hidden="true">
-    <div class="marquee__track" data-marquee-track>
+  <!-- Statement: pinned while the second sentence takes over -->
+  <section class="g-sec g-statement tone-media" data-header="light" aria-labelledby="statement-title">
+    <BgVideo class="g-bleed" src="/videos/gifts-band-planting-seedling" poster="/images/poster-gifts-band-planting-seedling.webp" />
+    <div class="g-statement__shade" aria-hidden="true"></div>
+    <div class="g-wrap g-statement__inner">
+      <p class="g-label g-eyebrow">From a seed to a smile</p>
+      <div class="g-statement__lines">
+        <h2 id="statement-title" class="g-say">
+          Every gift we make starts with something
+          <span class="g-ipill"><img src={withBase('/images/poster-gallery-planting-seeds.webp')} alt="" /></span>
+          that grows.
+        </h2>
+        <p class="g-say">
+          Your guests take home a sapling, a seed or a plant,
+          <span class="g-ipill"><img src={withBase(`${featured.image}-400.webp`)} alt="" /></span>
+          and a reason to remember the day.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Kinds of gift: pinned words left, cards scroll right -->
+  <section class="g-sec g-kinds tone-cream" id="kinds" data-header="dark" aria-labelledby="kinds-title">
+    <div class="g-wrap g-split" data-pin-left>
+      <div class="g-split__left">
+        <p class="g-label g-eyebrow">Four ways to say thank you</p>
+        <h2 id="kinds-title" class="g-h2" data-split>Choose your kind of gift</h2>
+        <p class="g-lead">Priced per piece, customised with your names, and made for bulk orders.</p>
+        <ArrowButton href="#catalogue" data-filter-link="all" data-rise>See all {products.length} gifts</ArrowButton>
+      </div>
+      <ul class="g-cards">
+        {
+          kinds.map((k, i) => (
+            <li>
+              <a class="g-kind" href="#catalogue" data-filter-link={k.slug}>
+                <div class="g-kind__media" data-reveal>
+                  <img src={withBase(`${k.image}.webp`)} width="800" height="800" alt="" loading="lazy" decoding="async" />
+                </div>
+                <div class="g-kind__row">
+                  <h3 class="g-h3">{categoryName[k.slug]}</h3>
+                  <span class="abtn__arw" aria-hidden="true"><Icon name="arrow-right" size={15} /></span>
+                </div>
+                <div class="g-kind__meta">
+                  <span class="g-label">{String(i + 1).padStart(2, '0')}</span>
+                  <p>{categories.find((c) => c.slug === k.slug)?.blurb}</p>
+                  <span class="g-label">
+                    {countIn(k.slug)} {countIn(k.slug) === 1 ? 'gift' : 'gifts'}
+                  </span>
+                </div>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Strip: what we make, drifting past -->
+  <div class="g-sec g-strip tone-forest" data-header="light" aria-hidden="true">
+    <div class="g-strip__track">
       {
         [0, 1].map(() => (
-          <div class="marquee__group">
+          <div class="g-strip__group">
             {['Seeded return gifts', 'Seed-paper invitations', 'Thamboolam bags', 'Plants in jute', 'Made in Chennai'].map((word) => (
-              <span class="marquee__item">
+              <span class="g-strip__item">
                 {word}
                 <Icon name="leaf" size={22} />
               </span>
@@ -142,661 +197,239 @@ const faqs = [
     </div>
   </div>
 
-  <!-- Categories -->
-  <Section tone="alt" labelledby="categories-title">
-    <div class="section-head">
-      <p class="eyebrow">Four ways to say thank you</p>
-      <h2 id="categories-title" data-split>Choose your kind of gift</h2>
-    </div>
-    <ul class="categories" role="list" data-stagger>
-      {
-        categoryCards.map((c) => (
-          <li>
-            <Card colourway={c.colourway} href="#catalogue" class="category" data-filter-link={c.slug}>
-              <span slot="icon" class="pop-wrap" data-pop>
-                <Icon name={c.icon} size={28} />
-              </span>
-              <h3>{categoryName[c.slug]}</h3>
-              <p>{categories.find((x) => x.slug === c.slug)?.blurb}</p>
-              <span class="category__more">
-                See {countIn(c.slug)} {countIn(c.slug) === 1 ? 'gift' : 'gifts'}
-                <Icon name="arrow-right" size={18} />
-              </span>
-            </Card>
-          </li>
-        ))
-      }
-    </ul>
-  </Section>
-
   <!-- Catalogue -->
-  <Section tone="base" id="catalogue" labelledby="catalogue-title">
-    <div class="catalogue" data-catalogue>
-      <div class="section-head section-head--row">
+  <section class="g-sec g-catalogue tone-forest" id="catalogue" data-header="light" aria-labelledby="catalogue-title">
+    <div class="g-wrap" data-catalogue>
+      <div class="g-sechead">
         <div>
-          <p class="eyebrow">Catalogue</p>
-          <h2 id="catalogue-title" data-split>Gifts and prices</h2>
+          <p class="g-label g-eyebrow">Catalogue</p>
+          <h2 id="catalogue-title" class="g-h2" data-split>Gifts and prices</h2>
         </div>
-        <p class="catalogue__status" data-catalogue-status aria-live="polite">Showing {products.length} gifts</p>
+        <p class="g-catalogue__status" data-catalogue-status aria-live="polite">Showing {products.length} gifts</p>
       </div>
-
-      <div class="filters" role="group" aria-label="Filter by category">
-        <button type="button" class="filter" data-filter="all" aria-pressed="true">All</button>
+      <div class="g-filters" role="group" aria-label="Filter by kind of gift">
+        <button type="button" class="g-filter g-label" data-filter="all" aria-pressed="true">All</button>
         {
           categories.map((c) => (
-            <button type="button" class="filter" data-filter={c.slug} aria-pressed="false">
+            <button type="button" class="g-filter g-label" data-filter={c.slug} aria-pressed="false">
               {c.name}
             </button>
           ))
         }
       </div>
-
-      <ul class="products" role="list" data-stagger>
-        {products.map((p) => <ProductCard product={p} categoryName={categoryName[p.category]} />)}
-      </ul>
-      <p class="catalogue__note">Prices are per piece, with the wrap or packaging described. Bulk quotes may differ.</p>
-    </div>
-  </Section>
-
-  <!-- Bulk orders -->
-  <Section tone="base" class="bulk-section" labelledby="bulk-title">
-    <div class="bulk" data-tone="alt">
-      <div class="bulk__intro">
-        <p class="eyebrow">Weddings & events</p>
-        <h2 id="bulk-title" data-split>Ordering for a crowd?</h2>
-        <p>Tell us the occasion, guest count and date. We'll suggest gifts that suit your budget and send a quote.</p>
-      </div>
-      <ul class="bulk__grid" role="list" data-stagger>
+      <ul class="g-products">
         {
-          bulk.map((b) => (
-            <li class="bulk__item">
-              <span class="bulk__icon" data-pop>
-                <Icon name={b.icon} size={26} />
-              </span>
-              <h3>{b.title}</h3>
-              <p set:html={b.text} />
+          products.map((p) => (
+            <li class="g-product" data-category={p.category}>
+              <article class="g-product__card">
+                <div class="g-product__media">
+                  <img
+                    src={withBase(`${p.image}-400.webp`)}
+                    srcset={`${withBase(`${p.image}-400.webp`)} 400w, ${withBase(`${p.image}.webp`)} 800w`}
+                    sizes="(min-width: 1100px) 340px, (min-width: 641px) 32vw, 48vw"
+                    width="800"
+                    height="800"
+                    alt={p.name}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <div class="g-product__body">
+                  <p class="g-label g-product__cat">{categoryName[p.category]}</p>
+                  <h3 class="g-product__name">{p.name}</h3>
+                  <p class="g-product__desc">{p.description}</p>
+                  <p class="g-product__price">
+                    <span>
+                      {p.price == null ? (
+                        <span class="g-product__unit">Price on request</span>
+                      ) : (
+                        <>
+                          {'priceFrom' in p && p.priceFrom && <span class="g-product__unit">from </span>}
+                          <span class="g-product__now">
+                            <span class="sr-only">Price: </span>
+                            {rupees(p.price)}
+                          </span>
+                          <span class="g-product__unit"> each</span>
+                          {'mrp' in p && p.mrp && p.mrp > p.price && (
+                            <s class="g-product__unit">
+                              {' '}
+                              <span class="sr-only">MRP: </span>
+                              {rupees(p.mrp)}
+                            </s>
+                          )}
+                        </>
+                      )}
+                    </span>
+                    {'moq' in p && p.moq && (
+                      <span class="g-product__moq">
+                        Min. {p.moq.toLocaleString('en-IN')}
+                        {'moqNote' in p && p.moqNote ? ` ${p.moqNote}` : ''}
+                      </span>
+                    )}
+                  </p>
+                  <ArrowButton
+                    href={whatsappLink(quoteMessage(p))}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-event="whatsapp_click"
+                    data-event-label={`product_${p.slug}`}
+                  >
+                    Get a quote<span class="sr-only"> for {p.name} on WhatsApp</span>
+                  </ArrowButton>
+                </div>
+              </article>
             </li>
           ))
         }
       </ul>
-      <div class="bulk__actions">
-        <Button size="lg" icon="arrow-right" data-morph-open="quote-builder">Build a bulk quote</Button>
-        <p>or call <a href={SITE.phoneHref}>{SITE.phoneDisplay}</a></p>
-      </div>
     </div>
-  </Section>
+  </section>
 
-  <!-- Video band: grows from an inset card to full width as it scrolls past -->
-  <section class="band" data-tone="deep" data-expand aria-labelledby="band-title">
-    <div class="band__media" data-expand-media>
-      <BgVideo src="/videos/gifts-band-planting-seedling" poster="/images/poster-gifts-band-planting-seedling.webp" />
-      <div class="band__shade" aria-hidden="true"></div>
-      <div class="container band__copy">
-        <p class="eyebrow">From a seed to a smile</p>
-        <h2 id="band-title" data-split>Every gift we make starts with something that grows.</h2>
-        <p class="lead">Your guests take home a sapling, a seed or a plant, and a reason to remember the day.</p>
+  <!-- Bulk orders: a ruled table -->
+  <section class="g-sec g-bulk tone-cream" id="bulk" data-header="dark" aria-labelledby="bulk-title">
+    <div class="g-wrap g-split">
+      <div class="g-split__left">
+        <p class="g-label g-eyebrow">Weddings &amp; events</p>
+        <h2 id="bulk-title" class="g-h2" data-split>Ordering for a crowd?</h2>
+        <p class="g-lead">Tell us the occasion, guest count and date. We'll suggest gifts that suit your budget and send a quote.</p>
+        <div class="g-bulk__actions" data-rise>
+          <ArrowButton data-morph-open="quote-builder">Build a bulk quote</ArrowButton>
+          <span>or call <a href={SITE.phoneHref}>{SITE.phoneDisplay}</a></span>
+        </div>
+      </div>
+      <dl class="g-table">
+        {
+          bulk.map((b) => (
+            <div class="g-table__row">
+              <Icon name={b.icon} size={26} />
+              <dt class="g-h3">{b.title}</dt>
+              <dd set:html={b.text} />
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <!-- Celebrations: thumbnails, words, film -->
+  <section class="g-sec g-gallery tone-deep" id="celebrations" data-header="light" aria-labelledby="gallery-title">
+    <div class="g-wrap" data-gallery>
+      <p class="g-label g-eyebrow">Event gallery</p>
+      <h2 id="gallery-title" class="g-h2" data-split>Gifts for every celebration</h2>
+      <div class="g-gallery__stage">
+        <div class="g-thumbs" role="group" aria-label="Choose a celebration">
+          {
+            gallery.map((g, i) => (
+              <button type="button" class="g-thumb" data-thumb aria-pressed={i === 0 ? 'true' : 'false'} aria-label={`Show ${g.caption}`}>
+                <img src={withBase(g.poster)} width="1280" height="720" alt="" loading="lazy" decoding="async" />
+              </button>
+            ))
+          }
+        </div>
+        <div class="g-gallery__words">
+          <div class="g-caps" aria-live="polite">
+            {
+              gallery.map((g, i) => (
+                <div class:list={['g-cap', i === 0 && 'on']} aria-hidden={i === 0 ? 'false' : 'true'}>
+                  <p class="g-label g-eyebrow">{String(i + 1).padStart(2, '0')}</p>
+                  <h3>{g.caption}</h3>
+                  <p>{g.alt}.</p>
+                </div>
+              ))
+            }
+          </div>
+          <div class="g-gallery__nav">
+            <span class="g-label g-count" data-count>01 / {String(gallery.length).padStart(2, '0')}</span>
+            <div class="g-progress" aria-hidden="true"><i data-progress></i></div>
+            <button type="button" class="g-arrow g-arrow--prev" data-prev aria-label="Previous celebration"><Icon name="arrow-right" size={18} /></button>
+            <button type="button" class="g-arrow" data-next aria-label="Next celebration"><Icon name="arrow-right" size={18} /></button>
+          </div>
+        </div>
+        <div class="g-gallery__media">
+          {
+            gallery.map((g, i) => (
+              <div class:list={['g-slide', i === 0 && 'on']}>
+                <BgVideo src={g.video} poster={g.poster} />
+              </div>
+            ))
+          }
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Event gallery -->
-  <section class="section gallery-section" data-tone="alt" aria-labelledby="gallery-title">
-    <div class="container section-head section-head--row" data-reveal>
-      <div>
-        <p class="eyebrow">Event gallery</p>
-        <h2 id="gallery-title" data-split>Gifts for every celebration</h2>
-      </div>
-      <p class="gallery-section__hint">Drag, swipe or use the arrows.</p>
+  <!-- Simple to order: three ruled cells -->
+  <section class="g-sec g-promise tone-cream" data-header="dark" aria-labelledby="promise-title">
+    <div class="g-wrap">
+      <p class="g-label g-eyebrow">How it works</p>
+      <h2 id="promise-title" class="g-h2" data-split>Simple to order</h2>
+      <ul class="g-cells">
+        {
+          facts.map((f, i) => (
+            <li class="g-cell" data-rise>
+              <p class="g-label">{String(i + 1).padStart(2, '0')}</p>
+              <p>{f}</p>
+            </li>
+          ))
+        }
+      </ul>
     </div>
-    <LoopGallery label="Photos of Laughing Earth return gifts at events" items={gallery} />
   </section>
 
-  <!-- FAQ -->
-  <Section tone="base" width="narrow" labelledby="faq-title">
-    <div class="section-head">
-      <p class="eyebrow">Good to know</p>
-      <h2 id="faq-title" data-split>Questions about bulk orders</h2>
-    </div>
-    <Faq items={faqs} />
-  </Section>
-
-  <!-- Closing CTA -->
-  <Section tone="deep" class="gifts-cta" reveal={false} labelledby="gifts-cta-title">
-    <div class="gifts-cta__leaves" data-parallax="0.2" aria-hidden="true">
-      <div data-sway><Leaves flip /></div>
-    </div>
-    <div class="gifts-cta__copy">
-      <h2 id="gifts-cta-title" data-split>Planning a wedding or a big celebration?</h2>
-      <p class="lead">Send us the date and guest count. We'll reply on WhatsApp with ideas and a quote.</p>
-      <div class="gifts-hero__actions">
-        <Button
-          href={whatsappLink(WHATSAPP_MESSAGES.gifts)}
-          size="lg"
-          icon="whatsapp"
-          iconPosition="start"
-          external
-          data-event="whatsapp_click"
-          data-event-label="gifts_cta"
-        >
-          Get a quote on WhatsApp
-        </Button>
-        <Button variant="outline" size="lg" data-morph-open="quote-builder">Build a bulk quote</Button>
+  <!-- Questions: pinned picture, ruled answers -->
+  <section class="g-sec g-faq tone-forest" id="questions" data-header="light" aria-labelledby="faq-title">
+    <div class="g-wrap g-split" data-pin-left>
+      <div class="g-split__left">
+        <p class="g-label g-eyebrow">Good to know</p>
+        <h2 id="faq-title" class="g-h2" data-split>Questions about bulk orders</h2>
+        <div class="g-faq__media" data-reveal>
+          <img src={withBase('/images/poster-gallery-succulent-closeup.webp')} width="1280" height="720" alt="Close-up of succulent leaves" loading="lazy" decoding="async" />
+        </div>
+      </div>
+      <div class="g-qa">
+        {
+          faqs.map((f) => (
+            <details class="g-q" name="gift-faq">
+              <summary>
+                <span>{f.q}</span>
+                <span class="g-q__icon" aria-hidden="true"><Icon name="plus" size={16} /></span>
+              </summary>
+              <div class="g-q__a" set:html={f.a} />
+            </details>
+          ))
+        }
       </div>
     </div>
-  </Section>
+  </section>
 
-  <QuoteBuilder gifts={categories.map((c) => c.name)} />
-  <Fragment slot="credits">
-    <p class="credits">
-      Product photographs are stand-ins from Wikimedia Commons until our own arrive:
-      {
-        credits.map((c, i) => (
-          <>
-            <a href={c.page} target="_blank" rel="noopener noreferrer">{c.title}</a>
-            {c.creator ? ` by ${c.creator}` : ''}, {c.licenseUrl ? <a href={c.licenseUrl} target="_blank" rel="noopener noreferrer">{c.license}</a> : c.license}
-            {i < credits.length - 1 ? '; ' : '. '}
-          </>
-        ))
-      }
-      Video clips from Mixkit (free licence).
-    </p>
-  </Fragment>
-</BaseLayout>
+  <!-- Closing call to action -->
+  <section class="g-sec g-cta tone-media" data-header="light" aria-labelledby="cta-title">
+    <BgVideo class="g-bleed" src="/videos/gallery-wedding-table" poster="/images/poster-gallery-wedding-table.webp" />
+    <div class="g-cta__shade" aria-hidden="true"></div>
+    <div class="g-wrap g-cta__inner">
+      <p class="g-label g-eyebrow">Weddings, housewarmings, birthdays</p>
+      <h2 id="cta-title" class="g-h2" data-split>Planning a wedding or a big celebration?</h2>
+      <p class="g-lead">Send us the date and guest count. We'll reply on WhatsApp with ideas and a quote.</p>
+      <div class="g-cta__actions" data-rise>
+        <ArrowButton href={whatsappLink(WHATSAPP_MESSAGES.gifts)} target="_blank" rel="noopener noreferrer" data-event="whatsapp_click" data-event-label="gifts_cta">Get a quote on WhatsApp</ArrowButton>
+        <ArrowButton variant="line" data-morph-open="quote-builder">Build a bulk quote</ArrowButton>
+      </div>
+    </div>
+  </section>
 
-<script>
-  import { init as catalogue } from '../scripts/return-gifts/catalogue';
-  import { init as quoteBuilder } from '../scripts/return-gifts/quote-builder';
-
-  catalogue();
-  quoteBuilder();
-</script>
-
-<style>
-  /* ---------- Shared section heading ---------- */
-  .section-head {
-    display: grid;
-    gap: var(--space-2);
-    margin-bottom: var(--space-6);
-  }
-
-  .section-head--row {
-    grid-template-columns: 1fr;
-    align-items: end;
-  }
-
-  @media (min-width: 768px) {
-    .section-head--row {
-      grid-template-columns: 1fr auto;
-      gap: var(--space-5);
+  <p slot="credits" class="g-credits">
+    Product photographs are stand-ins from Wikimedia Commons until our own arrive:
+    {
+      credits.map((c, i) => (
+        <>
+          <a href={c.page} target="_blank" rel="noopener noreferrer">{c.title}</a>
+          {c.creator ? ` by ${c.creator}` : ''}, {c.licenseUrl ? <a href={c.licenseUrl} target="_blank" rel="noopener noreferrer">{c.license}</a> : c.license}
+          {i < credits.length - 1 ? '; ' : '. '}
+        </>
+      ))
     }
-  }
-
-  /* ---------- Hero: full-bleed video ---------- */
-  .gifts-hero {
-    position: relative;
-    isolation: isolate;
-    display: grid;
-    align-items: end;
-    min-height: max(36rem, calc(100svh - 7rem));
-    overflow: clip;
-    background: var(--bg);
-    color: var(--text);
-  }
-
-  .gifts-hero__media,
-  .gifts-hero__shade {
-    position: absolute;
-    inset: 0;
-    z-index: -2;
-  }
-
-  .gifts-hero__media {
-    will-change: clip-path, transform;
-  }
-
-  /* Darkens the video under the copy so cream text keeps AA contrast */
-  .gifts-hero__shade {
-    z-index: -1;
-    background:
-      linear-gradient(to top, color-mix(in srgb, var(--bg) 92%, transparent) 0%, color-mix(in srgb, var(--bg) 55%, transparent) 55%, transparent 100%),
-      linear-gradient(to right, color-mix(in srgb, var(--bg) 70%, transparent), transparent 70%);
-  }
-
-  .gifts-hero__inner {
-    padding-block: var(--space-9) var(--space-8);
-  }
-
-  .gifts-hero__copy {
-    display: grid;
-    gap: var(--space-4);
-    justify-items: start;
-    max-width: 40rem;
-  }
-
-  .video-toggle {
-    position: absolute;
-    left: var(--gutter);
-    top: var(--space-5);
-    display: grid;
-    place-items: center;
-    width: var(--tap-target);
-    height: var(--tap-target);
-    border: 1px solid color-mix(in srgb, var(--text) 40%, transparent);
-    border-radius: 50%;
-    background: color-mix(in srgb, var(--bg) 45%, transparent);
-    color: var(--text);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-    transition: transform 160ms var(--ease-out);
-  }
-
-  .video-toggle:active {
-    transform: scale(0.94);
-  }
-
-  .video-toggle:focus-visible {
-    border-radius: 50%;
-  }
-
-  .video-toggle :global(.video-toggle__play),
-  .video-toggle[aria-pressed='true'] :global(.video-toggle__pause) {
-    display: none;
-  }
-
-  .video-toggle[aria-pressed='true'] :global(.video-toggle__play) {
-    display: block;
-  }
-
-  @media (min-width: 768px) {
-    .video-toggle {
-      left: auto;
-      right: var(--gutter);
-      top: auto;
-      bottom: var(--space-6);
-    }
-  }
-
-  /* ---------- Marquee ---------- */
-  .marquee {
-    overflow: clip;
-    padding-block: var(--space-4);
-    background: var(--bg);
-    color: var(--heading);
-    border-block: 1px solid var(--border);
-  }
-
-  .marquee__track {
-    display: flex;
-    width: max-content;
-  }
-
-  .marquee__group {
-    display: flex;
-    flex: none;
-  }
-
-  .marquee__item {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-5);
-    padding-right: var(--space-5);
-    font-family: var(--font-heading);
-    font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.5rem);
-    font-weight: var(--weight-heading);
-    white-space: nowrap;
-  }
-
-  .marquee__item :global(svg) {
-    color: var(--icon);
-  }
-
-  /* ---------- Video band ---------- */
-  .band {
-    background: var(--bg);
-    color: var(--text);
-  }
-
-  .band__media {
-    position: relative;
-    isolation: isolate;
-    display: grid;
-    align-items: end;
-    min-height: min(90svh, 52rem);
-    overflow: clip;
-  }
-
-  .band__media :global(.bg-video),
-  .band__shade {
-    position: absolute;
-    inset: 0;
-    z-index: -2;
-  }
-
-  .band__shade {
-    z-index: -1;
-    background: linear-gradient(to top, color-mix(in srgb, var(--bg) 90%, transparent) 10%, color-mix(in srgb, var(--bg) 30%, transparent) 70%);
-  }
-
-  .band__copy {
-    display: grid;
-    gap: var(--space-4);
-    padding-block: var(--space-9) var(--space-8);
-  }
-
-  .band__copy h2 {
-    max-width: 18ch;
-    font-size: clamp(2.25rem, 1.4rem + 3.4vw, 4.5rem);
-  }
-
-  .band__copy .lead {
-    color: var(--text);
-  }
-
-  .pop-wrap {
-    display: grid;
-    place-items: center;
-  }
-
-  .gifts-hero__copy h1 {
-    max-width: 12ch;
-  }
-
-  .gifts-hero__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    margin-top: var(--space-2);
-  }
-
-  .gifts-hero__facts {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2) var(--space-5);
-    padding: 0;
-    margin-top: var(--space-3);
-    list-style: none;
-    color: var(--muted);
-  }
-
-  .gifts-hero__facts li {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-  }
-
-  .gifts-hero__facts li::before {
-    content: '';
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 50%;
-    background: var(--icon);
-  }
-
-  .gifts-hero__leaves {
-    position: absolute;
-    z-index: -1;
-    right: -5rem;
-    top: -3rem;
-    width: clamp(12rem, 30vw, 28rem);
-    opacity: 0.9;
-    pointer-events: none;
-  }
-
-  /* ---------- Categories ---------- */
-  .categories {
-    display: grid;
-    gap: var(--space-4);
-    padding: 0;
-    list-style: none;
-  }
-
-  @media (min-width: 640px) {
-    .categories {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .categories {
-      grid-template-columns: repeat(4, 1fr);
-      gap: var(--space-5);
-    }
-  }
-
-  .categories li {
-    display: grid;
-  }
-
-  .categories :global(.category .card__body) {
-    height: 100%;
-  }
-
-  .categories :global(.category h3) {
-    font-size: var(--text-24);
-  }
-
-  .category__more {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    margin-top: auto;
-    padding-top: var(--space-2);
-    font-weight: var(--weight-semibold);
-  }
-
-  .categories :global(.category .category__more svg) {
-    transition: transform var(--duration-fast) var(--ease-out);
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .categories :global(.category:hover .category__more svg) {
-      transform: translateX(3px);
-    }
-  }
-
-  /* ---------- Catalogue ---------- */
-  .catalogue__status {
-    color: var(--muted);
-  }
-
-  .filters {
-    display: flex;
-    gap: var(--space-2);
-    margin: 0 calc(-1 * var(--gutter)) var(--space-6);
-    padding: var(--space-1) var(--gutter);
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  @media (min-width: 768px) {
-    .filters {
-      flex-wrap: wrap;
-      margin-inline: 0;
-      padding-inline: 0;
-      overflow: visible;
-    }
-  }
-
-  .filter {
-    flex: none;
-    min-height: var(--tap-target);
-    padding: 0.5em 1.25em;
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-pill);
-    background: transparent;
-    color: var(--text);
-    font-weight: var(--weight-medium);
-    white-space: nowrap;
-    transition:
-      background-color var(--duration-fast) var(--ease-out),
-      color var(--duration-fast) var(--ease-out),
-      transform 160ms var(--ease-out);
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .filter:hover {
-      background: color-mix(in srgb, var(--text) 10%, transparent);
-    }
-  }
-
-  .filter:active {
-    transform: scale(0.97);
-  }
-
-  .filter[aria-pressed='true'] {
-    border-color: var(--btn-bg);
-    background: var(--btn-bg);
-    color: var(--btn-text);
-  }
-
-  .filter:focus-visible {
-    border-radius: var(--radius-pill);
-  }
-
-  .products {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-3);
-    padding: 0;
-    list-style: none;
-  }
-
-  @media (min-width: 768px) {
-    .products {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: var(--space-5);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .products {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-  }
-
-  .catalogue__note {
-    margin-top: var(--space-6);
-    color: var(--muted);
-  }
-
-  /* ---------- Bulk orders panel (mockup's rounded feature panel) ---------- */
-  :global(.bulk-section) {
-    padding-top: 0;
-  }
-
-  .bulk {
-    display: grid;
-    gap: var(--space-6);
-    padding: var(--space-6) var(--space-5);
-    border-radius: var(--radius-panel);
-    background: var(--bg);
-    color: var(--text);
-    box-shadow: var(--shadow-card);
-  }
-
-  @media (min-width: 768px) {
-    .bulk {
-      padding: var(--space-7);
-    }
-  }
-
-  .bulk__intro {
-    display: grid;
-    gap: var(--space-3);
-    max-width: 40rem;
-  }
-
-  .bulk__grid {
-    display: grid;
-    gap: var(--space-5);
-    padding: 0;
-    list-style: none;
-  }
-
-  @media (min-width: 640px) {
-    .bulk__grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .bulk__grid {
-      grid-template-columns: repeat(4, 1fr);
-    }
-
-    .bulk__item + .bulk__item {
-      border-left: 1px solid var(--border);
-      padding-left: var(--space-5);
-    }
-  }
-
-  .bulk__item {
-    display: grid;
-    gap: var(--space-2);
-    align-content: start;
-  }
-
-  .bulk__item h3 {
-    font-size: var(--text-24);
-  }
-
-  .bulk__icon {
-    display: grid;
-    place-items: center;
-    width: 3.25rem;
-    height: 3.25rem;
-    border-radius: 50%;
-    border: 1.5px solid var(--border);
-    color: var(--icon);
-  }
-
-  .bulk__actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-3) var(--space-5);
-  }
-
-  .bulk__actions a {
-    color: var(--text);
-    font-weight: var(--weight-semibold);
-  }
-
-  /* ---------- Gallery ---------- */
-  .gallery-section {
-    background: var(--bg);
-    color: var(--text);
-    padding-block: var(--section-pad-y);
-  }
-
-  .gallery-section__hint {
-    color: var(--muted);
-  }
-
-  /* ---------- Closing CTA ---------- */
-  :global(.gifts-cta) {
-    position: relative;
-    overflow: clip;
-  }
-
-  .gifts-cta__copy {
-    position: relative;
-    z-index: 1;
-    display: grid;
-    gap: var(--space-4);
-    max-width: 40rem;
-  }
-
-  .gifts-cta__leaves {
-    position: absolute;
-    right: -6rem;
-    bottom: -8rem;
-    width: clamp(16rem, 36vw, 30rem);
-    opacity: 0.55;
-  }
-
-  .credits {
-    font-size: 0.8125rem;
-    line-height: 1.5;
-  }
-</style>
+    Video clips from Mixkit (free licence).
+  </p>
+
+  <QuoteBuilder slot="after" gifts={categories.map((c) => c.name)} />
+</GiftsLayout>

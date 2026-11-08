@@ -1,0 +1,164 @@
+---
+// Return Gifts layout: tall full-screen sections, a header that turns light or dark
+// with the section beneath it, and smoothed scrolling with pinned columns.
+// Separate from BaseLayout and global.css, so the other pages are unaffected.
+import { withBase } from '../lib/url';
+import '../styles/gifts.css';
+import Icon from '../components/Icon.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+import mark from '../assets/brand/logo-mark.webp';
+import { NAV, POLICIES, SITE, whatsappLink, WHATSAPP_MESSAGES } from '../config/site';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const pageTitle = title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const year = new Date().getFullYear();
+const a = SITE.address;
+
+const menuLinks = [
+  { href: '#kinds', label: 'Kinds of gift' },
+  { href: '#catalogue', label: 'Gifts and prices' },
+  { href: '#bulk', label: 'Bulk orders' },
+  { href: '#celebrations', label: 'Celebrations' },
+  { href: '#questions', label: 'Questions' },
+];
+---
+
+<!doctype html>
+<html lang="en-IN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={withBase('/favicon-32.png')} type="image/png" sizes="32x32" />
+    <link rel="icon" href={withBase('/favicon-48.png')} type="image/png" sizes="48x48" />
+    <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
+    <meta name="theme-color" content="#1F4D45" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap"
+    />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+  <body class="gifts" data-theme="gifts">
+    <a class="g-skip" href="#catalogue">Skip to the gifts</a>
+
+    <header class="g-head h-light" data-head>
+      <div class="g-head__start">
+        <button class="hbtn" type="button" data-menu-toggle aria-expanded="false" aria-controls="g-menu">
+          <span class="hbtn__bars" aria-hidden="true"><i></i><i></i></span>
+          <span>Menu</span>
+        </button>
+        <nav class="g-switch" aria-label="Choose a business">
+          <a class="hbtn" href={NAV.landscaping.href}>{NAV.landscaping.label}</a>
+          <a class="hbtn" href={NAV.gifts.href} aria-current="page">{NAV.gifts.label}</a>
+        </nav>
+      </div>
+      <a class="g-mark" href="#top" aria-label="Laughing Earth: back to the top">
+        <img src={mark.src} width="48" height="48" alt="" /><span>{SITE.name}</span>
+      </a>
+      <div class="g-head__end">
+        <button class="hbtn hbtn--solid" type="button" data-morph-open="quote-builder">Get a quote</button>
+        <a
+          class="hbtn hbtn--icon"
+          href={whatsappLink(WHATSAPP_MESSAGES.gifts)}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-event="whatsapp_click"
+          data-event-label="gifts_header"
+          aria-label="Chat on WhatsApp"><Icon name="whatsapp" size={18} /></a
+        >
+      </div>
+    </header>
+
+    <div class="g-menu" id="g-menu" data-menu inert>
+      <div class="g-menu__inner">
+        <nav class="g-menu__links" aria-label="Page sections">
+          {
+            menuLinks.map((l, i) => (
+              <a href={l.href}>
+                <span class="g-label">{String(i + 1).padStart(2, '0')}</span>
+                {l.label}
+              </a>
+            ))
+          }
+        </nav>
+        <div class="g-menu__side">
+          <nav class="g-switch g-switch--menu" aria-label="Choose a business, menu">
+            <a class="hbtn" href={NAV.landscaping.href}>{NAV.landscaping.label}</a>
+            <a class="hbtn" href={NAV.gifts.href} aria-current="page">{NAV.gifts.label}</a>
+          </nav>
+          <nav class="g-menu__pages" aria-label="Other pages">
+            <a href={NAV.about.href}>{NAV.about.label}</a>
+            <a href={NAV.contact.href}>{NAV.contact.label}</a>
+          </nav>
+          <p class="g-menu__contact">
+            <a href={SITE.phoneHref}>{SITE.phoneDisplay}</a><br />
+            <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div id="smooth-wrapper">
+      <div id="smooth-content">
+        <main id="top">
+          <slot />
+        </main>
+
+        <footer class="g-foot tone-deep" data-header="light">
+          <div class="g-wrap g-foot__grid">
+            <div class="g-foot__brand">
+              <p class="g-foot__line">{SITE.brandLine}</p>
+              <a class="g-foot__link" href={SITE.instagram} target="_blank" rel="noopener noreferrer">Follow us on Instagram</a>
+            </div>
+            <nav aria-labelledby="g-foot-explore">
+              <h2 class="g-label" id="g-foot-explore">Explore</h2>
+              <ul>{Object.values(NAV).map((item) => <li><a href={item.href}>{item.label}</a></li>)}</ul>
+            </nav>
+            <nav aria-labelledby="g-foot-policies">
+              <h2 class="g-label" id="g-foot-policies">Policies</h2>
+              <ul>{POLICIES.map((item) => <li><a href={item.href}>{item.label}</a></li>)}</ul>
+            </nav>
+            <div>
+              <h2 class="g-label">Visit or call</h2>
+              <address>
+                <p>{a.street}, {a.locality}, {a.city}, {a.region} {a.postalCode}</p>
+                <p><a href={SITE.phoneHref}>{SITE.phoneDisplay}</a></p>
+                <p>
+                  <a href={whatsappLink(WHATSAPP_MESSAGES.general)} target="_blank" rel="noopener noreferrer" data-event="whatsapp_click" data-event-label="footer">WhatsApp us</a>
+                </p>
+                <p><a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>
+              </address>
+            </div>
+          </div>
+          <div class="g-wrap"><slot name="credits" /></div>
+          <p class="g-foot__word" aria-hidden="true">{SITE.name}</p>
+          <div class="g-wrap g-foot__base">
+            <p>&copy; <span data-current-year>{year}</span> {SITE.name}. All rights reserved.</p>
+            <p>{SITE.credit.label}</p>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <slot name="after" />
+    <WhatsAppButton message={WHATSAPP_MESSAGES.gifts} />
+
+    <script>
+      import { init } from '../scripts/return-gifts/page';
+      init();
+    </script>
+  </body>
+</html>
