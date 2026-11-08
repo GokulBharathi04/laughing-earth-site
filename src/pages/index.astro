@@ -11,6 +11,8 @@ import { NAV, SITE } from '../config/site';
 // itself; returning in the same tab, reduced motion and no-JS skip the film.
 const next = `${NAV.landscaping.href}/`;
 const canonical = new URL(next, Astro.site);
+const heroHd = withBase('/videos/land-hero-banner-1080.mp4');
+const heroSd = withBase('/videos/land-hero-banner-720.mp4');
 ---
 
 <!doctype html>
@@ -29,9 +31,14 @@ const canonical = new URL(next, Astro.site);
     <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
     <meta name="theme-color" content="#15140E" />
     <link rel="prefetch" href={next} />
-    <link rel="prefetch" href={withBase('/videos/land-hero-banner.mp4')} />
     <noscript><meta http-equiv="refresh" content={`0;url=${next}`} /></noscript>
-    <script is:inline define:vars={{ next }}>
+    <script is:inline define:vars={{ next, heroHd, heroSd }}>
+      // Warm the Landscaping hero film in the size that page will ask for
+      // (its <source media> picks 1080p from 768px up, 720p below).
+      const warm = document.createElement('link');
+      warm.rel = 'prefetch';
+      warm.href = matchMedia('(min-width: 768px)').matches ? heroHd : heroSd;
+      document.head.append(warm);
       // Before first paint, so a returning visitor never sees a flash of the film.
       try {
         if (
