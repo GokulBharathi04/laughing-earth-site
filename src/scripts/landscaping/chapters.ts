@@ -24,11 +24,9 @@ export function init() {
   /* ================= UI that works with or without motion ================= */
   function setupHeader() {
     const header = qs('[data-header]');
-    const btn = qs('[data-menu-button]');
+    // The header stays transparent over the dark chapters, so the menu icon keeps its light colour.
     const sync = () => {
-      const s = scrollY > 24;
-      header.classList.toggle('scrolled', s);
-      btn.classList.toggle('on-light', s);
+      header.classList.toggle('scrolled', scrollY > 24);
     };
     addEventListener('scroll', sync, { passive: true });
     sync();

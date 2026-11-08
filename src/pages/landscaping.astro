@@ -213,7 +213,6 @@ const a = SITE.address;
       <source src={withBase('/videos/land-hero-banner.mp4')} type="video/mp4" />
     </video>
     <div class="hero-shade"></div>
-    <div class="scanlines"></div>
     <div class="hero-copy">
       <p class="eyebrow">Landscaping · {a.city}</p>
       <h1 id="lh-title">Gardens designed <em>to grow with you</em></h1>
@@ -248,7 +247,7 @@ const a = SITE.address;
   <section class="cine intro-ch chapter" aria-labelledby="intro-title">
     <div class="plate"><span class="mask"><span class="plate-num">01</span></span><span class="mask"><span class="plate-ttl">The ground</span></span></div>
     <BgVideo class="bleed" src="/videos/land-story-gardener-soil" poster="/images/poster-land-story-gardener-soil.webp" />
-    <div class="shade"></div><div class="scanlines"></div>
+    <div class="shade"></div>
     <div class="copy">
       <h2 id="intro-title">Paving first.<br /><em>Then the green.</em></h2>
       <p class="lede">A garden is only as good as the ground you walk on. We lay the patio, the paths and the steps first, then plant around them. From a single balcony to a villa lawn, we design the space around how you live, plant it with species that suit Chennai's climate, and stay on to keep it healthy.</p>
@@ -273,7 +272,7 @@ const a = SITE.address;
     <video class="bleed" poster={withBase('/images/poster-land-services-aerial.webp')} muted loop playsinline disablepictureinpicture preload="none" aria-hidden="true" tabindex="-1">
       <source src={withBase('/videos/land-services-aerial.mp4')} type="video/mp4" />
     </video>
-    <div class="plan-shade"></div><div class="scanlines"></div>
+    <div class="plan-shade"></div>
     <div class="plate"><span class="mask"><span class="plate-num">02</span></span><span class="mask"><span class="plate-ttl">Our services</span></span></div>
     <div class="plan-note">
       <h2 id="services-title">Our <em>services</em></h2>
@@ -283,7 +282,7 @@ const a = SITE.address;
 
   <section class="cine centered chapter" aria-labelledby="band-title">
     <BgVideo class="bleed" src="/videos/land-band-lawn-mowing" poster="/images/poster-land-band-lawn-mowing.webp" />
-    <div class="shade"></div><div class="scanlines"></div>
+    <div class="shade"></div>
     <div class="copy">
       <h2 id="band-title">A garden is <em>never finished</em></h2>
       <p class="lede">Edges trimmed, lawns fed, plants replaced when they tire. We look after it so you can enjoy it.</p>
@@ -293,7 +292,7 @@ const a = SITE.address;
   <section class="cine chapter" id="stonework" data-frames aria-labelledby="lay-title">
     <div class="plate"><span class="mask"><span class="plate-num">03</span></span><span class="mask"><span class="plate-ttl">The paving</span></span></div>
     {rows.map((r, i) => <img class:list={['bleed frame', i === 0 && 'on']} {...img(r.photo)} sizes="100vw" alt={r.alt} loading="lazy" decoding="async" />)}
-    <div class="shade"></div><div class="scanlines"></div>
+    <div class="shade"></div>
     <div class="copy">
       <h2 id="lay-title">What we <em>pave</em></h2>
       <p class="lede">Patios, paths, drives and steps in natural stone and brick, laid on a proper base with a fall for the rain.</p>
@@ -308,7 +307,7 @@ const a = SITE.address;
 
   <section class="cine pave-ch chapter" id="paving" data-frames aria-labelledby="pave-title">
     {materials.map((m, i) => <img class:list={['bleed frame', i === 0 && 'on']} {...img(m.photo)} sizes="100vw" alt={m.alt} loading="lazy" decoding="async" />)}
-    <div class="shade"></div><div class="scanlines"></div>
+    <div class="shade"></div>
     <div class="copy">
       <h2 id="pave-title">Choose your <em>paving</em></h2>
       <div class="tags">
@@ -360,7 +359,7 @@ const a = SITE.address;
         </div>
       ))
     }
-    <div class="shade"></div><div class="scanlines"></div>
+    <div class="shade"></div>
     <div class="copy">
       <h2 id="curtain-title">Sun and <em>monsoon</em></h2>
       <p class="lede">Chennai gardens sit two exams a year: May heat and the northeast monsoon. We choose plants that take both, and lay every stone to a fall so rain runs off instead of sitting on top.</p>
@@ -386,7 +385,7 @@ const a = SITE.address;
         ),
       )
     }
-    <div class="shade"></div><div class="scanlines"></div>
+    <div class="shade"></div>
     <div class="copy">
       <h2 id="steps-title">From visit <em>to first rain</em></h2>
       <p class="lede">Four stages, one team, and a written quote before anything is dug.</p>
@@ -441,7 +440,7 @@ const a = SITE.address;
 
   <section class="visit-ch chapter" id="visit" aria-labelledby="visit-title">
     <img class="bleed" {...img('patio-barn')} sizes="100vw" alt="A sandstone patio with benches and parasols beside a lawn" loading="lazy" decoding="async" />
-    <div class="contact-shade"></div><div class="scanlines"></div>
+    <div class="contact-shade"></div>
     <div class="plate"><span class="mask"><span class="plate-num">08</span></span><span class="mask"><span class="plate-ttl">The visit</span></span></div>
     <div class="visit-inner">
       <h2 id="visit-title">Book a <em>site visit</em></h2>

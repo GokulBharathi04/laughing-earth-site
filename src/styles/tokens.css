@@ -139,4 +139,8 @@
   /* Layering */
   --z-header: 50;
   --z-whatsapp: 60;
+
+  /* Floating WhatsApp logo: brand green and white glyph stay fixed on every theme */
+  --wa-brand: #25d366;
+  --wa-glyph: #ffffff;
 }

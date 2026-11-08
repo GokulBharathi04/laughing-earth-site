@@ -24,7 +24,6 @@
   --deep: var(--night);
   --deep-rgb: 21 20 14;
   --band: var(--soil);
-  --scan: 0.18;
   --wipe: cubic-bezier(0.76, 0, 0.24, 1);
   --slide: cubic-bezier(0.65, 0, 0.35, 1);
   /* floating WhatsApp button */
@@ -219,11 +218,13 @@ html {
   border-bottom: 1px solid transparent;
   transition: height 0.4s, background 0.4s, color 0.4s, border-color 0.4s;
 }
+/* Scrolled: stays see-through (every chapter is dark), with a light frost so the links read over busy video */
 .site-head.scrolled {
   height: calc(68px + env(safe-area-inset-top, 0px));
-  background: rgb(var(--glow-rgb) / 0.95);
-  color: var(--ink);
-  border-bottom-color: rgb(30 30 26 / 0.16);
+  background: rgb(var(--deep-rgb) / 0.14);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  backdrop-filter: blur(10px) saturate(120%);
+  border-bottom-color: rgb(var(--glow-rgb) / 0.12);
 }
 .wordmark {
   display: inline-flex;
@@ -307,8 +308,8 @@ html {
   background: var(--soil);
   color: var(--glow);
 }
-/* Over the dark video the active side needs a light fill to read as selected */
-.site-head:not(.scrolled) .switch a[aria-current='page'] {
+/* Over the dark chapters the active side needs a light fill to read as selected */
+.site-head .switch a[aria-current='page'] {
   background: var(--glow);
   color: var(--ink);
 }
@@ -389,7 +390,6 @@ html {
   background: currentColor;
   transition: transform 0.35s, opacity 0.2s;
 }
-.menu-button.on-light { color: var(--ink); }
 .menu-button.is-open { color: var(--glow); }
 .menu-button.is-open span:nth-child(1) { transform: translateY(8.5px) rotate(45deg); }
 .menu-button.is-open span:nth-child(2) { opacity: 0; }
@@ -507,22 +507,6 @@ html {
   object-fit: cover;
   object-position: center;
 }
-.scanlines {
-  display: none;
-}
-@media (min-width: 801px) {
-  .scanlines {
-    display: block;
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    opacity: var(--scan);
-    background:
-      repeating-linear-gradient(0deg, rgb(0 0 0 / 0.55) 0 1px, transparent 1px 2.5px),
-      repeating-linear-gradient(90deg, rgb(255 0 0 / 0.1) 0 1px, rgb(0 255 0 / 0.08) 1px 2px, rgb(0 80 255 / 0.1) 2px 3px);
-  }
-}
 /* Chapter plate: serif numeral over a caps title, both masked */
 .plate {
   position: absolute;
@@ -593,7 +577,7 @@ html {
 .video-toggle {
   position: absolute;
   z-index: 5;
-  right: 92px;
+  right: 92px; /* clears the floating WhatsApp logo (up to 60px, 16px off the edge) */
   bottom: 24px;
   width: 44px;
   height: 44px;
@@ -633,8 +617,17 @@ html {
   max-width: 400px;
   padding: 32px 34px 26px;
   border-radius: 4px;
-  background: rgb(var(--deep-rgb) / 0.92);
-  box-shadow: 0 28px 80px rgb(0 0 0 / 0.45);
+  border: 1px solid rgb(var(--glow-rgb) / 0.16);
+  /* Frosted glass: the hero shows through; the blur evens out bright spots so the text keeps its contrast */
+  background: rgb(var(--deep-rgb) / 0.4);
+  -webkit-backdrop-filter: blur(16px) saturate(130%);
+  backdrop-filter: blur(16px) saturate(130%);
+  box-shadow: 0 24px 64px rgb(0 0 0 / 0.28);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .card {
+    background: rgb(var(--deep-rgb) / 0.8);
+  }
 }
 @media (min-width: 1051px) {
   .form-chapter {

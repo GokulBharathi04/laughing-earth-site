@@ -6,9 +6,9 @@ import { NAV, SITE } from '../config/site';
 // The site's front door: the logo film, full screen, then straight into the site.
 // There is no landing page behind it.
 //
-// It is seen rarely, so it can take its time, but it must never stand in the way:
-// Skip, Escape or a click go on at once; a video that fails or stalls goes on by
-// itself; returning in the same tab, reduced motion and no-JS skip the film.
+// It plays through on its own, with no skip button. It still never traps anyone:
+// a video that fails or stalls goes on by itself, Escape goes on for keyboard
+// users, and returning in the same tab, reduced motion and no-JS skip the film.
 const next = `${NAV.landscaping.href}/`;
 const canonical = new URL(next, Astro.site);
 ---
@@ -29,7 +29,8 @@ const canonical = new URL(next, Astro.site);
     <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
     <meta name="theme-color" content="#15140E" />
     <link rel="prefetch" href={next} />
-    <link rel="prefetch" href={withBase('/videos/land-hero-banner.mp4')} />
+    <!-- The 16 MB hero video is prefetched only once the intro has fully downloaded (see script),
+         so it never competes with the intro for bandwidth. -->
     <noscript><meta http-equiv="refresh" content={`0;url=${next}`} /></noscript>
     <script is:inline define:vars={{ next }}>
       // Before first paint, so a returning visitor never sees a flash of the film.
@@ -51,6 +52,7 @@ const canonical = new URL(next, Astro.site);
       class="film"
       data-film
       data-next={next}
+      data-hero-video={withBase('/videos/land-hero-banner.mp4')}
       style={`--backdrop-start:url('${withBase('/images/logo-intro-backdrop-start.webp')}');--backdrop-end:url('${withBase('/images/logo-intro-backdrop-end.webp')}')`}
     >
       <video
@@ -64,7 +66,6 @@ const canonical = new URL(next, Astro.site);
       >
         <source src={withBase('/videos/logo-intro.mp4')} type="video/mp4" />
       </video>
-      <a class="film__skip" href={next}>Skip intro</a>
     </div>
 
     <script>
@@ -97,13 +98,21 @@ const canonical = new URL(next, Astro.site);
       document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') leave();
       });
-      film.addEventListener('click', (event) => {
-        event.preventDefault(); // the Skip link is a plain link only without JS
-        leave();
-      });
       video.addEventListener('error', () => leave(false));
       video.querySelector('source')?.addEventListener('error', () => leave(false));
       video.addEventListener('ended', () => setTimeout(leave, HOLD_ON_LOGO));
+
+      // Warm the Landscaping hero video only after the intro is fully buffered.
+      let heroPrefetched = false;
+      video.addEventListener('progress', () => {
+        const b = video.buffered;
+        if (heroPrefetched || !b.length || b.end(b.length - 1) < video.duration - 0.25) return;
+        heroPrefetched = true;
+        const link = document.createElement('link');
+        link.rel = 'prefetch';
+        link.href = film.dataset.heroVideo!;
+        document.head.appendChild(link);
+      });
       // The clip turns from dark jungle to a bright clearing: on phones, the
       // backdrop around the square crop follows it.
       video.addEventListener('timeupdate', () => {
@@ -132,7 +141,6 @@ const canonical = new URL(next, Astro.site);
         place-items: center;
         overflow: hidden;
         background: var(--forest-deep) var(--backdrop-start) center / cover no-repeat;
-        cursor: pointer;
       }
 
       /* Second backdrop, faded in as the clip brightens (opacity only) */
@@ -177,28 +185,6 @@ const canonical = new URL(next, Astro.site);
           -webkit-mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
           mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
         }
-      }
-
-      .film__skip {
-        position: absolute;
-        left: clamp(1rem, 3vw, 2rem); /* the film has a small logo in its right corner */
-        bottom: clamp(1rem, 3vw, 2rem);
-        display: inline-flex;
-        align-items: center;
-        min-height: var(--tap-target);
-        padding-inline: var(--space-5);
-        border: 1px solid color-mix(in srgb, var(--cream) 30%, transparent);
-        border-radius: var(--radius-pill);
-        background: color-mix(in srgb, var(--ink) 72%, transparent);
-        color: var(--cream);
-        font-size: var(--text-16);
-        font-weight: var(--weight-medium);
-        text-decoration: none;
-        transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
-      }
-
-      .film__skip:active {
-        transform: scale(0.97);
       }
     </style>
   </body>
