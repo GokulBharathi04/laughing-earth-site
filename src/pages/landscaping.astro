@@ -210,7 +210,8 @@ const a = SITE.address;
 >
   <section class="hero chapter" aria-labelledby="lh-title">
     <video id="lh-video" class="bleed" poster={withBase('/images/poster-land-hero-banner.webp')} muted loop playsinline disablepictureinpicture preload="auto" aria-hidden="true" tabindex="-1">
-      <source src={withBase('/videos/land-hero-banner.mp4')} type="video/mp4" />
+      <source src={withBase('/videos/land-hero-banner-1080.mp4')} type="video/mp4" media="(min-width: 768px)" />
+      <source src={withBase('/videos/land-hero-banner-720.mp4')} type="video/mp4" />
     </video>
     <div class="hero-shade"></div>
     <div class="scanlines"></div>
@@ -247,7 +248,7 @@ const a = SITE.address;
 
   <section class="cine intro-ch chapter" aria-labelledby="intro-title">
     <div class="plate"><span class="mask"><span class="plate-num">01</span></span><span class="mask"><span class="plate-ttl">The ground</span></span></div>
-    <BgVideo class="bleed" src="/videos/land-story-gardener-soil" poster="/images/poster-land-story-gardener-soil.webp" />
+    <BgVideo hd class="bleed" src="/videos/land-story-gardener-soil" poster="/images/poster-land-story-gardener-soil.webp" />
     <div class="shade"></div><div class="scanlines"></div>
     <div class="copy">
       <h2 id="intro-title">Paving first.<br /><em>Then the green.</em></h2>
@@ -271,7 +272,8 @@ const a = SITE.address;
 
   <section class="plan chapter" id="services" aria-labelledby="services-title">
     <video class="bleed" poster={withBase('/images/poster-land-services-aerial.webp')} muted loop playsinline disablepictureinpicture preload="none" aria-hidden="true" tabindex="-1">
-      <source src={withBase('/videos/land-services-aerial.mp4')} type="video/mp4" />
+      <source src={withBase('/videos/land-services-aerial-1080.mp4')} type="video/mp4" media="(min-width: 768px)" />
+      <source src={withBase('/videos/land-services-aerial-720.mp4')} type="video/mp4" />
     </video>
     <div class="plan-shade"></div><div class="scanlines"></div>
     <div class="plate"><span class="mask"><span class="plate-num">02</span></span><span class="mask"><span class="plate-ttl">Our services</span></span></div>
@@ -282,7 +284,7 @@ const a = SITE.address;
     </section>
 
   <section class="cine centered chapter" aria-labelledby="band-title">
-    <BgVideo class="bleed" src="/videos/land-band-lawn-mowing" poster="/images/poster-land-band-lawn-mowing.webp" />
+    <BgVideo hd class="bleed" src="/videos/land-band-lawn-mowing" poster="/images/poster-land-band-lawn-mowing.webp" />
     <div class="shade"></div><div class="scanlines"></div>
     <div class="copy">
       <h2 id="band-title">A garden is <em>never finished</em></h2>
@@ -356,7 +358,7 @@ const a = SITE.address;
     {
       curtain.map((c, i) => (
         <div class:list={['frame-wrap frame', i === 0 && 'on']}>
-          <BgVideo src={`/videos/${c.video}`} poster={`/images/poster-${c.video}.webp`} />
+          <BgVideo hd src={`/videos/${c.video}`} poster={`/images/poster-${c.video}.webp`} />
         </div>
       ))
     }
@@ -379,7 +381,7 @@ const a = SITE.address;
       steps.map((s, i) =>
         s.video ? (
           <div class:list={['frame-wrap frame', i === 0 && 'on']}>
-            <BgVideo src={`/videos/${s.video}`} poster={`/images/poster-${s.video}.webp`} />
+            <BgVideo hd src={`/videos/${s.video}`} poster={`/images/poster-${s.video}.webp`} />
           </div>
         ) : (
           <img class:list={['bleed frame', i === 0 && 'on']} {...img(s.photo!)} sizes="100vw" alt={s.alt} loading="lazy" decoding="async" />
