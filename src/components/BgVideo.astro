@@ -1,11 +1,14 @@
 ---
 import { withBase } from '../lib/url';
 // Muted, looping background video. Phones get the 360p file, larger screens
-// 720p. Playback is managed by src/scripts/motion/video.ts: it plays only while
-// on screen and never autoplays for reduced motion (the poster shows instead).
+// 720p; with `hd`, phones get 720p and larger screens 1080p. Playback is
+// managed by src/scripts/motion/video.ts: it plays only while on screen and
+// never autoplays for reduced motion (the poster shows instead).
 interface Props {
   /** Path without suffix, e.g. /videos/gifts-hero-watering-plant → -720.mp4 / -360.mp4 */
   src: string;
+  /** Use the -1080.mp4 (768px and up) / -720.mp4 (phones) pair instead */
+  hd?: boolean;
   poster: string;
   class?: string;
   /** Load straight away (hero) instead of when near the viewport */
@@ -14,8 +17,9 @@ interface Props {
   id?: string;
 }
 
-const { src: path, poster: posterPath, class: className, eager = false, id } = Astro.props;
+const { src: path, poster: posterPath, class: className, eager = false, id, hd = false } = Astro.props;
 const src = withBase(path);
+const [large, small] = hd ? ['1080', '720'] : ['720', '360'];
 const poster = withBase(posterPath);
 ---
 
@@ -32,8 +36,8 @@ const poster = withBase(posterPath);
   aria-hidden="true"
   tabindex="-1"
 >
-  <source src={`${src}-720.mp4`} type="video/mp4" media="(min-width: 768px)" />
-  <source src={`${src}-360.mp4`} type="video/mp4" />
+  <source src={`${src}-${large}.mp4`} type="video/mp4" media="(min-width: 768px)" />
+  <source src={`${src}-${small}.mp4`} type="video/mp4" />
 </video>
 
 <style>

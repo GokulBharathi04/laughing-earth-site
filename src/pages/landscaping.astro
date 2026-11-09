@@ -246,7 +246,7 @@ const a = SITE.address;
 
   <section class="cine intro-ch chapter" aria-labelledby="intro-title">
     <div class="plate"><span class="mask"><span class="plate-num">01</span></span><span class="mask"><span class="plate-ttl">The ground</span></span></div>
-    <BgVideo class="bleed" src="/videos/land-story-gardener-soil" poster="/images/poster-land-story-gardener-soil.webp" />
+    <BgVideo hd class="bleed" src="/videos/land-story-gardener-soil" poster="/images/poster-land-story-gardener-soil.webp" />
     <div class="shade"></div>
     <div class="copy">
       <h2 id="intro-title">Paving first.<br /><em>Then the green.</em></h2>
@@ -281,7 +281,7 @@ const a = SITE.address;
     </section>
 
   <section class="cine centered chapter" aria-labelledby="band-title">
-    <BgVideo class="bleed" src="/videos/land-band-lawn-mowing" poster="/images/poster-land-band-lawn-mowing.webp" />
+    <BgVideo hd class="bleed" src="/videos/land-band-lawn-mowing" poster="/images/poster-land-band-lawn-mowing.webp" />
     <div class="shade"></div>
     <div class="copy">
       <h2 id="band-title">A garden is <em>never finished</em></h2>
@@ -355,7 +355,7 @@ const a = SITE.address;
     {
       curtain.map((c, i) => (
         <div class:list={['frame-wrap frame', i === 0 && 'on']}>
-          <BgVideo src={`/videos/${c.video}`} poster={`/images/poster-${c.video}.webp`} />
+          <BgVideo hd src={`/videos/${c.video}`} poster={`/images/poster-${c.video}.webp`} />
         </div>
       ))
     }
@@ -378,7 +378,7 @@ const a = SITE.address;
       steps.map((s, i) =>
         s.video ? (
           <div class:list={['frame-wrap frame', i === 0 && 'on']}>
-            <BgVideo src={`/videos/${s.video}`} poster={`/images/poster-${s.video}.webp`} />
+            <BgVideo hd src={`/videos/${s.video}`} poster={`/images/poster-${s.video}.webp`} />
           </div>
         ) : (
           <img class:list={['bleed frame', i === 0 && 'on']} {...img(s.photo!)} sizes="100vw" alt={s.alt} loading="lazy" decoding="async" />

@@ -91,11 +91,33 @@ shared under the same licence. Each is in `public/images/land/` at 1600 px
 | `land/setts-laying.webp` (+ `-800`) | Process step 3 ("On site") | Placing the new granite setts - geograph.org.uk - 3506618, John Haynes, CC BY-SA 2.0 ([source](https://commons.wikimedia.org/wiki/File:Placing_the_new_granite_setts_-_geograph.org.uk_-_3506618.jpg)) | Their team laying paving |
 | `land/path-hedge.webp` (+ `-800`) | Questions, tall photo | Garden path Harlow Museum & Walled Gardens, Essex 02, Acabashi, CC BY-SA 4.0 ([source](https://commons.wikimedia.org/wiki/File:Garden_path_Harlow_Museum_%26_Walled_Gardens,_Essex_02.jpg)) | A path they laid through a garden |
 
-Videos (Mixkit free licence, 1280×720 and 640×360 H.264, no audio, with a
-poster `poster-<name>.webp` in `public/images/`):
+Videos (H.264, no audio, with a poster `poster-<name>.webp` in `public/images/`).
 
-| Name | Where it's used | Stock clip now (Mixkit #) | Ideal replacement |
+**The two banner films** (`land-hero-banner`, `land-services-aerial`) are the
+client's own HD exports, used at their original resolution as a single file each
+(no phone version): 1920×1080 and 2688×1512, 10 s. They were re-laid losslessly
+for the web (index first, audio and video interleaved) but not re-encoded, so
+they are heavy (16 MB and 22 MB, about 14–19 Mbps). A 1080p re-encode at about
+4–5 Mbps would look the same and stream on mobile.
+
+**The six stock clips** (`land-story-gardener-soil`, `land-band-lawn-mowing`,
+`land-rain-stones`, `gallery-land-sprinkler-lawn`, `land-stone-water` and
+`land-slab-cut`) are served as `<name>-1080.mp4` (1920×1080, screens 768px and
+wider) and `<name>-720.mp4` (1280×720, phones), with 1920×1080 posters. They were
+**AI-upscaled** (Real-ESRGAN general-x4v3) from the 720p Mixkit downloads. That
+makes them clearly sharper, but it is not true 1080p detail. Mixkit also offers
+its clips at 1080p: re-encoding those originals under the same names would be
+sharper again.
+
+Replace with the client's footage using the same names: 8–12 s seamless loops,
+no audio, filmed at 1080p or higher. Supply a 1920×1080 H.264 file (about
+5.5 MB for 12 s) and a 1280×720 version (about 2.8 MB), with the `moov` atom at
+the front (`-movflags +faststart`) so playback starts quickly.
+
+| Name | Where it's used | Clip now | Ideal replacement |
 | --- | --- | --- | --- |
+| `land-hero-banner` | Hero background (10 s loop) | The client's banner film: lit stepping stones at dusk, Laughing Earth logo in the corner (client's 1920×1080 export, `Banner_video.mp4`) | Done; a lighter 1080p encode would help mobile |
+| `land-services-aerial` | "Our services" background (10 s loop) | The client's aerial garden film, Laughing Earth logo in the corner (client's 2688×1512 export, `Garden video.mp4`) | Done; a lighter 1080p encode would help mobile |
 | `land-hero-stone-wall` | Hero background (16 s loop) | Stone retaining wall and steps below a lawn (#15318) | Slow pass along a wall, steps or patio Laughing Earth built |
 | `land-rain-stones` | Monsoon curtain, frame 1 | Rain on smooth stones (#21194) | Rain running off one of their patios |
 | `land-pebble-path` | Monsoon curtain, frame 2 | Pebbles close up (#20299) | A pebble drainage channel they laid |
