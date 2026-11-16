@@ -5,6 +5,7 @@
 import { withBase } from '../lib/url';
 import '../styles/gifts.css';
 import Icon from '../components/Icon.astro';
+import PypCredit from '../components/PypCredit.astro';
 import WhatsAppButton from '../components/WhatsAppButton.astro';
 import mark from '../assets/brand/logo-mark.webp';
 import { NAV, POLICIES, SITE, whatsappLink, WHATSAPP_MESSAGES } from '../config/site';
@@ -147,7 +148,7 @@ const menuLinks = [
           <p class="g-foot__word" aria-hidden="true">{SITE.name}</p>
           <div class="g-wrap g-foot__base">
             <p>&copy; <span data-current-year>{year}</span> {SITE.name}. All rights reserved.</p>
-            <p>{SITE.credit.label}</p>
+            <PypCredit />
           </div>
         </footer>
       </div>

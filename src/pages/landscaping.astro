@@ -2,6 +2,7 @@
 import { withBase } from '../lib/url';
 import LandscapeLayout from '../layouts/LandscapeLayout.astro';
 import Icon from '../components/Icon.astro';
+import PypCredit from '../components/PypCredit.astro';
 import mark from '../assets/brand/logo-mark.webp';
 import { SITE, NAV, POLICIES, whatsappLink, WHATSAPP_MESSAGES } from '../config/site';
 
@@ -290,7 +291,7 @@ const a = SITE.address;
     <p class="foot-word" aria-hidden="true">{SITE.name}</p>
     <div class="foot-base">
       <p>&copy; <span data-current-year>{new Date().getFullYear()}</span> {SITE.name}. All rights reserved.</p>
-      <p>{SITE.credit.label}</p>
+      <PypCredit />
     </div>
   </footer>
 </LandscapeLayout>

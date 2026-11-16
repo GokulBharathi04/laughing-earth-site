@@ -1340,6 +1340,7 @@ html {
 .foot-base {
   display: flex;
   flex-wrap: wrap;
+  align-items: center; /* the agency logo is taller than the copyright line */
   justify-content: space-between;
   gap: 8px 24px;
   padding-right: 80px;

@@ -1,0 +1,29 @@
+---
+// Agency credit. Pick your Pixel SOP: every site we build carries this in the
+// footer, logo included (same mark and 48px height as on our other client sites).
+import logo from '../assets/brand/pickyourpixel.webp';
+---
+
+<p class="pyp-credit">
+  Designed &amp; Developed by
+  <img src={logo.src} alt="" width="84" height="48" loading="lazy" decoding="async" />
+  <strong>Pick your Pixel</strong>
+</p>
+
+<style>
+  .pyp-credit {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 10px;
+    margin: 0;
+  }
+  .pyp-credit img {
+    display: block;
+    width: auto;
+    height: 48px;
+  }
+  .pyp-credit strong {
+    font-weight: 600;
+  }
+</style>
