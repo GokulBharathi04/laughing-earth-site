@@ -157,3 +157,24 @@ client's own logo file where they supply one.
 | `idfc.webp` | IDFC First Bank | Wikimedia Commons (public domain) |
 | `parker.webp` | Parker | Wikimedia Commons, Parker Hannifin (public domain) |
 | `eone.webp` | Eone Technologies | eonetechnologies.com |
+
+### Landscaping: services ring and studio sections (November 2026 layout)
+
+The six service pictures are **supplied by the client** (16 Nov 2026), matched to
+each service by file name. Originals (1024 x 1024 JPEG) are kept outside the repo in
+`Sample Images/Final Images/` of the old v3 folder. Each is cut with `sharp` into
+`public/images/land-studio/<name>-480.webp` (4:5, ring card), `<name>-detail.webp`
+(4:5, 800 x 1000, details panel on desktop) and `<name>-720.webp` (4:3, details panel
+on phones). To replace one, export the same three sizes under the same names.
+
+| Name | Service | Client file |
+| --- | --- | --- |
+| `svc-landscape-design` | Landscape design | Landscape Design.jpg.jpeg |
+| `svc-hardscape-design` | Hardscape design | Hardscape Design.jpg.jpeg |
+| `svc-landscape-maintenance` | Landscape maintenance | Landscape Maintenance.jpg.jpeg |
+| `svc-gardening-services` | Gardening services | Gardening Services.jpg.jpeg |
+| `svc-miyawaki-butterfly` | Miyawaki & butterfly gardens | Miyawaki & Butterfly Gardens.jpg.jpeg |
+| `svc-irrigation` | Automated water irrigation | Automated Water Irrigation Systems.jpg.jpeg |
+
+`about-aerial-{800,1400}.webp` (3:2, About section) is cut from the client's own aerial
+film poster, cropped from the left so the video's watermark is left out.

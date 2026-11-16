@@ -5,7 +5,6 @@ import Icon from '../components/Icon.astro';
 import QuoteBuilder from '../components/QuoteBuilder.astro';
 import BgVideo from '../components/BgVideo.astro';
 import catalogue from '../../data/products.json';
-import credits from '../../data/gifts-credits.json';
 import { withBase } from '../lib/url';
 import { SITE, whatsappLink, WHATSAPP_MESSAGES } from '../config/site';
 
@@ -17,7 +16,6 @@ const countIn = (slug: string) => products.filter((p) => p.category === slug).le
 const kinds = [
   { slug: 'plants', image: '/images/product-little-smiles' },
   { slug: 'seeded-return-gifts', image: '/images/product-butterfly-box' },
-  { slug: 'seed-paper-invitations', image: '/images/product-aesthetic-seed-paper-wedding-card' },
   { slug: 'thamboolam-bags', image: '/images/product-thamboolam-bags' },
 ] as const;
 
@@ -40,18 +38,6 @@ const bulk = [
   { icon: 'truck', title: 'Delivery', text: 'Across Chennai. Other areas <mark class="tbc">to confirm</mark>.' },
 ] as const;
 
-// Stock footage (Mixkit free licence) until the client's own event videos
-// arrive; see IMAGES-NEEDED.md.
-const clip = (name: string) => ({ video: `/videos/${name}`, poster: `/images/poster-${name}.webp` });
-const gallery = [
-  { ...clip('gallery-wedding-table'), caption: 'Weddings', alt: 'A wedding table decorated with flowers' },
-  { ...clip('gallery-gifts-at-the-door'), caption: 'Housewarmings', alt: 'Guests arriving at a front door with gifts' },
-  { ...clip('gallery-giving-a-gift'), caption: 'Birthdays & thank-yous', alt: 'One person handing a small wrapped gift to another' },
-  { ...clip('gallery-succulent-closeup'), caption: 'Plants that last', alt: 'Close-up of succulent leaves' },
-  { ...clip('gallery-planting-seeds'), caption: 'Seeds that sprout', alt: 'Hands planting seeds in garden soil' },
-  { ...clip('gallery-flower-shop'), caption: 'Made to order', alt: 'Shelves of fresh flowers and plants in a shop' },
-];
-
 const faqs = [
   {
     q: 'Is there a minimum order?',
@@ -59,7 +45,7 @@ const faqs = [
   },
   {
     q: 'Can you print our names and wedding date?',
-    a: '<p>Yes. Thamboolam bags, thank-you cards and seed-paper invitations can carry your names, the date or a logo. Share the wording on WhatsApp and we will send a preview before printing.</p>',
+    a: '<p>Yes. Thamboolam bags and thank-you cards can carry your names, the date or a logo. Share the wording on WhatsApp and we will send a preview before printing.</p>',
   },
   {
     q: 'How early should we place the order?',
@@ -70,10 +56,6 @@ const faqs = [
     a: '<p>We deliver across Chennai. Delivery to other cities and venue drop-offs are <mark class="tbc">to confirm</mark>; ask us with your area and date.</p>',
   },
   {
-    q: 'How do seed-paper invitations grow?',
-    a: '<p>Soak the card in water for a few hours, lay it on moist soil, cover it lightly and keep it damp in a sunny spot. Sprouts usually appear within a couple of weeks. <mark class="tbc">Client to review</mark></p>',
-  },
-  {
     q: 'How do we pay?',
     a: '<p>There is no online checkout. Once your quote is confirmed on WhatsApp, we share payment details directly.</p>',
   },
@@ -81,10 +63,10 @@ const faqs = [
 ---
 
 <GiftsLayout
-  title="Eco-friendly Return Gifts, Seed-paper Invitations & Thamboolam Bags in Chennai"
-  description="Seeded return gifts, seed-paper wedding invitations, customisable thamboolam bags and potted plants for weddings and events in Chennai. Prices per piece; bulk quotes on WhatsApp."
+  title="Eco-friendly Return Gifts, Seeded Gifts & Thamboolam Bags in Chennai"
+  description="Seeded return gifts, customisable thamboolam bags and potted plants for weddings and events in Chennai. Prices per piece; bulk quotes on WhatsApp."
 >
-  <!-- Hero: full-bleed film; it stays put while the next section slides over it -->
+  <!-- Hero: full-bleed film. The pinned statement that followed it was removed at the client's request (Nov 2026) -->
   <section class="g-sec g-hero tone-media" data-header="light" aria-labelledby="gifts-hero-title">
     <BgVideo id="gifts-hero-video" class="g-bleed" src="/videos/gifts-hero-watering-plant" poster="/images/poster-gifts-hero-watering-plant.webp" eager />
     <div class="g-hero__shade" aria-hidden="true"></div>
@@ -102,7 +84,7 @@ const faqs = [
       <div class="g-hero__bottom">
         <div>
           <p class="g-hero__lead">
-            Seeded gifts, seed-paper invitations, thamboolam bags and potted plants for weddings, housewarmings and every
+            Seeded gifts, thamboolam bags and potted plants for weddings, housewarmings and every
             celebration in between.
           </p>
           <ul class="g-facts">
@@ -122,35 +104,14 @@ const faqs = [
     </div>
   </section>
 
-  <!-- Statement: pinned while the second sentence takes over -->
-  <section class="g-sec g-statement tone-media" data-header="light" aria-labelledby="statement-title">
-    <BgVideo class="g-bleed" src="/videos/gifts-band-planting-seedling" poster="/images/poster-gifts-band-planting-seedling.webp" />
-    <div class="g-statement__shade" aria-hidden="true"></div>
-    <div class="g-wrap g-statement__inner">
-      <p class="g-label g-eyebrow">From a seed to a smile</p>
-      <div class="g-statement__lines">
-        <h2 id="statement-title" class="g-say">
-          Every gift we make starts with something
-          <span class="g-ipill"><img src={withBase('/images/poster-gallery-planting-seeds.webp')} alt="" /></span>
-          that grows.
-        </h2>
-        <p class="g-say">
-          Your guests take home a sapling, a seed or a plant,
-          <span class="g-ipill"><img src={withBase(`${featured.image}-400.webp`)} alt="" /></span>
-          and a reason to remember the day.
-        </p>
-      </div>
-    </div>
-  </section>
-
   <!-- Kinds of gift: pinned words left, cards scroll right -->
   <section class="g-sec g-kinds tone-cream" id="kinds" data-header="dark" aria-labelledby="kinds-title">
     <div class="g-wrap g-split" data-pin-left>
       <div class="g-split__left">
-        <p class="g-label g-eyebrow">Four ways to say thank you</p>
+        <p class="g-label g-eyebrow">Three ways to say thank you</p>
         <h2 id="kinds-title" class="g-h2" data-split>Choose your kind of gift</h2>
         <p class="g-lead">Priced per piece, customised with your names, and made for bulk orders.</p>
-        <ArrowButton href="#catalogue" data-filter-link="all" data-rise>See all {products.length} gifts</ArrowButton>
+        <ArrowButton href="#catalogue" data-filter-link="all" data-rise>See all gifts</ArrowButton>
       </div>
       <ul class="g-cards">
         {
@@ -185,7 +146,7 @@ const faqs = [
       {
         [0, 1].map(() => (
           <div class="g-strip__group">
-            {['Seeded return gifts', 'Seed-paper invitations', 'Thamboolam bags', 'Plants in jute', 'Made in Chennai'].map((word) => (
+            {['Seeded return gifts', 'Saplings and plants', 'Thamboolam bags', 'Plants in jute', 'Made in Chennai'].map((word) => (
               <span class="g-strip__item">
                 {word}
                 <Icon name="leaf" size={22} />
@@ -311,53 +272,6 @@ const faqs = [
     </div>
   </section>
 
-  <!-- Celebrations: thumbnails, words, film -->
-  <section class="g-sec g-gallery tone-deep" id="celebrations" data-header="light" aria-labelledby="gallery-title">
-    <div class="g-wrap" data-gallery>
-      <p class="g-label g-eyebrow">Event gallery</p>
-      <h2 id="gallery-title" class="g-h2" data-split>Gifts for every celebration</h2>
-      <div class="g-gallery__stage">
-        <div class="g-thumbs" role="group" aria-label="Choose a celebration">
-          {
-            gallery.map((g, i) => (
-              <button type="button" class="g-thumb" data-thumb aria-pressed={i === 0 ? 'true' : 'false'} aria-label={`Show ${g.caption}`}>
-                <img src={withBase(g.poster)} width="1280" height="720" alt="" loading="lazy" decoding="async" />
-              </button>
-            ))
-          }
-        </div>
-        <div class="g-gallery__words">
-          <div class="g-caps" aria-live="polite">
-            {
-              gallery.map((g, i) => (
-                <div class:list={['g-cap', i === 0 && 'on']} aria-hidden={i === 0 ? 'false' : 'true'}>
-                  <p class="g-label g-eyebrow">{String(i + 1).padStart(2, '0')}</p>
-                  <h3>{g.caption}</h3>
-                  <p>{g.alt}.</p>
-                </div>
-              ))
-            }
-          </div>
-          <div class="g-gallery__nav">
-            <span class="g-label g-count" data-count>01 / {String(gallery.length).padStart(2, '0')}</span>
-            <div class="g-progress" aria-hidden="true"><i data-progress></i></div>
-            <button type="button" class="g-arrow g-arrow--prev" data-prev aria-label="Previous celebration"><Icon name="arrow-right" size={18} /></button>
-            <button type="button" class="g-arrow" data-next aria-label="Next celebration"><Icon name="arrow-right" size={18} /></button>
-          </div>
-        </div>
-        <div class="g-gallery__media">
-          {
-            gallery.map((g, i) => (
-              <div class:list={['g-slide', i === 0 && 'on']}>
-                <BgVideo src={g.video} poster={g.poster} />
-              </div>
-            ))
-          }
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- Simple to order: three ruled cells -->
   <section class="g-sec g-promise tone-cream" data-header="dark" aria-labelledby="promise-title">
     <div class="g-wrap">
@@ -416,20 +330,6 @@ const faqs = [
       </div>
     </div>
   </section>
-
-  <p slot="credits" class="g-credits">
-    Product photographs are stand-ins from Wikimedia Commons until our own arrive:
-    {
-      credits.map((c, i) => (
-        <>
-          <a href={c.page} target="_blank" rel="noopener noreferrer">{c.title}</a>
-          {c.creator ? ` by ${c.creator}` : ''}, {c.licenseUrl ? <a href={c.licenseUrl} target="_blank" rel="noopener noreferrer">{c.license}</a> : c.license}
-          {i < credits.length - 1 ? '; ' : '. '}
-        </>
-      ))
-    }
-    Video clips from Mixkit (free licence).
-  </p>
 
   <QuoteBuilder slot="after" gifts={categories.map((c) => c.name)} />
 </GiftsLayout>

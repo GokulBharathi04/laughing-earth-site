@@ -269,9 +269,19 @@ html {
   --h-on: var(--cream);
   --h-onfg: var(--ink);
   color: var(--h-fg);
-  transition: color 200ms ease;
+  /* Frosted glass, as on the Landscaping side: a light tint and blur so the bar
+     reads over film and photographs, with a hairline under it */
+  --h-glass: rgb(16 38 34 / 0.16);
+  --h-edge: rgb(244 233 216 / 0.14);
+  background: var(--h-glass);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  backdrop-filter: blur(10px) saturate(120%);
+  border-bottom: 1px solid var(--h-edge);
+  transition: color 200ms ease, background-color 300ms ease, border-color 300ms ease;
 }
 .g-head.h-dark {
+  --h-glass: rgb(244 233 216 / 0.5);
+  --h-edge: rgb(30 30 26 / 0.1);
   --h-fg: var(--ink);
   --h-bg: rgb(244 233 216 / 0.86);
   --h-line: rgb(30 30 26 / 0.3);
@@ -288,7 +298,25 @@ html {
   justify-self: end;
 }
 .g-switch {
-  display: flex;
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--h-line, currentColor);
+  border-radius: 999px;
+  background: var(--h-bg, transparent);
+}
+/* Inside the rounded track the two sides are plain pills; only the current one is filled */
+.g-switch .hbtn {
+  min-height: 34px;
+  border-color: transparent;
+  border-radius: 999px;
+  background: transparent;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+.g-switch .hbtn[aria-current='page'] {
+  background: var(--h-on, var(--cream));
+  border-color: var(--h-on, var(--cream));
+  color: var(--h-onfg, var(--ink));
 }
 .hbtn {
   display: inline-flex;
@@ -306,9 +334,6 @@ html {
   white-space: nowrap;
   cursor: pointer;
   transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease, transform 160ms var(--g-ease);
-}
-.g-switch .hbtn + .hbtn {
-  margin-left: -1px;
 }
 .hbtn[aria-current='page'],
 .hbtn--solid {
@@ -1276,16 +1301,12 @@ html:has(.morph-dialog[open]) {
 }
 @media (max-width: 900px) {
   .g-head {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr;
   }
-  .g-mark {
-    grid-column: 1;
-    grid-row: 1;
-  }
+  /* Name on the left, Menu on the right */
   .g-head__start {
-    grid-column: 2;
-    grid-row: 1;
-    justify-self: end;
+    flex-direction: row-reverse;
+    justify-content: space-between;
   }
   .g-head .g-switch,
   .g-head__end {

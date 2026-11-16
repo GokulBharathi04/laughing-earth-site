@@ -1,212 +1,81 @@
 ---
 import { withBase } from '../lib/url';
 import LandscapeLayout from '../layouts/LandscapeLayout.astro';
-import BgVideo from '../components/BgVideo.astro';
-import credits from '../../data/landscaping-credits.json';
-import { PATTERNS, VIEW, type Pattern } from '../lib/paving-patterns';
+import Icon from '../components/Icon.astro';
 import mark from '../assets/brand/logo-mark.webp';
-import { SITE, NAV, POLICIES, FORMSPREE_ENDPOINT, whatsappLink, WHATSAPP_MESSAGES } from '../config/site';
+import { SITE, NAV, POLICIES, whatsappLink, WHATSAPP_MESSAGES } from '../config/site';
 
-// Photographs: open-licence pictures of paving and stonework (credited in the
-// footer) until the client's own project photos arrive; see IMAGES-NEEDED.md.
-const img = (name: string) => ({
-  src: withBase(`/images/land/${name}.webp`),
-  srcset: `${withBase(`/images/land/${name}-800.webp`)} 800w, ${withBase(`/images/land/${name}.webp`)} 1600w`,
-});
+// Three parts, in the order the client set out:
+//  1. the banner and its enquiry card, exactly as on the previous version;
+//  2. the services, on a turning 3D ring (src/scripts/landscaping/service-ring.ts);
+//  3. about, vision and commitment, and contact, laid out as in the
+//     "Laughing Earth Landscape Studio" reference page, in this site's dusk palette.
 
-// Hero facts, carried over from the first landscaping page.
-const facts = [
-  { title: 'Across Chennai', text: 'Working from our nursery in Villivakkam.' },
-  { title: 'Design to upkeep', text: 'One team from the first sketch to regular care.' },
-  { title: 'Plants that suit Chennai', text: 'Chosen for local heat, monsoon and shade.' },
-  { title: 'Site visit', text: 'We see the space before we quote. Fee <mark class="tbc">to confirm</mark>.' },
-];
+// Pictures cut to size in /images/land-studio (see IMAGES-NEEDED.md).
+const pic = (file: string) => withBase(`/images/land-studio/${file}`);
 
-const rows = [
+// Each service: the reference page's line, and what it includes, taken from
+// that same line. The card shows the picture and name; the details panel shows
+// the rest. detail = 4:5 picture for the panel (its own pixel size), wide = 4:3
+// picture for the panel on phones.
+const services = [
   {
-    title: 'Sandstone patios',
-    text: 'Indian sandstone or Kota flags on a compacted, levelled base, laid with a slight fall so monsoon rain runs off instead of pooling at the door.',
-    photo: 'patio-barn',
-    alt: 'A wide patio of sandstone flags with benches and planting beside a lawn',
-    size: 'wide',
+    name: 'Landscape design',
+    slug: 'svc-landscape-design',
+    detail: [800, 1000],
+    text: 'Thoughtfully planned green spaces with trees, palms, plants, lawns, shrubs, flower beds and ground covers.',
+    includes: ['Trees and palms', 'Plants and shrubs', 'Lawns', 'Flower beds', 'Ground covers'],
+    alt: 'A lawn garden with palms, flowering shrubs, a stone path, a lily pond with a fountain and a pergola',
   },
   {
-    title: 'Brick paths',
-    text: 'Clay brick paviours in herringbone, basketweave or running bond, held by a firm edge so the pattern never creeps into the lawn.',
-    photo: 'brick-herringbone',
-    alt: 'Close-up of brick paviours in brown, grey and tan laid in herringbone',
-    size: 'tall',
+    name: 'Hardscape design',
+    slug: 'svc-hardscape-design',
+    detail: [800, 1000],
+    text: 'Natural stone paving, pathways, driveways, retaining walls, pergolas, garden steps, fountains and seating areas.',
+    includes: ['Natural stone paving', 'Pathways and driveways', 'Retaining walls', 'Pergolas', 'Garden steps', 'Fountains and seating areas'],
+    alt: 'A natural stone patio with broad steps, retaining walls, a fountain, a pergola and built-in seating',
   },
   {
-    title: 'Crazy paving and stepping stones',
-    text: 'Broken flags fitted like a puzzle with tight joints, or single stones set into the grass along the line people really walk.',
-    photo: 'crazy-paving',
-    alt: 'Irregular flagstones fitted together as crazy paving up to a doorway',
-    size: 'square',
+    name: 'Landscape maintenance',
+    slug: 'svc-landscape-maintenance',
+    detail: [800, 1000],
+    text: 'Mowing, pruning, trimming, fertilisation, weed control, irrigation management and seasonal care, all year round.',
+    includes: ['Mowing, pruning and trimming', 'Fertilisation', 'Weed control', 'Irrigation management', 'Seasonal care, all year round'],
+    alt: 'A freshly mown striped lawn with a mower, a wheelbarrow of tools and a sprinkler running',
   },
   {
-    title: 'Granite drives',
-    text: "Granite setts, the hard stone Tamil Nadu is known for, laid on a deep base so a driveway takes a car every day.",
-    photo: 'granite-setts',
-    alt: 'A long avenue paved in small grey granite setts under trees',
-    size: 'mid',
+    name: 'Gardening services',
+    slug: 'svc-gardening-services',
+    detail: [800, 1000],
+    text: 'Plant selection, garden setup, soil preparation, potting, repotting, planting and general garden care.',
+    includes: ['Plant selection', 'Garden setup', 'Soil preparation', 'Potting and repotting', 'Planting and general garden care'],
+    alt: 'Potted plants, soil, a watering can and hand tools set out on a stone courtyard for planting',
   },
   {
-    title: 'Steps, walls and edging',
-    text: 'Stone steps, low retaining walls and raised beds that hold a slope, frame a border and give you somewhere to sit.',
-    photo: 'temple-granite',
-    alt: 'Large dressed granite blocks fitted in courses, at the Big Temple in Thanjavur',
-    size: 'tall',
-  },
-] as const;
-
-// The paving chooser. Facts are general properties of each material; prices
-// wait for the client. Colours are the materials' own tones for the drawing.
-const materials = [
-  {
-    id: 'brick',
-    name: 'Clay brick paviours',
-    photo: 'brick-moss',
-    alt: 'Old clay brick paviours with moss growing in the joints',
-    looks: 'Warm terracotta reds that deepen with age.',
-    sun: 'Stays warm, never scorching.',
-    rain: 'Textured faces grip; shaded joints need an occasional sweep.',
-    best: 'Paths, courtyards and edging.',
+    name: 'Miyawaki & butterfly gardens',
+    slug: 'svc-miyawaki-butterfly',
+    detail: [800, 1000],
+    text: 'Dense native mini-forests and nectar-rich pollinator gardens that support birds, insects and a healthier ecosystem.',
+    includes: ['Dense native mini-forests', 'Nectar-rich pollinator gardens', 'Homes for birds and insects'],
+    alt: 'A stone path through dense native planting and bright flowers, with butterflies in the sunlight',
   },
   {
-    id: 'sandstone',
-    name: 'Indian sandstone',
-    photo: 'sandstone-wet-panel',
-    alt: 'Wet sandstone flags in rust, grey and buff tones',
-    looks: 'Riven flags in mixed buffs, greys and rust.',
-    sun: 'Light tones stay cooler underfoot.',
-    rain: 'The riven face grips; sealing keeps stains out.',
-    best: 'Patios, terraces and wide paths.',
-  },
-  {
-    id: 'crazy',
-    name: 'Crazy paving',
-    photo: 'crazy-paving-panel',
-    alt: 'Irregular grey flagstones fitted together with narrow joints',
-    looks: 'Irregular flags of sandstone, Kota or granite offcuts.',
-    sun: 'Depends on the stone; pale offcuts stay cooler.',
-    rain: 'Plenty of joints, so water drains quickly.',
-    best: 'Informal paths and spaces around trees.',
-  },
-  {
-    id: 'granite',
-    name: 'Granite setts',
-    photo: 'granite-setts-panel',
-    alt: 'Small grey granite setts in curved rows',
-    looks: 'Small, hard blocks in greys, flamed or split.',
-    sun: 'Dark granite heats up, so we suggest the paler greys.',
-    rain: 'Flamed and split faces grip in heavy rain.',
-    best: 'Driveways and anything a car drives on.',
-  },
-] as const;
-
-const patternOrder: Pattern[] = ['herringbone', 'basketweave', 'running-bond', 'random-flags'];
-
-const curtain = [
-  { video: 'land-rain-stones', caption: 'Rain on stone: a good base lets it run off, not under.' },
-  { video: 'gallery-land-sprinkler-lawn', caption: 'Lawns set up with watering, so they root before the heat.' },
-  { video: 'land-stone-water', caption: "Stone at the water's edge, laid to stay put." },
-];
-
-const steps = [
-  {
-    lead: 'On the first visit,',
-    text: 'we walk the site, measure it, and look at where water stands after rain. You see real stone samples, not a catalogue.',
-    photo: 'kota-slabs',
-    alt: 'Four grey-green Kota stone slabs laid out on the ground',
-  },
-  {
-    lead: 'Then a drawing.',
-    text: 'You get a plan and a written quote: every square foot of paving, every step and every plant, priced line by line.',
-    photo: 'pavers-study',
-    alt: "A 1914 pen study by Umberto Boccioni of a man laying paving stones",
-  },
-  {
-    lead: 'On site,',
-    text: 'our team digs out, lays and compacts the base, sets each stone to a fall and fills the joints. Then the planting goes in.',
-    photo: 'setts-laying',
-    alt: 'A worker kneeling to set granite setts along the edge of a path',
-  },
-  {
-    lead: 'After the first monsoon,',
-    text: 'we check levels and joints, and regular garden care keeps lawns cut, beds weeded and paving swept.',
-    video: 'land-slab-cut',
+    name: 'Automated water irrigation',
+    slug: 'svc-irrigation',
+    detail: [800, 1000],
+    text: 'Drip and sprinkler systems, custom layouts and automatic timers that save water and effort.',
+    includes: ['Drip systems', 'Sprinkler systems', 'Custom layouts', 'Automatic timers'],
+    alt: 'Pop-up sprinklers watering a lawn beside a wall-mounted irrigation timer and drip lines',
   },
 ];
 
-// Clients, with their logos (Wikimedia Commons and the companies' own sites;
-// see IMAGES-NEEDED.md). w/h are the trimmed files' pixel sizes.
-const clients = [
-  { name: 'Switch Mobility', file: 'switch', w: 171, h: 33 },
-  { name: 'PMJ Jewels', file: 'pmj', w: 160, h: 160 },
-  { name: 'TVS Motor Company', file: 'tvs', w: 354, h: 64 },
-  { name: 'Lucas TVS', file: 'lucas-tvs', w: 240, h: 55 },
-  { name: 'Indian Oil', file: 'indian-oil', w: 134, h: 160 },
-  { name: 'Hindustan Petroleum', file: 'hp', w: 126, h: 160 },
-  { name: 'CA India', file: 'ca', w: 212, h: 160 },
-  { name: 'Zoho', file: 'zoho', w: 371, h: 160 },
-  { name: 'Equitas Small Finance Bank', file: 'equitas', w: 172, h: 60 },
-  { name: 'HDFC Bank', file: 'hdfc', w: 955, h: 160 },
-  { name: 'Shriram Group', file: 'shriram', w: 532, h: 160 },
-  { name: 'L&T', file: 'lt', w: 160, h: 160 },
-  { name: 'IDFC First Bank', file: 'idfc', w: 452, h: 160 },
-  { name: 'Parker', file: 'parker', w: 416, h: 160 },
-  { name: 'Eone Technologies', file: 'eone', w: 439, h: 96 },
-].map((c) => {
-  // Same visual weight for every mark: size by area, not by height, so a wide
-  // wordmark is not shrunk to a sliver and a square badge does not dominate.
-  const ratio = c.w / c.h;
-  const height = Math.min(64, Math.round(46 / Math.sqrt(ratio)) + 14);
-  return { ...c, height, width: Math.round(height * ratio) };
-});
-
-const faqs = [
-  {
-    q: 'How much does a garden or patio cost?',
-    a: 'It depends on the size of the space, the stone or plants, and how deep the base must be. After the site visit we send a written quote with every item listed. Typical rates are <mark class="tbc">to confirm</mark>.',
-  },
-  {
-    q: 'How long does a project take?',
-    a: 'A balcony, small patio or path can be ready in days; a full garden with paving, lawn and planting takes longer. You get a timeline with the quote. Typical durations are <mark class="tbc">to confirm</mark>.',
-  },
-  {
-    q: 'Which areas do you cover?',
-    a: 'We are based in Villivakkam and work across Chennai. Projects outside the city are <mark class="tbc">to confirm</mark>; ask us with your location.',
-  },
-  {
-    q: 'Do you offer maintenance plans?',
-    a: 'Yes. We can visit regularly to mow, prune, feed, replant and sweep the paving, for gardens we built and ones we did not. Visit frequency and plan prices are <mark class="tbc">to confirm</mark>.',
-  },
-  {
-    q: 'Which plants and stone suit Chennai?',
-    a: 'Plants that handle heat, humidity and heavy rain: hardy shrubs, palms, flowering creepers and native species. Underfoot, pale sandstone or Kota for patios, brick for paths, granite setts for drives.',
-  },
-  {
-    q: 'Will paving be slippery in the monsoon?',
-    a: 'We use riven, flamed or textured faces outside, never polished ones, and lay every surface to a fall so water runs off quickly.',
-  },
-  {
-    q: 'Will the paving sink or crack?',
-    a: 'Most failures start underneath. We dig out, compact a proper sub-base, and go deeper wherever a car will drive.',
-  },
-  {
-    q: 'Can you work on a terrace or a small balcony?',
-    a: 'Yes. We plan planters, soil and any paving for the weight and drainage a terrace can take, and choose plants that cope with rooftop sun and wind.',
-  },
-];
-
-const propertyTypes = ['Independent house', 'Villa', 'Apartment balcony or terrace', 'Office or commercial', 'Other'];
+const pad = (i: number) => String(i).padStart(2, '0');
 const a = SITE.address;
 ---
 
 <LandscapeLayout
-  title="Landscaping Services, Garden Design & Stone Paving in Chennai"
-  description="Landscaping services in Chennai by Laughing Earth: garden design, lawns, vertical and terrace gardens and maintenance, plus stone paving: sandstone patios, brick paths, crazy paving and granite drives. Book a site visit."
+  title="Landscaping Services & Garden Design in Chennai"
+  description="Laughing Earth Landscaping Studio, Chennai: landscape and hardscape design, landscape maintenance, gardening services, Miyawaki and butterfly gardens, and automated irrigation. Where nature meets design."
 >
   <section class="hero chapter" aria-labelledby="lh-title">
     <video id="lh-video" class="bleed" poster={withBase('/images/poster-land-hero-banner.webp')} muted loop playsinline disablepictureinpicture preload="auto" aria-hidden="true" tabindex="-1">
@@ -218,9 +87,93 @@ const a = SITE.address;
       <h1 id="lh-title">Gardens designed <em>to grow with you</em></h1>
       <p class="hero-small">Garden design, lawns, vertical and terrace gardens, stone paving and ongoing care for homes and offices across Chennai.</p>
     </div>
-    <button class="video-toggle" type="button" data-video-toggle aria-controls="lh-video" aria-pressed="false" aria-label="Pause background video"><i></i></button>
   </section>
 
+  <!-- 2. Services: the banner dissolves into a large title, then the ring alone (services-stage.ts) -->
+  <section class="svc-ch chapter" id="services" data-svc-stage data-own-motion aria-labelledby="services-title">
+    <div class="svc-bg" aria-hidden="true"></div>
+    <div class="svc-head">
+      <h2 id="services-title" class="svc-title">Our <em>services</em></h2>
+      <p class="svc-lede">Comprehensive outdoor solutions: conceptual design, development, installation and ongoing maintenance.</p>
+    </div>
+
+    <div class="svc-ring">
+      <div class="ring" data-ring role="region" aria-roledescription="carousel" aria-label="Our services">
+        <div class="ring-stage" data-ring-stage>
+          <ul class="ring-track" data-ring-track role="list">
+            {
+              services.map((s, i) => (
+                <li
+                  class="ring-card"
+                  data-ring-card
+                  data-name={s.name}
+                  data-detail={pic(`${s.slug}-detail.webp`)}
+                  data-detail-w={s.detail[0]}
+                  data-detail-h={s.detail[1]}
+                  data-detail-wide={pic(`${s.slug}-720.webp`)}
+                  role="group"
+                  aria-roledescription="slide"
+                  aria-label={`${i + 1} of ${services.length}: ${s.name}`}
+                >
+                  <button class="ring-open" type="button" data-ring-open tabindex={i === 0 ? 0 : -1} aria-label={`${s.name}: see details`}>
+                    <img src={pic(`${s.slug}-480.webp`)} width="480" height="600" alt={s.alt} loading="lazy" decoding="async" draggable="false" />
+                    <span class="ring-over" aria-hidden="true">
+                      <span class="ring-title">{s.name}</span>
+                    </span>
+                    <span class="ring-more" aria-hidden="true"><Icon name="plus" size={18} /></span>
+                  </button>
+                  <div class="ring-detail sr-only">
+                    <h3>{s.name}</h3>
+                    <p>{s.text}</p>
+                    <ul>{s.includes.map((x) => <li>{x}</li>)}</ul>
+                  </div>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        <div class="ring-controls">
+          <button class="ring-btn" type="button" data-ring-prev aria-label="Previous service"><Icon name="chevron-left" size={20} /></button>
+          <p class="ring-status" aria-live="polite">
+            <span class="ring-count"><span data-ring-current>01</span> / {pad(services.length)}</span>
+            <span class="sr-only" data-ring-name>{services[0].name}</span>
+            <span class="ring-hint" aria-hidden="true">Tap a card for details</span>
+          </p>
+          <button class="ring-btn" type="button" data-ring-next aria-label="Next service"><Icon name="chevron-right" size={20} /></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Details panel: the front card zooms up into it (service-ring.ts) -->
+  <dialog class="svc-dialog" data-svc-dialog aria-labelledby="svc-d-title">
+    <div class="svc-d-panel">
+      <span class="svc-d-face" data-svc-d-face aria-hidden="true"></span>
+      <figure class="svc-d-media" data-svc-d-media>
+        <picture>
+          <source media="(max-width: 800px)" data-svc-d-wide />
+          <img data-svc-d-img alt="" decoding="async" />
+        </picture>
+      </figure>
+      <div class="svc-d-copy" data-svc-d-copy>
+        <p class="svc-d-num" data-svc-d-num></p>
+        <h3 id="svc-d-title" class="svc-d-title" data-svc-d-title>Service</h3>
+        <p class="svc-d-text" data-svc-d-text></p>
+        <p class="svc-d-sub">What's included</p>
+        <ul class="svc-d-list" data-svc-d-list></ul>
+        <p class="svc-d-note">Every project starts with a site visit and a written quote.</p>
+        <div class="svc-d-actions">
+          <a class="svc-d-call" href={SITE.phoneHref}>Or call {SITE.phoneDisplay}</a>
+          <a class="pill primary svc-d-cta" data-svc-d-cta href={whatsappLink(WHATSAPP_MESSAGES.landscaping)} target="_blank" rel="noopener noreferrer" data-event="whatsapp_click" data-event-label="landscaping_service_quote">Contact us for quotes</a>
+        </div>
+      </div>
+      <button class="svc-d-close" type="button" data-svc-d-close aria-label="Close details" autofocus><Icon name="close" size={20} /></button>
+    </div>
+  </dialog>
+
+  <!-- The enquiry card belongs to the banner: on desktop it is positioned over it
+       (landscape.css), so its place in the markup only matters on phones, where
+       it now follows the services instead of interrupting the dissolve. -->
   <section class="form-chapter chapter" data-tone="pool" id="enquire" aria-label="Quick enquiry">
     <aside class="card" data-card>
       <div class="card-form">
@@ -244,238 +197,72 @@ const a = SITE.address;
     </aside>
   </section>
 
-  <section class="cine intro-ch chapter" aria-labelledby="intro-title">
-    <div class="plate"><span class="mask"><span class="plate-num">01</span></span><span class="mask"><span class="plate-ttl">The ground</span></span></div>
-    <BgVideo hd class="bleed" src="/videos/land-story-gardener-soil" poster="/images/poster-land-story-gardener-soil.webp" />
-    <div class="shade"></div>
-    <div class="copy">
-      <h2 id="intro-title">Paving first.<br /><em>Then the green.</em></h2>
-      <p class="lede">A garden is only as good as the ground you walk on. We lay the patio, the paths and the steps first, then plant around them. From a single balcony to a villa lawn, we design the space around how you live, plant it with species that suit Chennai's climate, and stay on to keep it healthy.</p>
-      <ul class="facts" role="list">
-        {facts.map((f) => <li><strong>{f.title}</strong><span set:html={f.text} /></li>)}
-      </ul>
+  <!-- 3. The reference page's layout: about, vision and commitment, contact -->
+  <section class="studio studio-about" id="about" aria-labelledby="about-title">
+    <div class="studio-wrap about-grid">
+      <div class="about-copy" data-rise>
+        <h2 id="about-title">Outdoor spaces deserve <em>great design too</em></h2>
+        <p class="about-text">
+          We believe outdoor spaces deserve the same creativity and attention as indoor ones. From lush gardens to
+          elegant stone pathways and bespoke hardscape features, we bring every element together for harmonious
+          outdoor experiences that are timeless, practical and inspiring.
+        </p>
+      </div>
+      <figure class="about-figure" data-rise style="--d: 1">
+        <img
+          src={pic('about-aerial-1400.webp')}
+          srcset={`${pic('about-aerial-800.webp')} 800w, ${pic('about-aerial-1400.webp')} 1400w`}
+          sizes="(min-width: 900px) 46vw, 100vw"
+          width="1400"
+          height="933"
+          alt="Aerial view of a landscaped estate: a planted roof garden, curving stone-paved drives, lawns, flower beds and pergolas"
+          loading="lazy"
+          decoding="async"
+        />
+      </figure>
     </div>
-    <figure class="intro-figure">
-      <img {...img('stonework-chelsea')} sizes="380px" width="828" height="920" alt="Honed stone bench set into a curved dry-stone wall, with broad curved stone steps and flowering borders" loading="lazy" decoding="async" />
-      <figcaption>
-        <strong>Show-garden stonework, RHS Chelsea 2024</strong>
-        <ul>
-          <li>Honed stone benches set into the wall</li>
-          <li>Curved steps with split-face edges</li>
-          <li>Dry-stone walling under smooth coping</li>
+  </section>
+
+  <section class="studio studio-vc" id="vision" aria-label="Our vision and commitment">
+    <div class="studio-wrap vc-grid">
+      <div class="vc-item" data-rise>
+        <h2>Our <em>vision</em></h2>
+        <p>
+          To transform everyday outdoor spaces into extraordinary green environments where design, nature and
+          functionality come together, and to inspire people to experience the beauty of nature in their everyday
+          lives.
+        </p>
+      </div>
+      <div class="vc-item" data-rise style="--d: 1">
+        <h2>Our <em>commitment</em></h2>
+        <p>
+          Quality craftsmanship, thoughtful design, reliable execution and sustainable solutions, from the first concept
+          to the final finishing touch.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="studio studio-cta" id="contact" aria-labelledby="contact-title">
+    <div class="studio-wrap">
+      <div class="cta-panel" data-rise>
+        <h2 id="contact-title">Let’s bring your outdoor space <em>to life</em></h2>
+        <p>Tell us about your garden, terrace or commercial space and we will design something that stands the test of time.</p>
+        <ul class="cta-lines" role="list">
+          <li><Icon name="phone" size={18} /><a href={SITE.phoneHref}>{SITE.phoneDisplay}</a></li>
+          <li><Icon name="mail" size={18} /><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+          <li><Icon name="pin" size={18} /><span>{a.locality}, {a.city}</span></li>
         </ul>
-      </figcaption>
-    </figure>
-  </section>
-
-  <section class="plan chapter" id="services" aria-labelledby="services-title">
-    <video class="bleed" poster={withBase('/images/poster-land-services-aerial.webp')} muted loop playsinline disablepictureinpicture preload="none" aria-hidden="true" tabindex="-1">
-      <source src={withBase('/videos/land-services-aerial.mp4')} type="video/mp4" />
-    </video>
-    <div class="plan-shade"></div>
-    <div class="plate"><span class="mask"><span class="plate-num">02</span></span><span class="mask"><span class="plate-ttl">Our services</span></span></div>
-    <div class="plan-note">
-      <h2 id="services-title">Our <em>services</em></h2>
-      <p class="lede">From planted borders and terraced beds to stone driveways and open lawns, we design, build and care for outdoor spaces as one complete landscape.</p>
-    </div>
-    </section>
-
-  <section class="cine centered chapter" aria-labelledby="band-title">
-    <BgVideo hd class="bleed" src="/videos/land-band-lawn-mowing" poster="/images/poster-land-band-lawn-mowing.webp" />
-    <div class="shade"></div>
-    <div class="copy">
-      <h2 id="band-title">A garden is <em>never finished</em></h2>
-      <p class="lede">Edges trimmed, lawns fed, plants replaced when they tire. We look after it so you can enjoy it.</p>
-    </div>
-  </section>
-
-  <section class="cine chapter" id="stonework" data-frames aria-labelledby="lay-title">
-    <div class="plate"><span class="mask"><span class="plate-num">03</span></span><span class="mask"><span class="plate-ttl">The paving</span></span></div>
-    {rows.map((r, i) => <img class:list={['bleed frame', i === 0 && 'on']} {...img(r.photo)} sizes="100vw" alt={r.alt} loading="lazy" decoding="async" />)}
-    <div class="shade"></div>
-    <div class="copy">
-      <h2 id="lay-title">What we <em>pave</em></h2>
-      <p class="lede">Patios, paths, drives and steps in natural stone and brick, laid on a proper base with a fall for the rain.</p>
-      <div class="tags">
-        {rows.map((r, i) => <button type="button" aria-pressed={i === 0 ? 'true' : 'false'}>{r.title}</button>)}
-      </div>
-      <div class="panels" aria-live="polite">
-        {rows.map((r, i) => <div class:list={['panel', i === 0 && 'on']}><p set:html={r.text} /></div>)}
-      </div>
-    </div>
-  </section>
-
-  <section class="cine pave-ch chapter" id="paving" data-frames aria-labelledby="pave-title">
-    {materials.map((m, i) => <img class:list={['bleed frame', i === 0 && 'on']} {...img(m.photo)} sizes="100vw" alt={m.alt} loading="lazy" decoding="async" />)}
-    <div class="shade"></div>
-    <div class="copy">
-      <h2 id="pave-title">Choose your <em>paving</em></h2>
-      <div class="tags">
-        {materials.map((m, i) => <button type="button" data-stone={m.id} aria-pressed={i === 0 ? 'true' : 'false'}>{m.name}</button>)}
-      </div>
-      <div class="panels" aria-live="polite">
-        {
-          materials.map((m, i) => (
-            <div class:list={['panel', i === 0 && 'on']}>
-              <dl class="specs">
-                <div><dt>Looks</dt><dd>{m.looks}</dd></div>
-                <div><dt>In May sun</dt><dd>{m.sun}</dd></div>
-                <div><dt>In the monsoon</dt><dd>{m.rain}</dd></div>
-                <div><dt>Best for</dt><dd>{m.best}</dd></div>
-                <div><dt>Price</dt><dd>Per square foot, <mark class="tbc">to confirm</mark></dd></div>
-              </dl>
-            </div>
-          ))
-        }
-      </div>
-    </div>
-    <div class="drawing">
-      <fieldset>
-        <legend>Pattern</legend>
-        {
-          patternOrder.map((p, i) => (
-            <label class="chip"><input type="radio" name="pattern" value={p} checked={i === 0} /><span>{PATTERNS[p].label}</span></label>
-          ))
-        }
-      </fieldset>
-      <svg class="pave-svg" data-stone="brick" viewBox={`0 0 ${VIEW.w} ${VIEW.h}`} role="img" aria-label="Drawing of the chosen paving laid in the chosen pattern">
-        {
-          patternOrder.map((p, i) => (
-            <g class:list={['pave-layout', i === 0 && 'on']} data-pattern={p}>
-              {PATTERNS[p].units.map((u) => <rect x={u.x} y={u.y} width={u.w} height={u.h} class={`t${u.shade}`} />)}
-            </g>
-          ))
-        }
-      </svg>
-    </div>
-  </section>
-
-  <section class="cine chapter" data-frames aria-labelledby="curtain-title">
-    <div class="plate"><span class="mask"><span class="plate-num">04</span></span><span class="mask"><span class="plate-ttl">The weather</span></span></div>
-    {
-      curtain.map((c, i) => (
-        <div class:list={['frame-wrap frame', i === 0 && 'on']}>
-          <BgVideo hd src={`/videos/${c.video}`} poster={`/images/poster-${c.video}.webp`} />
+        <div class="cta-actions">
+          <a class="pill primary" href={whatsappLink(WHATSAPP_MESSAGES.landscaping)} target="_blank" rel="noopener noreferrer" data-event="whatsapp_click" data-event-label="landscaping_contact">Chat on WhatsApp</a>
+          <a class="pill ghost" href={NAV.contact.href}>Book a site visit</a>
         </div>
-      ))
-    }
-    <div class="shade"></div>
-    <div class="copy">
-      <h2 id="curtain-title">Sun and <em>monsoon</em></h2>
-      <p class="lede">Chennai gardens sit two exams a year: May heat and the northeast monsoon. We choose plants that take both, and lay every stone to a fall so rain runs off instead of sitting on top.</p>
-      <div class="tags">
-        {['Rain on stone', 'Lawns', "Water's edge"].map((t, i) => <button type="button" aria-pressed={i === 0 ? 'true' : 'false'}>{t}</button>)}
-      </div>
-      <div class="panels" aria-live="polite">
-        {curtain.map((c, i) => <div class:list={['panel', i === 0 && 'on']}><p>{c.caption}</p></div>)}
       </div>
     </div>
   </section>
 
-  <section class="cine chapter" id="process" data-frames aria-labelledby="steps-title">
-    <div class="plate"><span class="mask"><span class="plate-num">05</span></span><span class="mask"><span class="plate-ttl">The process</span></span></div>
-    {
-      steps.map((s, i) =>
-        s.video ? (
-          <div class:list={['frame-wrap frame', i === 0 && 'on']}>
-            <BgVideo hd src={`/videos/${s.video}`} poster={`/images/poster-${s.video}.webp`} />
-          </div>
-        ) : (
-          <img class:list={['bleed frame', i === 0 && 'on']} {...img(s.photo!)} sizes="100vw" alt={s.alt} loading="lazy" decoding="async" />
-        ),
-      )
-    }
-    <div class="shade"></div>
-    <div class="copy">
-      <h2 id="steps-title">From visit <em>to first rain</em></h2>
-      <p class="lede">Four stages, one team, and a written quote before anything is dug.</p>
-      <div class="tags">
-        {steps.map((_, i) => <button type="button" aria-pressed={i === 0 ? 'true' : 'false'}>Stage {i + 1} of 4</button>)}
-      </div>
-      <div class="panels" aria-live="polite">
-        {steps.map((s, i) => <div class:list={['panel', i === 0 && 'on']}><p><strong>{s.lead}</strong> {s.text}</p></div>)}
-      </div>
-    </div>
-  </section>
-
-  <section class="ink chapter" id="clients" aria-labelledby="clients-title">
-    <img class="bleed ink-bg" src={withBase('/images/poster-gallery-land-garden-sunset.webp')} alt="" loading="lazy" decoding="async" />
-    <div class="ink-shade"></div>
-    <div class="plate"><span class="mask"><span class="plate-num">06</span></span><span class="mask"><span class="plate-ttl">The clients</span></span></div>
-    <h2 id="clients-title">Our <em>clients</em></h2>
-    <p class="lede">Some of the companies we have worked with.</p>
-    <ul class="client-grid" role="list">
-      {
-        clients.map((c) => (
-          <li><img src={withBase(`/images/clients/${c.file}.webp`)} alt={c.name} width={c.width} height={c.height} style={`--logo-w:${c.width}px`} loading="lazy" decoding="async" /></li>
-        ))
-      }
-    </ul>
-  </section>
-
-  <section class="ink chapter" id="questions" aria-labelledby="qa-title">
-    <img class="bleed ink-bg" {...img('path-hedge')} sizes="100vw" alt="" loading="lazy" decoding="async" />
-    <div class="ink-shade"></div>
-    <div class="plate"><span class="mask"><span class="plate-num">07</span></span><span class="mask"><span class="plate-ttl">The questions</span></span></div>
-    <h2 id="qa-title">Questions</h2>
-    <div class="q-grid">
-      {
-        [faqs.slice(0, 4), faqs.slice(4)].map((col) => (
-          <div class="q-col">
-            {col.map((f) => (
-              <details class="q-row" name="landscaping-faq">
-                <summary><span>{f.q}</span><i aria-hidden="true"></i></summary>
-                <p set:html={f.a} />
-              </details>
-            ))}
-          </div>
-        ))
-      }
-    </div>
-    <div class="q-actions">
-      <a class="pill primary" href="#visit">Book a site visit</a>
-      <a class="pill ghost" href={whatsappLink(WHATSAPP_MESSAGES.landscaping)} target="_blank" rel="noopener noreferrer" data-event="whatsapp_click" data-event-label="landscaping_faq">Ask on WhatsApp</a>
-    </div>
-  </section>
-
-  <section class="visit-ch chapter" id="visit" aria-labelledby="visit-title">
-    <img class="bleed" {...img('patio-barn')} sizes="100vw" alt="A sandstone patio with benches and parasols beside a lawn" loading="lazy" decoding="async" />
-    <div class="contact-shade"></div>
-    <div class="plate"><span class="mask"><span class="plate-num">08</span></span><span class="mask"><span class="plate-ttl">The visit</span></span></div>
-    <div class="visit-inner">
-      <h2 id="visit-title">Book a <em>site visit</em></h2>
-      <p class="lede">Tell us about the space. We call back to arrange a visit, then send a written quote.</p>
-      <ol class="progress" aria-hidden="true">
-        <li class="active">You</li><li>The property</li><li>The idea</li>
-      </ol>
-      <form action={FORMSPREE_ENDPOINT} method="POST" data-enquiry-form data-event="form_submit" data-event-label="landscaping_enquiry">
-        <input type="hidden" name="_subject" value="New landscaping enquiry" />
-        <div class="step" data-step>
-          <div class="field"><label for="v-name">Name</label><input id="v-name" type="text" name="name" autocomplete="name" required maxlength="80" /><i class="focusline"></i></div>
-          <div class="field"><label for="v-phone">Phone</label><input id="v-phone" type="tel" name="phone" autocomplete="tel" inputmode="tel" required maxlength="20" pattern="[0-9+ \(\)\-]{8,20}" aria-describedby="phone-desc" /><i class="focusline"></i><small id="phone-desc">We call to fix a time for the site visit.</small></div>
-          <div class="step-nav"><span></span><button type="button" class="pill primary" data-next>Continue</button></div>
-        </div>
-        <div class="step" data-step>
-          <div class="field">
-            <label for="v-property">Property</label>
-            <select id="v-property" name="property" required>
-              <option value="" disabled selected>Choose one</option>
-              {propertyTypes.map((p) => <option>{p}</option>)}
-            </select><i class="focusline"></i>
-          </div>
-          <div class="step-nav"><button type="button" class="pill ghost" data-prev>Back</button><button type="button" class="pill primary" data-next>Continue</button></div>
-        </div>
-        <div class="step" data-step>
-          <div class="field"><label for="v-msg">What would you like laid or planted?</label><textarea id="v-msg" name="message" rows="2" maxlength="1000" placeholder="e.g. A sandstone patio and a brick path to the gate"></textarea></div>
-          <div class="step-nav"><button type="button" class="pill ghost" data-prev>Back</button><button type="submit" class="pill primary">Send and book a visit</button></div>
-        </div>
-        <p class="visit-status" data-enquiry-status role="status" aria-live="polite"></p>
-      </form>
-      <p class="visit-alt">Or call <a href={SITE.phoneHref}>{SITE.phoneDisplay}</a> · {a.locality}, {a.city}</p>
-    </div>
-  </section>
-
-  <footer class="ink foot-ch chapter">
+  <!-- data-own-motion: the footer is short now, so the chapter engine's scrubbed entrance would never finish and its headings would stay blurred -->
+  <footer class="ink foot-ch chapter" data-own-motion>
     <div class="foot-grid">
       <div>
         <a class="wordmark" href="#top"><img src={mark.src} width="48" height="48" alt="" /><span>{SITE.name}</span></a>
@@ -500,19 +287,6 @@ const a = SITE.address;
         </address>
       </div>
     </div>
-    <p class="credits">
-      Photographs of paving and stonework from Wikimedia Commons and Openverse:
-      {
-        credits.map((c, i) => (
-          <>
-            <a href={c.page} target="_blank" rel="noopener noreferrer">{c.title}</a>
-            {c.creator ? ` by ${c.creator}` : ''}, {c.licenseUrl ? <a href={c.licenseUrl} target="_blank" rel="noopener noreferrer">{c.license}</a> : c.license}
-            {i < credits.length - 1 ? '; ' : '. '}
-          </>
-        ))
-      }
-      Video clips from Mixkit (free licence).
-    </p>
     <p class="foot-word" aria-hidden="true">{SITE.name}</p>
     <div class="foot-base">
       <p>&copy; <span data-current-year>{new Date().getFullYear()}</span> {SITE.name}. All rights reserved.</p>
@@ -520,3 +294,11 @@ const a = SITE.address;
     </div>
   </footer>
 </LandscapeLayout>
+
+<script>
+  import { init as ring } from '../scripts/landscaping/service-ring';
+  import { init as rise } from '../scripts/landscaping/rise';
+
+  ring();
+  rise();
+</script>

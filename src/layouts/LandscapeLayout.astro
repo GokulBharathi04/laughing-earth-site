@@ -19,10 +19,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 
 const chapterLinks = [
   { href: '#services', label: 'Services' },
-  { href: '#stonework', label: 'Paving' },
-  { href: '#process', label: 'Process' },
-  { href: '#clients', label: 'Clients' },
-  { href: '#questions', label: 'Questions' },
+  { href: '#about', label: 'About' },
+  { href: '#vision', label: 'Vision' },
+  { href: '#contact', label: 'Contact' },
 ];
 const pageLinks = [NAV.about, NAV.contact];
 ---
@@ -59,17 +58,12 @@ const pageLinks = [NAV.about, NAV.contact];
     </script>
   </head>
   <body class="land" data-theme="landscaping">
-    <a class="skip-link" href="#visit">Skip to the enquiry form</a>
-
-    <div class="preloader" data-preloader aria-hidden="true">
-      <div class="pl-panels"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-      <div class="pl-logo"><img src={mark.src} alt="" /><div class="pl-pct" data-pct>0</div></div>
-    </div>
+    <a class="skip-link" href="#enquire">Skip to the enquiry form</a>
 
     <header class="site-head" data-header>
       <div class="head-start">
-        <a class="wordmark" href="#top" aria-label="Laughing Earth: back to the top">
-          <img src={mark.src} width="48" height="48" alt="" /><span>{SITE.name}</span>
+        <a class="wordmark" href="#top" aria-label="Laughing Earth Landscaping Studio: back to the top">
+          <img src={mark.src} width="48" height="48" alt="" /><span>{SITE.name} <small>Landscaping Studio</small></span>
         </a>
         <nav class="desktop-nav" aria-label="Page sections">
           {chapterLinks.map((l) => <a href={l.href}>{l.label}</a>)}
@@ -80,7 +74,7 @@ const pageLinks = [NAV.about, NAV.contact];
         <a href={NAV.gifts.href}>{NAV.gifts.label}</a>
       </nav>
       <div class="head-end">
-        <a class="mbtn" href="#visit">
+        <a class="mbtn" href="#contact">
           <span class="mbtn-circle"></span><span class="mbtn-dot"></span><span class="mbtn-text">Plan my garden</span>
         </a>
       </div>
@@ -98,7 +92,7 @@ const pageLinks = [NAV.about, NAV.contact];
         </nav>
         <nav class="mm-nav" aria-label="Page sections, menu">
           {
-            [...chapterLinks, { href: '#visit', label: 'Book a site visit' }].map((l, i) => (
+            [...chapterLinks, { href: '#enquire', label: 'Plan my garden' }].map((l, i) => (
               <a href={l.href}><span><em>{String(i + 1).padStart(2, '0')}</em>{l.label}</span></a>
             ))
           }

@@ -1355,8 +1355,686 @@ html {
   margin: 0;
 }
 
-/* ---------- Tablet: nav collapses ---------- */
-@media (max-width: 1420px) {
+/* ---------- Services stage: the banner dissolves into the title, then the ring alone (services-stage.ts) ---------- */
+.svc-ch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(40px, 6vh, 72px);
+  padding: 140px var(--gut) 72px;
+  background: none; /* the dusk is its own layer, so it can fade in over the banner */
+  text-align: center;
+}
+.svc-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 90% at 50% 45%, var(--pool), var(--pool-deep) 55%, var(--deep));
+}
+.svc-head,
+.svc-ring {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+.svc-title {
+  font-size: clamp(64px, 11vw, 188px);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+.svc-lede {
+  max-width: 34em;
+  margin: 26px auto 0;
+  font-size: 19px;
+  font-weight: 300;
+  line-height: 1.6;
+  color: var(--on-media-soft);
+}
+/* Staged (motion on): the section sits exactly over the banner; the title and
+   the ring take turns in the middle of the same screen */
+.svc-staged .svc-ch {
+  z-index: 6;
+  height: 100svh;
+  min-height: 560px;
+  padding: 0;
+  pointer-events: none; /* the banner and its card stay usable while the dusk is still clear */
+}
+.svc-staged .svc-head,
+.svc-staged .svc-ring {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 96px var(--gut) 40px;
+}
+.svc-staged .svc-ring {
+  pointer-events: auto; /* hidden (and so untouchable) until the timeline brings it in */
+}
+
+/* The ring: cards on a turning circle (service-ring.ts) */
+.ring {
+  --card-w: clamp(240px, 21vw, 320px);
+  width: 100%;
+}
+/* The stage owns horizontal drags only; vertical swipes still scroll the page */
+.ring-stage {
+  position: relative;
+  perspective: 1400px;
+  perspective-origin: 50% 45%;
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.ring-track {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ring-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--soil);
+  box-shadow: 0 24px 60px rgb(0 0 0 / 0.38);
+}
+.ring-open {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: inherit;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 120ms var(--ease-out);
+}
+.ring-open:focus-visible {
+  outline-offset: -6px; /* inside the card, which clips anything outside it */
+}
+.ring-open img {
+  width: 100%;
+  height: auto; /* the height attribute would otherwise fix it and override the ratio */
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  -webkit-touch-callout: none;
+}
+/* The name sits in the middle of the picture on a soft pool of shade, so both read */
+.ring-over {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 28px 22px;
+  background:
+    radial-gradient(closest-side at 50% 50%, rgb(var(--deep-rgb) / 0.5), rgb(var(--deep-rgb) / 0)),
+    linear-gradient(0deg, rgb(var(--deep-rgb) / 0.4), rgb(var(--deep-rgb) / 0) 40%);
+}
+.ring-num {
+  font: 600 12px/1 var(--sans);
+  letter-spacing: 0.24em;
+  color: var(--amber);
+  text-shadow: 0 1px 8px rgb(0 0 0 / 0.55);
+}
+.ring-title {
+  font: 300 clamp(26px, 2.1vw, 34px)/1.08 var(--serif);
+  letter-spacing: -0.015em;
+  color: var(--glow);
+  text-wrap: balance;
+  text-shadow:
+    0 2px 18px rgb(0 0 0 / 0.5),
+    0 1px 3px rgb(0 0 0 / 0.4);
+}
+.ring-more {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-left: -20px;
+  border-radius: 50%;
+  border: 1px solid rgb(var(--glow-rgb) / 0.6);
+  background: rgb(var(--deep-rgb) / 0.35);
+  color: var(--glow);
+  opacity: 0;
+  transition:
+    opacity 0.4s var(--slide),
+    background-color 0.3s;
+}
+.ring-card[data-active] .ring-more {
+  opacity: 1;
+}
+.ring.is-ready .ring-card[data-active] .ring-open:active {
+  transform: scale(0.98);
+}
+@media (hover: hover) and (pointer: fine) {
+  .ring.is-ready .ring-card[data-active] .ring-open:hover .ring-more {
+    background: rgb(var(--glow-rgb) / 0.18);
+  }
+}
+/* Without the script: a plain row that scrolls sideways */
+.ring:not(.is-ready) .ring-track {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 8px;
+}
+.ring:not(.is-ready) .ring-card {
+  flex: 0 0 var(--card-w);
+  scroll-snap-align: start;
+}
+.ring:not(.is-ready) .ring-controls {
+  display: none;
+}
+/* With the script: every card stands on the circle; the far side shows no mirror images */
+.ring.is-ready .ring-track {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+.ring.is-ready .ring-card {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: var(--card-w);
+  margin-left: calc(var(--card-w) / -2);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  cursor: pointer;
+}
+.ring.is-dragging .ring-card {
+  cursor: grabbing;
+}
+/* Cards away from the front sink into the dusk */
+.ring.is-ready .ring-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgb(var(--deep-rgb) / 0.58);
+  pointer-events: none;
+  transition: opacity 0.5s var(--slide);
+}
+.ring.is-ready .ring-card[data-active]::after {
+  opacity: 0;
+}
+@media (hover: hover) and (pointer: fine) {
+  .ring.is-ready .ring-card:not([data-active]):hover::after {
+    opacity: 0.6;
+  }
+}
+.ring-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 30px;
+}
+.ring-btn {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border: 1px solid rgb(var(--glow-rgb) / 0.5);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--glow);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  transition:
+    background-color 0.3s,
+    transform 120ms var(--ease-out);
+}
+.ring-btn:active {
+  transform: scale(0.94);
+}
+@media (hover: hover) and (pointer: fine) {
+  .ring-btn:hover {
+    background: rgb(var(--glow-rgb) / 0.12);
+  }
+}
+.ring-status {
+  flex: 0 1 17rem;
+  min-width: 0;
+  margin: 0;
+  text-align: center;
+}
+.ring-count {
+  display: block;
+  font: 600 12px/1.4 var(--sans);
+  letter-spacing: 0.2em;
+  color: var(--on-media-soft);
+}
+.ring-hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--on-media-soft);
+}
+
+/* ---------- Service details: the front card zooms up into this panel ---------- */
+.svc-dialog {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: clamp(16px, 4vw, 48px);
+  border: 0;
+  background: transparent;
+  color: var(--glow);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.svc-dialog[open] {
+  display: grid;
+  place-items: center;
+}
+/* Literal colours: ::backdrop does not inherit custom properties in every browser */
+.svc-dialog::backdrop {
+  background: rgb(21 20 14 / 0.74);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  animation: svc-fade 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.svc-dialog.is-closing::backdrop {
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+@keyframes svc-fade {
+  from {
+    opacity: 0;
+  }
+}
+.svc-d-panel {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr);
+  width: min(1080px, 100%);
+  min-height: min(620px, calc(100dvh - 2 * clamp(16px, 4vw, 48px)));
+}
+.svc-d-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 4px;
+  border: 1px solid rgb(var(--glow-rgb) / 0.14);
+  background: var(--soil);
+  box-shadow: 0 40px 100px rgb(0 0 0 / 0.5);
+}
+.svc-d-media {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 4px 0 0 4px;
+  transform-origin: 50% 50%;
+}
+.svc-d-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.svc-d-copy {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(28px, 4vw, 52px);
+  text-align: left;
+}
+.svc-d-num {
+  margin: 0;
+  font: 600 12px var(--sans);
+  letter-spacing: 0.24em;
+  color: var(--amber);
+}
+.svc-d-title {
+  margin-top: 12px;
+  padding-right: 44px; /* clear of the close button */
+  font-size: clamp(34px, 3.4vw, 52px);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+}
+.svc-d-text {
+  margin: 18px 0 0;
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 1.6;
+  color: var(--on-media-soft);
+}
+.svc-d-sub {
+  margin: 26px 0 10px;
+  font: 600 12px var(--sans);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--on-media-soft);
+}
+.svc-d-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.svc-d-list li {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgb(var(--glow-rgb) / 0.24);
+  font-size: 15px;
+  line-height: 1.3;
+}
+.svc-d-note {
+  margin: 22px 0 0;
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--on-media-soft);
+}
+/* "Contact us for quotes" holds the bottom-right corner */
+.svc-d-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px 22px;
+  margin-top: auto;
+  padding-top: 32px;
+}
+.svc-d-call {
+  font-size: 16px;
+  color: var(--on-media-soft);
+  text-underline-offset: 0.2em;
+}
+.svc-d-cta {
+  width: auto;
+  min-height: 50px;
+  margin: 0;
+  padding: 0 28px;
+}
+.svc-d-close {
+  position: absolute;
+  z-index: 2;
+  top: 14px;
+  right: 14px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid rgb(var(--glow-rgb) / 0.3);
+  border-radius: 50%;
+  background: rgb(var(--deep-rgb) / 0.4);
+  color: var(--glow);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 0.3s,
+    transform 120ms var(--ease-out);
+}
+.svc-d-close:active {
+  transform: scale(0.94);
+}
+@media (hover: hover) and (pointer: fine) {
+  .svc-d-close:hover {
+    background: rgb(var(--glow-rgb) / 0.14);
+  }
+}
+@media (max-width: 800px) {
+  .ring {
+    --card-w: min(62vw, 260px);
+  }
+  .svc-ch {
+    padding: 120px 0 56px; /* unstaged: the ring runs edge to edge, the words keep the gutter */
+  }
+  .svc-head,
+  .ring-controls {
+    padding-inline: var(--gut);
+  }
+  .svc-staged .svc-head {
+    padding: 80px var(--gut) 32px;
+  }
+  .svc-staged .svc-ring {
+    padding: 80px 0 32px;
+  }
+  .svc-lede {
+    font-size: 17px;
+  }
+  /* Details become a full-screen sheet: picture on top, words below, the quote button last */
+  .svc-dialog {
+    padding: 0;
+  }
+  .svc-d-panel {
+    grid-template-columns: 1fr;
+    width: 100%;
+    min-height: 100dvh;
+  }
+  .svc-d-face {
+    border-radius: 0;
+  }
+  .svc-d-media {
+    aspect-ratio: 4 / 3;
+    border-radius: 0;
+  }
+  .svc-d-copy {
+    padding: 24px 24px calc(28px + env(safe-area-inset-bottom, 0px));
+  }
+  .svc-d-actions {
+    flex-direction: column; /* the quote button last, at the bottom */
+    align-items: stretch;
+  }
+  .svc-d-cta {
+    width: 100%;
+  }
+  .svc-d-call {
+    text-align: center;
+  }
+}
+
+/* ---------- Studio: the reference page's layout, in the dusk palette ---------- */
+.studio {
+  position: relative;
+  padding: clamp(72px, 9vw, 128px) var(--gut);
+  background: var(--deep);
+}
+.studio + .studio {
+  padding-top: 0;
+}
+.studio-wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+.studio h2 {
+  font-size: clamp(36px, 4.2vw, 64px);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  text-wrap: balance; /* no single word left on the last line */
+}
+/* The footer is a full screen with its words at the foot; after the contact
+   panel that leaves an empty band, so here it takes only the room it needs. */
+.studio-cta + .foot-ch {
+  min-height: 0;
+  padding-top: 0;
+}
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(32px, 5vw, 80px);
+  align-items: center;
+}
+.about-text {
+  max-width: 34em;
+  margin: 24px 0 0;
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 1.65;
+  color: var(--on-media-soft);
+}
+.about-figure {
+  margin: 0;
+}
+.about-figure img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid rgb(var(--glow-rgb) / 0.14);
+  box-shadow: 0 24px 64px rgb(0 0 0 / 0.32);
+}
+.vc-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(28px, 4vw, 64px);
+  padding-top: clamp(40px, 5vw, 72px);
+  border-top: 1px solid var(--hair);
+}
+.vc-item {
+  padding: 4px 0 4px 24px;
+  border-left: 3px solid var(--amber);
+}
+.vc-item h2 {
+  font-size: clamp(30px, 2.8vw, 44px);
+}
+.vc-item p {
+  max-width: 34em;
+  margin: 14px 0 0;
+  font-size: 17px;
+  font-weight: 300;
+  line-height: 1.65;
+  color: var(--on-media-soft);
+}
+.cta-panel {
+  padding: clamp(48px, 6vw, 88px) clamp(24px, 4vw, 64px);
+  border-radius: 4px;
+  border: 1px solid rgb(var(--glow-rgb) / 0.16);
+  background: radial-gradient(120% 140% at 50% 0%, var(--pool), var(--pool-deep) 72%);
+  box-shadow: 0 24px 64px rgb(0 0 0 / 0.28);
+  text-align: center;
+}
+.cta-panel h2 {
+  max-width: 14em;
+  margin: 0 auto;
+}
+.cta-panel > p {
+  max-width: 34em;
+  margin: 18px auto 0;
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 1.6;
+  color: var(--on-media-soft);
+}
+.cta-lines {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 28px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.cta-lines li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.cta-lines svg {
+  flex: none;
+  color: var(--amber);
+}
+.cta-lines a {
+  font-weight: 500;
+  text-decoration: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .cta-lines a:hover {
+    text-decoration: underline;
+  }
+}
+.cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 32px;
+}
+.cta-actions .pill {
+  width: auto;
+  min-width: 220px;
+  margin: 0;
+}
+/* One-way rise (rise.ts): hidden only once the script has started */
+.rise-ready [data-rise] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.8s var(--ease-out),
+    transform 0.8s var(--ease-out);
+  transition-delay: calc(var(--d, 0) * 80ms);
+}
+.rise-ready [data-rise].is-in {
+  opacity: 1;
+  transform: none;
+}
+@media (max-width: 900px) {
+  .about-grid,
+  .vc-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 800px) {
+  .about-text,
+  .cta-panel > p {
+    font-size: 17px;
+  }
+  /* Two lines, not three, inside the narrow panel */
+  .cta-panel h2 {
+    font-size: clamp(26px, 7.4vw, 36px);
+  }
+  /* The enquiry card's buttons keep their label on one line */
+  .card .pill {
+    padding: 0 12px;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .cta-actions .pill {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+/* The header name is longer on this side ("… Landscaping Studio"): same size on
+   wide screens, a second smaller line on phones so it clears the menu button */
+.wordmark small {
+  font-size: 1em;
+}
+@media (max-width: 1000px) {
+  .site-head .wordmark small {
+    display: block;
+    margin-top: 3px;
+    font: 600 10px/1 var(--sans);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--on-media-soft);
+  }
+}
+
+/* ---------- Tablet: nav collapses (earlier than before, to fit the longer name) ---------- */
+@media (max-width: 1700px) {
   .desktop-nav {
     display: none;
   }

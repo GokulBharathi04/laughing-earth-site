@@ -1,5 +1,5 @@
 {
-  "_note": "Prices and minimum orders from the Laughing Earth WhatsApp catalogue (October 2026); thamboolam bags and the seed-paper card from BRIEF.md. price null = price on request; priceFrom = \"from\" price; moq = minimum order quantity. image is the path without size suffix or extension: <image>.webp (800px) and <image>-400.webp.",
+  "_note": "Prices and minimum orders from the Laughing Earth WhatsApp catalogue (October 2026); thamboolam bags from BRIEF.md; The Green Hug changed to 60 and the seed-paper wedding card removed at the client's request (Nov 2026). price null = price on request; priceFrom = \"from\" price; moq = minimum order quantity. image is the path without size suffix or extension: <image>.webp (800px) and <image>-400.webp.",
   "categories": [
     {
       "slug": "plants",
@@ -10,11 +10,6 @@
       "slug": "seeded-return-gifts",
       "name": "Seeded return gifts",
       "blurb": "Seed balls, seed pens and grow kits your guests can plant at home."
-    },
-    {
-      "slug": "seed-paper-invitations",
-      "name": "Seed-paper invitations",
-      "blurb": "Wedding cards made with seeds that sprout once they're planted."
     },
     {
       "slug": "thamboolam-bags",
@@ -45,7 +40,7 @@
       "name": "The Green Hug",
       "slug": "green-hug",
       "category": "plants",
-      "price": 55,
+      "price": 60,
       "image": "/images/product-green-hug",
       "description": "A flowering sapling in a bag made from recycled plastic bottles. A gift for a greener tomorrow.",
       "moq": 25
@@ -167,15 +162,6 @@
       "mrp": 65,
       "image": "/images/product-thamboolam-bags",
       "description": "Our largest thamboolam bag, for a sapling plus traditional items."
-    },
-    {
-      "name": "Aesthetic wedding card",
-      "slug": "aesthetic-seed-paper-wedding-card",
-      "category": "seed-paper-invitations",
-      "price": 50,
-      "mrp": 90,
-      "image": "/images/product-aesthetic-seed-paper-wedding-card",
-      "description": "A seed-paper wedding invitation that grows into flowers once it's planted."
     }
   ]
 }

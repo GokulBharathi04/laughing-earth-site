@@ -24,7 +24,6 @@ const menuLinks = [
   { href: '#kinds', label: 'Kinds of gift' },
   { href: '#catalogue', label: 'Gifts and prices' },
   { href: '#bulk', label: 'Bulk orders' },
-  { href: '#celebrations', label: 'Celebrations' },
   { href: '#questions', label: 'Questions' },
 ];
 ---
@@ -60,14 +59,15 @@ const menuLinks = [
           <span class="hbtn__bars" aria-hidden="true"><i></i><i></i></span>
           <span>Menu</span>
         </button>
-        <nav class="g-switch" aria-label="Choose a business">
-          <a class="hbtn" href={NAV.landscaping.href}>{NAV.landscaping.label}</a>
-          <a class="hbtn" href={NAV.gifts.href} aria-current="page">{NAV.gifts.label}</a>
-        </nav>
+        <a class="g-mark" href="#top" aria-label="Laughing Earth: back to the top">
+          <img src={mark.src} width="48" height="48" alt="" /><span>{SITE.name}</span>
+        </a>
       </div>
-      <a class="g-mark" href="#top" aria-label="Laughing Earth: back to the top">
-        <img src={mark.src} width="48" height="48" alt="" /><span>{SITE.name}</span>
-      </a>
+      <!-- Rounded switch on the true centre of the bar, as on the Landscaping side -->
+      <nav class="g-switch" aria-label="Choose a business">
+        <a class="hbtn" href={NAV.landscaping.href}>{NAV.landscaping.label}</a>
+        <a class="hbtn" href={NAV.gifts.href} aria-current="page">{NAV.gifts.label}</a>
+      </nav>
       <div class="g-head__end">
         <button class="hbtn hbtn--solid" type="button" data-morph-open="quote-builder">Get a quote</button>
         <a

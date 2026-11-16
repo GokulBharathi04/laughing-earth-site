@@ -1,14 +1,11 @@
 ---
-import '../styles/global.css';
 import { withBase } from '../lib/url';
 import { NAV, SITE } from '../config/site';
 
-// The site's front door: the logo film, full screen, then straight into the site.
-// There is no landing page behind it.
-//
-// It plays through on its own, with no skip button. It still never traps anyone:
-// a video that fails or stalls goes on by itself, Escape goes on for keyboard
-// users, and returning in the same tab, reduced motion and no-JS skip the film.
+// The site's front door. The logo film that used to play here was removed at
+// the client's request (November 2026), so this address goes straight to the
+// Landscaping page. The film's files are still in public/ if it is wanted back;
+// the previous version of this file is in git history.
 const next = `${NAV.landscaping.href}/`;
 const canonical = new URL(next, Astro.site);
 ---
@@ -21,171 +18,18 @@ const canonical = new URL(next, Astro.site);
     <title>{SITE.name} | Landscaping & Eco-friendly Return Gifts in Chennai</title>
     <meta
       name="description"
-      content="Laughing Earth, Villivakkam, Chennai: garden design and landscaping services, plus eco-friendly seeded return gifts, seed-paper wedding invitations and thamboolam bags."
+      content="Laughing Earth, Villivakkam, Chennai: garden design and landscaping services, plus eco-friendly seeded return gifts, potted plants and thamboolam bags."
     />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href={withBase('/favicon-32.png')} type="image/png" sizes="32x32" />
-    <link rel="icon" href={withBase('/favicon-48.png')} type="image/png" sizes="48x48" />
-    <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
     <meta name="theme-color" content="#15140E" />
-    <link rel="prefetch" href={next} />
-    <!-- The 16 MB hero video is prefetched only once the intro has fully downloaded (see script),
-         so it never competes with the intro for bandwidth. -->
-    <noscript><meta http-equiv="refresh" content={`0;url=${next}`} /></noscript>
+    <meta http-equiv="refresh" content={`0;url=${next}`} />
     <script is:inline define:vars={{ next }}>
-      // Before first paint, so a returning visitor never sees a flash of the film.
-      try {
-        if (
-          sessionStorage.getItem('le-intro-seen') ||
-          matchMedia('(prefers-reduced-motion: reduce)').matches
-        ) {
-          location.replace(next);
-        }
-      } catch (e) {
-        location.replace(next);
-      }
+      location.replace(next); // replace(), so Back never lands here again
     </script>
   </head>
-  <body class="film-page">
-    <h1 class="sr-only">{SITE.name}</h1>
-    <div
-      class="film"
-      data-film
-      data-next={next}
-      data-hero-video={withBase('/videos/land-hero-banner.mp4')}
-      style={`--backdrop-start:url('${withBase('/images/logo-intro-backdrop-start.webp')}');--backdrop-end:url('${withBase('/images/logo-intro-backdrop-end.webp')}')`}
-    >
-      <video
-        class="film__video"
-        muted
-        playsinline
-        disablepictureinpicture
-        preload="auto"
-        poster={withBase('/images/poster-logo-intro.webp')}
-        aria-label="Laughing Earth logo animation: leaves part to reveal the logo"
-      >
-        <source src={withBase('/videos/logo-intro.mp4')} type="video/mp4" />
-      </video>
-    </div>
-
-    <script>
-      const film = document.querySelector<HTMLElement>('[data-film]')!;
-      const video = film.querySelector('video')!;
-      const nextUrl = film.dataset.next!;
-
-      const HOLD_ON_LOGO = 700; // ms the finished logo rests before moving on
-      const START_LIMIT = 2500; // ms a slow connection may take to begin playing
-      const TOTAL_LIMIT = 10000; // the film is 6s; nothing may hold the visitor longer
-      const FADE = 380; // matches the .is-leaving transition
-
-      let leaving = false;
-
-      const leave = (fade = true) => {
-        if (leaving) return;
-        leaving = true;
-        try {
-          sessionStorage.setItem('le-intro-seen', '1');
-          sessionStorage.setItem('le-from-film', '1');
-        } catch {
-          /* storage blocked: the film just plays again next time */
-        }
-        // replace(), so the Back button never lands on the film again
-        if (!fade) return location.replace(nextUrl);
-        film.classList.add('is-leaving');
-        setTimeout(() => location.replace(nextUrl), FADE);
-      };
-
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') leave();
-      });
-      video.addEventListener('error', () => leave(false));
-      video.querySelector('source')?.addEventListener('error', () => leave(false));
-      video.addEventListener('ended', () => setTimeout(leave, HOLD_ON_LOGO));
-
-      // Warm the Landscaping hero video only after the intro is fully buffered.
-      let heroPrefetched = false;
-      video.addEventListener('progress', () => {
-        const b = video.buffered;
-        if (heroPrefetched || !b.length || b.end(b.length - 1) < video.duration - 0.25) return;
-        heroPrefetched = true;
-        const link = document.createElement('link');
-        link.rel = 'prefetch';
-        link.href = film.dataset.heroVideo!;
-        document.head.appendChild(link);
-      });
-      // The clip turns from dark jungle to a bright clearing: on phones, the
-      // backdrop around the square crop follows it.
-      video.addEventListener('timeupdate', () => {
-        if (video.currentTime > 2.6) film.classList.add('is-bright');
-      });
-
-      setTimeout(() => {
-        if (video.currentTime === 0) leave(false);
-      }, START_LIMIT);
-      setTimeout(leave, TOTAL_LIMIT);
-
-      video.play().catch(() => leave(false));
-    </script>
-
-    <style>
-      .film-page {
-        min-height: 100svh;
-        overflow: hidden;
-        background: #15140e; /* matches the Landscaping page behind the film */
-      }
-
-      .film {
-        position: fixed;
-        inset: 0;
-        display: grid;
-        place-items: center;
-        overflow: hidden;
-        background: var(--forest-deep) var(--backdrop-start) center / cover no-repeat;
-      }
-
-      /* Second backdrop, faded in as the clip brightens (opacity only) */
-      .film::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: var(--backdrop-end) center / cover no-repeat;
-        opacity: 0;
-        transition: opacity 900ms ease;
-      }
-
-      .film.is-bright::before {
-        opacity: 1;
-      }
-
-      /* Leaving: fades and eases slightly towards the viewer into the site.
-         The exit is the fast half: the visitor has already waited for the film. */
-      .film.is-leaving {
-        opacity: 0;
-        transform: scale(1.03);
-        pointer-events: none;
-        transition:
-          opacity 380ms cubic-bezier(0.23, 1, 0.32, 1),
-          transform 380ms cubic-bezier(0.23, 1, 0.32, 1);
-      }
-
-      .film__video {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        max-width: none;
-        object-fit: cover;
-      }
-
-      /* Portrait screens: a full-height crop would cut into the logo, so the film
-         sits in a centred square that melts into the matching backdrop */
-      @media (max-aspect-ratio: 1/1) {
-        .film__video {
-          height: auto;
-          aspect-ratio: 1;
-          -webkit-mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
-          mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
-        }
-      }
-    </style>
+  <body style="margin:0;background:#15140e;color:#f8efda;font-family:system-ui,sans-serif">
+    <h1 style="position:absolute;left:-9999px">{SITE.name}</h1>
+    <p style="padding:24px"><a href={next} style="color:inherit">Continue to {SITE.name}</a></p>
   </body>
 </html>

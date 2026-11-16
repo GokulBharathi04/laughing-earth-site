@@ -8,6 +8,7 @@ import { ScrollSmoother } from 'gsap/ScrollSmoother';
 import { SplitText } from 'gsap/SplitText';
 import { whatsappLink } from '../../config/site';
 import { init as enquiry } from './enquiry';
+import { buildServicesStage } from './services-stage';
 
 type Move = { els: Element[]; from: Record<string, any>; dur: number; ease: string; at?: number; stagger?: number };
 type Chapter = HTMLElement & { _stop?: number };
@@ -18,8 +19,10 @@ const isPhone = () => matchMedia('(max-width:800px)').matches;
 
 export function init() {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // ?snap=off keeps every reveal but gives the wheel and keys back to the browser.
-  const snapOn = new URLSearchParams(location.search).get('snap') !== 'off';
+  // Snapping steps the wheel from chapter to chapter. The page now ends in flowing
+  // sections (about, vision, contact) that are not chapters and would be stepped
+  // over, so the wheel and keys stay with the browser unless ?snap=on is asked for.
+  const snapOn = new URLSearchParams(location.search).get('snap') === 'on';
 
   /* ================= UI that works with or without motion ================= */
   function setupHeader() {
@@ -87,9 +90,9 @@ export function init() {
         else if (v.closest('.frame')) v.pause();
       });
 
-    const toggle = qs('[data-video-toggle]');
+    const toggle = document.querySelector<HTMLElement>('[data-video-toggle]');
     const hero = qs<HTMLVideoElement>('.hero video');
-    toggle.addEventListener('click', () => {
+    toggle?.addEventListener('click', () => {
       const pause = !hero.dataset.userPaused;
       hero.dataset.userPaused = pause ? '1' : '';
       toggle.setAttribute('aria-pressed', String(pause));
@@ -177,7 +180,8 @@ export function init() {
 
   /* Site visit: the existing enquiry form, shown one step at a time. */
   function setupWizard() {
-    const form = qs<HTMLFormElement>('[data-enquiry-form]');
+    const form = document.querySelector<HTMLFormElement>('[data-enquiry-form]');
+    if (!form) return; // no site-visit wizard on this version of the page
     const steps = qsa('[data-step]', form);
     const dots = qsa('.progress li');
     let at = 0;
@@ -237,7 +241,7 @@ export function init() {
 
   /* Reduced motion: no curtain, native scrolling, everything simply visible. */
   if (reduced) {
-    qs('[data-preloader]').remove();
+    document.querySelector('[data-preloader]')?.remove();
     return;
   }
 
@@ -273,6 +277,8 @@ export function init() {
     tick();
   });
 
+  // A flowing section lands just below the see-through header, not under it.
+  const clearHeader = () => qs('[data-header]').offsetHeight + 16;
   const FEEL = { scrub: 1.2, start: 'top 50%', end: 'top -50%', hold: 0 };
   const SHOWN: Record<string, any> = { opacity: 1, x: 0, y: 0, xPercent: 0, yPercent: 0, scale: 1, scaleX: 1, filter: 'blur(0px)', strokeDashoffset: 0 };
   const sideways = (i: number) => (i % 2 ? 1 : -1) * innerWidth * 0.28;
@@ -417,8 +423,9 @@ export function init() {
   let chapterCtx: gsap.Context | null = null;
   function buildChapters() {
     chapterCtx = gsap.context(() => {
+      // data-own-motion: the section runs its own scroll timeline (the services stage).
       qsa('.chapter').forEach((ch) => {
-        if (!ch.classList.contains('hero')) reveal(ch, choreograph(ch));
+        if (!ch.classList.contains('hero') && !ch.hasAttribute('data-own-motion')) reveal(ch, choreograph(ch));
       });
     });
   }
@@ -467,14 +474,12 @@ export function init() {
       });
       return best;
     };
-    glide = (i, dur = NAV_DUR, ease = NAV_EASE) => {
-      const arr = stops();
-      i = Math.max(0, Math.min(arr.length - 1, i));
+    const glideTo = (to: number, dur = NAV_DUR, ease = NAV_EASE) => {
       locked = true;
       const p = { v: y() };
       tween?.kill();
       tween = gsap.to(p, {
-        v: arr[i],
+        v: to,
         duration: dur,
         ease,
         onUpdate: () => smoother.scrollTop(p.v),
@@ -487,11 +492,31 @@ export function init() {
         locked = false;
       }, dur * 1000 + 250);
     };
+    glide = (i, dur = NAV_DUR, ease = NAV_EASE) => {
+      const arr = stops();
+      glideTo(arr[Math.max(0, Math.min(arr.length - 1, i))], dur, ease);
+    };
     qsa<HTMLAnchorElement>('a[href^="#"]').forEach((a) => {
       a.addEventListener('click', (e) => {
         const id = a.getAttribute('href')!.slice(1);
         const target = document.getElementById(id);
         const ch = target?.closest<Chapter>('.chapter');
+        // A pinned stage says where it wants to be landed on (the services ring).
+        if (target?.dataset.anchorScroll) {
+          e.preventDefault();
+          const to = Number(target.dataset.anchorScroll);
+          glideTo(to, Math.min(NAV_DUR + Math.abs(to - y()) / innerHeight * 0.12, 2.2));
+          return;
+        }
+        // A flowing section (about, vision, contact) has no chapter stop: glide
+        // straight to its top. The smoother owns scrolling, so a native jump
+        // would be undone.
+        if (!ch && target && id !== 'top') {
+          e.preventDefault();
+          const to = Math.min(smoother.offset(target, `top ${clearHeader()}px`), ScrollTrigger.maxScroll(window));
+          glideTo(to, Math.min(NAV_DUR + Math.abs(to - y()) / innerHeight * 0.12, 2.2));
+          return;
+        }
         if (!ch && id !== 'top') return; // #top is <main>: the way home, stop 0
         stops();
         e.preventDefault();
@@ -577,7 +602,14 @@ export function init() {
 
   /* Curtain: gates on the hero video, fonts and poster; never traps the visitor. */
   function preloader() {
-    const pre = qs('[data-preloader]');
+    // The loading curtain (logo and counter) was removed at the client's request:
+    // with no curtain in the page, the banner's entrance simply starts at once.
+    const pre = document.querySelector<HTMLElement>('[data-preloader]');
+    if (!pre) {
+      heroGo = true;
+      heroQueue.splice(0).forEach((f) => f());
+      return;
+    }
     const logo = qs('.pl-logo img', pre);
     const pct = qs('[data-pct]', pre);
     const shown = { v: 0 };
@@ -662,7 +694,16 @@ export function init() {
   // A deep link such as /landscaping/#visit lands on its chapter behind the curtain.
   function arriveAtHash() {
     const id = location.hash.slice(1);
-    const ch = id ? document.getElementById(id)?.closest<Chapter>('.chapter') : null;
+    const target = id ? document.getElementById(id) : null;
+    const ch = target?.closest<Chapter>('.chapter');
+    if (target?.dataset.anchorScroll) {
+      smoother.scrollTop(Number(target.dataset.anchorScroll));
+      return;
+    }
+    if (target && !ch) {
+      smoother.scrollTop(Math.min(smoother.offset(target, `top ${clearHeader()}px`), ScrollTrigger.maxScroll(window)));
+      return;
+    }
     if (!ch) return;
     const arr = stops();
     smoother.scrollTop(arr[ch._stop!]);
@@ -678,9 +719,12 @@ export function init() {
       clearTimeout(timer);
       timer = setTimeout(() => {
         chapterCtx?.revert();
+        stageCtx?.revert();
         heroCtx?.revert();
         buildHero(true);
+        stageCtx = buildServicesStage();
         buildChapters();
+        ScrollTrigger.sort();
         ScrollTrigger.refresh();
       }, 250);
     });
@@ -689,12 +733,17 @@ export function init() {
   preloader();
   navigation();
   let built = false;
+  let stageCtx: gsap.Context | null = null;
   const build = () => {
     if (built) return;
     built = true;
     buildHero(false);
+    // The pinned services stage first, so chapters below it measure past its pin.
+    stageCtx = buildServicesStage();
     buildChapters();
+    ScrollTrigger.sort();
     ScrollTrigger.refresh();
+    if (!document.querySelector('[data-preloader]')) arriveAtHash(); // deep links, now that no curtain does it
     rebuildOnResize();
   };
   (document.fonts ? document.fonts.ready : Promise.resolve()).then(build);
