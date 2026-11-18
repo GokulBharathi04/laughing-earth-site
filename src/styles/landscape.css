@@ -2212,16 +2212,8 @@ html {
     display: none;
   }
 }
-/* Too narrow for the name and a centred switch: the switch moves into the menu */
-@media (max-width: 640px) {
-  .site-head {
-    grid-template-columns: 1fr;
-  }
-  .site-head .switch,
-  .head-end {
-    display: none;
-  }
-}
+/* At 640px and below the bar takes a second row for the switch: see "Phone:
+   switch on its own row" after the phone rules, so it can override them. */
 @media (max-width: 800px) {
   .plan-shade {
     background: linear-gradient(0deg, rgb(var(--deep-rgb) / 0.9), rgb(var(--deep-rgb) / 0.5) 45%, rgb(var(--deep-rgb) / 0.34));
@@ -2356,6 +2348,52 @@ html {
   }
   .foot-base {
     padding-right: 72px;
+  }
+}
+
+/* ---------- Phone: switch on its own row ---------- */
+/* Too narrow for the name and a centred switch on one row, so the bar takes a
+   second row and the switch stays on screen there as a segmented control
+   (client, Nov 2026) instead of hiding in the menu. */
+@media (max-width: 640px) {
+  .site-head,
+  .site-head.scrolled {
+    grid-template-columns: 1fr;
+    grid-template-rows: 60px 44px;
+    align-content: start;
+    row-gap: 0;
+    height: auto;
+    padding-bottom: 10px;
+  }
+  .head-end {
+    display: none;
+  }
+  .site-head .switch {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-self: center;
+    width: 100%;
+    max-width: 440px;
+  }
+  .site-head .switch a {
+    justify-content: center;
+  }
+  /* The menu button lines up with the first row */
+  .menu-button {
+    top: calc(8px + env(safe-area-inset-top, 0px));
+  }
+  /* Everything that sat just under the one-row bar clears the second row */
+  .hero-copy {
+    padding-top: calc(140px + env(safe-area-inset-top, 0px));
+  }
+  .svc-staged .svc-ring {
+    padding-top: calc(120px + env(safe-area-inset-top, 0px));
+  }
+  .svc-ch {
+    padding-top: 150px;
+  }
+  .form-chapter {
+    padding-top: 136px;
   }
 }
 

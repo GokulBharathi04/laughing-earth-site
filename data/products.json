@@ -1,5 +1,5 @@
 {
-  "_note": "Prices and minimum orders from the Laughing Earth WhatsApp catalogue (October 2026); thamboolam bags from BRIEF.md; The Green Hug changed to 60 and the seed-paper wedding card removed at the client's request (Nov 2026). price null = price on request; priceFrom = \"from\" price; moq = minimum order quantity. image is the path without size suffix or extension: <image>.webp (800px) and <image>-400.webp.",
+  "_note": "Prices and minimum orders from the Laughing Earth WhatsApp catalogue (October 2026); thamboolam bags from BRIEF.md; The Green Hug changed to 60 and the seed-paper wedding card removed at the client's request (Nov 2026). The four thamboolam bags became one product with a size choice, at 45 / 50 / 60 / 70 (client, 18 Nov 2026). price null = price on request; priceFrom = \"from\" price; moq = minimum order quantity; sizes = one card with a size drop-down, each size with its own price (price = the smallest). image is the path without size suffix or extension: <image>.webp (800px) and <image>-400.webp.",
   "categories": [
     {
       "slug": "plants",
@@ -128,40 +128,19 @@
       "description": "A coco peat pot, two coco coir coins, two seed balls, fertiliser, a thank-you card and easy growing instructions."
     },
     {
-      "name": "Customisable thamboolam bag 8.8×6×3",
-      "slug": "thamboolam-bag-8-8x6x3",
+      "name": "Customisable thamboolam bag",
+      "slug": "thamboolam-bag",
       "category": "thamboolam-bags",
-      "price": 35,
-      "mrp": 40,
+      "price": 45,
+      "priceFrom": true,
       "image": "/images/product-thamboolam-bags",
-      "description": "Our smallest thamboolam bag, for betel, fruit and a small gift."
-    },
-    {
-      "name": "Customisable thamboolam bag 8.8×10.5×3",
-      "slug": "thamboolam-bag-8-8x10-5x3",
-      "category": "thamboolam-bags",
-      "price": 40,
-      "mrp": 45,
-      "image": "/images/product-thamboolam-bags",
-      "description": "A taller thamboolam bag with room for a coconut and sweets."
-    },
-    {
-      "name": "Customisable thamboolam bag 10.5×12×4",
-      "slug": "thamboolam-bag-10-5x12x4",
-      "category": "thamboolam-bags",
-      "price": 50,
-      "mrp": 55,
-      "image": "/images/product-thamboolam-bags",
-      "description": "A roomy thamboolam bag for fuller return gift sets."
-    },
-    {
-      "name": "Customisable thamboolam bag 12×14×4",
-      "slug": "thamboolam-bag-12x14x4",
-      "category": "thamboolam-bags",
-      "price": 60,
-      "mrp": 65,
-      "image": "/images/product-thamboolam-bags",
-      "description": "Our largest thamboolam bag, for a sapling plus traditional items."
+      "description": "Eco-friendly thamboolam bags printed with your names and date, in four sizes.",
+      "sizes": [
+        { "label": "8.8×6×3", "price": 45, "note": "Our smallest: betel, fruit and a small gift." },
+        { "label": "8.8×10.5×3", "price": 50, "note": "Taller, with room for a coconut and sweets." },
+        { "label": "10.5×12×4", "price": 60, "note": "Roomy, for fuller return gift sets." },
+        { "label": "12×14×4", "price": 70, "note": "Our largest: a sapling plus traditional items." }
+      ]
     }
   ]
 }

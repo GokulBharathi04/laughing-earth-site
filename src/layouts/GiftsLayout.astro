@@ -16,7 +16,10 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
-const pageTitle = title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
+// This side's own name (client, Nov 2026), as the other side is "Laughing Earth Landscaping Studio".
+const SIDE_NAME = 'Eco Favours';
+const brand = `${SITE.name} ${SIDE_NAME}`;
+const pageTitle = title.includes(SITE.name) ? title : `${title} | ${brand}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const year = new Date().getFullYear();
 const a = SITE.address;
@@ -60,8 +63,8 @@ const menuLinks = [
           <span class="hbtn__bars" aria-hidden="true"><i></i><i></i></span>
           <span>Menu</span>
         </button>
-        <a class="g-mark" href="#top" aria-label="Laughing Earth: back to the top">
-          <img src={mark.src} width="48" height="48" alt="" /><span>{SITE.name}</span>
+        <a class="g-mark" href="#top" aria-label={`${brand}: back to the top`}>
+          <img src={mark.src} width="48" height="48" alt="" /><span>{SITE.name} <small>{SIDE_NAME}</small></span>
         </a>
       </div>
       <!-- Rounded switch on the true centre of the bar, as on the Landscaping side -->

@@ -94,6 +94,8 @@ Each business has its own colourway on the same design system — one brand, two
 
 More products will be added later via `data/products.json`.
 
+**Client updates, 18 Nov 2026:** the four thamboolam bags are now one product with a size choice: 8.8×6×3 ₹45, 8.8×10.5×3 ₹50, 10.5×12×4 ₹60, 12×14×4 ₹70 (no MRP). The Return Gifts side is named **Laughing Earth Eco Favours**. Lead time for bulk orders: 15 to 20 days.
+
 ### Business details
 
 - **Address:** 8B, Sastha Nagar Annex, opposite Thathan Kuppam lake, Rajiv Gandhi Nagar, Villivakkam, Chennai, Tamil Nadu 600049
@@ -105,7 +107,7 @@ More products will be added later via `data/products.json`.
 
 ### Still to come from the client (use clearly named placeholders)
 
-Landscaping services and pricing, landscaping project photos (before/after), hero photos, full product catalogue and photos, bulk-order rules (minimum quantity, lead time, delivery areas), customer reviews, final logo files.
+Landscaping services and pricing, landscaping project photos (before/after), hero photos, full product catalogue and photos, bulk-order rules (minimum quantity, delivery areas; lead time now confirmed as 15 to 20 days), customer reviews, final logo files.
 
 ## 5. Technical requirements
 

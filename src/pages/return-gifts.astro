@@ -31,10 +31,19 @@ const priceLine = (p: Product) =>
 const quoteMessage = (p: Product) =>
   `Hi Laughing Earth! I'd like a quote for "${p.name}"${p.price == null ? '' : ` (${'priceFrom' in p && p.priceFrom ? 'from ' : ''}${rupees(p.price)} each)`}. Quantity: ___ Event date: ___`;
 
+// A gift sold in several sizes (the thamboolam bag) is one card with a size menu.
+// Its quote message names the chosen size; sizes.ts fills {size} and {price} in.
+const sizesOf = (p: Product) => ('sizes' in p && p.sizes ? p.sizes : null);
+const sizeQuote = (p: Product) => `Hi Laughing Earth! I'd like a quote for "${p.name}", size {size} ({price} each). Quantity: ___ Event date: ___`;
+const firstSizeQuote = (p: Product) => {
+  const s = sizesOf(p)![0];
+  return sizeQuote(p).replace('{size}', s.label).replace('{price}', rupees(s.price));
+};
+
 const bulk = [
   { icon: 'boxes', title: 'Minimum order', text: 'From 25 pieces for plants and saplings, 50 to 100 for seeded gifts. Each gift lists its own.' },
   { icon: 'pen', title: 'Customisation', text: 'Names, dates and logos printed on bags, cards and tags.' },
-  { icon: 'clock', title: 'Lead time', text: 'Order <mark class="tbc">to confirm</mark> before your event.' },
+  { icon: 'clock', title: 'Lead time', text: '15 to 20 days for bulk orders.' },
   { icon: 'truck', title: 'Delivery', text: 'Across Chennai. Other areas <mark class="tbc">to confirm</mark>.' },
 ] as const;
 
@@ -49,7 +58,7 @@ const faqs = [
   },
   {
     q: 'How early should we place the order?',
-    a: '<p>Ideally <mark class="tbc">to confirm</mark> before the event, so plants are fresh and printing is checked. For large orders, reach out as soon as your date is fixed.</p>',
+    a: '<p>Bulk orders take 15 to 20 days, so please place yours at least 15 to 20 days before your event. That keeps the plants fresh and leaves time to check the printing.</p>',
   },
   {
     q: 'Do you deliver to the venue?',
@@ -180,9 +189,11 @@ const faqs = [
       </div>
       <ul class="g-products">
         {
-          products.map((p) => (
+          products.map((p) => {
+            const sizes = sizesOf(p);
+            return (
             <li class="g-product" data-category={p.category}>
-              <article class="g-product__card">
+              <article class="g-product__card" data-size-card={sizes ? '' : undefined} data-quote-template={sizes ? sizeQuote(p) : undefined}>
                 <div class="g-product__media">
                   <img
                     src={withBase(`${p.image}-400.webp`)}
@@ -199,16 +210,31 @@ const faqs = [
                   <p class="g-label g-product__cat">{categoryName[p.category]}</p>
                   <h3 class="g-product__name">{p.name}</h3>
                   <p class="g-product__desc">{p.description}</p>
+                  {sizes && (
+                    <div class="g-size">
+                      <label class="g-label" for={`size-${p.slug}`}>Size</label>
+                      <span class="g-size__field">
+                        <select id={`size-${p.slug}`} data-size-select aria-describedby={`size-${p.slug}-note`}>
+                          {sizes.map((s, i) => (
+                            <option value={s.label} data-price={s.price} data-note={s.note} selected={i === 0}>
+                              {s.label}
+                            </option>
+                          ))}
+                        </select>
+                      </span>
+                      <p class="g-size__note" id={`size-${p.slug}-note`} data-size-note>{sizes[0].note}</p>
+                    </div>
+                  )}
                   <p class="g-product__price">
                     <span>
                       {p.price == null ? (
                         <span class="g-product__unit">Price on request</span>
                       ) : (
                         <>
-                          {'priceFrom' in p && p.priceFrom && <span class="g-product__unit">from </span>}
-                          <span class="g-product__now">
+                          {'priceFrom' in p && p.priceFrom && <span class="g-product__unit" data-size-from>from </span>}
+                          <span class="g-product__now" aria-live={sizes ? 'polite' : undefined}>
                             <span class="sr-only">Price: </span>
-                            {rupees(p.price)}
+                            <span data-size-price>{rupees(p.price)}</span>
                           </span>
                           <span class="g-product__unit"> each</span>
                           {'mrp' in p && p.mrp && p.mrp > p.price && (
@@ -229,18 +255,20 @@ const faqs = [
                     )}
                   </p>
                   <ArrowButton
-                    href={whatsappLink(quoteMessage(p))}
+                    href={whatsappLink(sizes ? firstSizeQuote(p) : quoteMessage(p))}
                     target="_blank"
                     rel="noopener noreferrer"
                     data-event="whatsapp_click"
                     data-event-label={`product_${p.slug}`}
+                    data-size-quote={sizes ? '' : undefined}
                   >
                     Get a quote<span class="sr-only"> for {p.name} on WhatsApp</span>
                   </ArrowButton>
                 </div>
               </article>
             </li>
-          ))
+            );
+          })
         }
       </ul>
     </div>
@@ -272,23 +300,7 @@ const faqs = [
     </div>
   </section>
 
-  <!-- Simple to order: three ruled cells -->
-  <section class="g-sec g-promise tone-cream" data-header="dark" aria-labelledby="promise-title">
-    <div class="g-wrap">
-      <p class="g-label g-eyebrow">How it works</p>
-      <h2 id="promise-title" class="g-h2" data-split>Simple to order</h2>
-      <ul class="g-cells">
-        {
-          facts.map((f, i) => (
-            <li class="g-cell" data-rise>
-              <p class="g-label">{String(i + 1).padStart(2, '0')}</p>
-              <p>{f}</p>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
+  <!-- The "How it works / Simple to order" section that stood here was removed at the client's request (Nov 2026) -->
 
   <!-- Questions: pinned picture, ruled answers -->
   <section class="g-sec g-faq tone-forest" id="questions" data-header="light" aria-labelledby="faq-title">

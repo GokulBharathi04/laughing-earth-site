@@ -6,6 +6,7 @@
 import { gsap, ScrollTrigger, SplitText, prefersReducedMotion } from '../motion/gsap';
 import { ScrollSmoother } from 'gsap/ScrollSmoother';
 import { init as catalogue } from './catalogue';
+import { init as sizes } from './sizes';
 import { init as quoteBuilder } from './quote-builder';
 import { init as morphDialog } from '../motion/morph-dialog';
 
@@ -128,6 +129,7 @@ export function init() {
 
   /* ---------- Existing shared behaviour ---------- */
   catalogue();
+  sizes();
   quoteBuilder();
   morphDialog();
   qsa('[data-current-year]').forEach((el) => (el.textContent = String(new Date().getFullYear())));
