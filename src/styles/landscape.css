@@ -6,7 +6,9 @@
 .land {
   --serif: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
   --sans: 'Inter', 'DM Sans', Arial, sans-serif;
-  --gut: 6vw;
+  /* A phone held sideways puts its notch at one side: keep words clear of it */
+  --safe-x: max(env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+  --gut: max(6vw, calc(var(--safe-x) + 16px));
   /* Sampled from the hero film */
   --night: #15140e;
   --soil: #2c241c;
@@ -52,6 +54,26 @@ html.from-film .pl-logo {
 }
 html {
   -webkit-text-size-adjust: 100%;
+  /* No grey flash on tap (iOS Safari, Android Chrome): every control below
+     gives its own press feedback instead */
+  -webkit-tap-highlight-color: transparent;
+}
+/* Taps fire at once (no wait for a double-tap zoom) on everything tappable */
+.land a,
+.land button,
+.land summary,
+.land label {
+  touch-action: manipulation;
+}
+/* Controls are not text: a long press must not select their labels */
+.land button,
+.land .pill,
+.land .switch a,
+.land .mm-nav a,
+.land .mbtn,
+.land .wordmark {
+  user-select: none;
+  -webkit-user-select: none;
 }
 /* Same page-change fade as the rest of the site, so the film hands over cleanly */
 @media (prefers-reduced-motion: no-preference) {
@@ -274,7 +296,7 @@ html {
   filter: blur(0);
   transition: filter 0.35s ease;
 }
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .desktop-nav a:hover {
     filter: blur(3px);
   }
@@ -313,8 +335,15 @@ html {
   background: var(--glow);
   color: var(--ink);
 }
-.switch a:not([aria-current]):hover {
-  background: rgb(127 127 127 / 0.18);
+/* Hover only where there is a real pointer: on touch a tap would leave it stuck on */
+@media (hover: hover) and (pointer: fine) {
+  .switch a:not([aria-current]):hover {
+    background: rgb(127 127 127 / 0.18);
+  }
+}
+.switch a:not([aria-current]):active {
+  background: rgb(127 127 127 / 0.26);
+  transition: none;
 }
 /* Motion button: a circle that floods the pill on hover */
 .mbtn {
@@ -360,7 +389,7 @@ html {
   text-transform: uppercase;
   transition: color 0.5s;
 }
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .mbtn:hover .mbtn-circle { width: 100%; }
   .mbtn:hover .mbtn-text { color: var(--glow); }
   .mbtn:hover .mbtn-dot { transform: translateX(6px); }
@@ -374,7 +403,7 @@ html {
   position: fixed;
   z-index: 40;
   top: calc(19px + env(safe-area-inset-top, 0px));
-  right: 20px;
+  right: max(20px, env(safe-area-inset-right, 0px));
   width: 44px;
   height: 44px;
   padding: 12px 9px;
@@ -382,6 +411,10 @@ html {
   background: none;
   color: var(--glow);
   cursor: pointer;
+  transition: transform 120ms var(--ease-out);
+}
+.menu-button:active {
+  transform: scale(0.92);
 }
 .menu-button span {
   display: block;
@@ -439,10 +472,15 @@ html {
   justify-content: center;
   gap: 22px;
   height: 100%;
-  padding: 84px 28px 28px;
+  padding: calc(84px + env(safe-area-inset-top, 0px)) var(--gut) calc(28px + env(safe-area-inset-bottom, 0px));
   overflow-y: auto;
+  overscroll-behavior: contain; /* scrolling the menu never drags the page behind it */
   opacity: 0;
   transition: opacity 0.2s;
+}
+.mm-nav a:active > span,
+.mm-pages a:active {
+  opacity: 0.6;
 }
 .mobile-menu.open .mm-inner {
   opacity: 1;
@@ -760,8 +798,23 @@ html {
   background: transparent;
   color: var(--glow);
 }
-.pill.ghost:hover {
-  background: rgb(var(--glow-rgb) / 0.12);
+@media (hover: hover) and (pointer: fine) {
+  .pill.ghost:hover {
+    background: rgb(var(--glow-rgb) / 0.12);
+  }
+}
+/* Press feedback lands with the finger, not when it lifts */
+.pill {
+  transition:
+    background 0.3s,
+    color 0.3s,
+    transform 120ms var(--ease-out);
+}
+.pill:active {
+  transform: scale(0.97);
+}
+.pill.ghost:active {
+  background: rgb(var(--glow-rgb) / 0.16);
 }
 .card-trust {
   display: block;
@@ -914,8 +967,10 @@ html {
   cursor: pointer;
   transition: background 0.3s, color 0.3s, border-color 0.3s;
 }
-.tags button:hover {
-  border-color: var(--glow);
+@media (hover: hover) and (pointer: fine) {
+  .tags button:hover {
+    border-color: var(--glow);
+  }
 }
 .tags button[aria-pressed='true'] {
   border-color: var(--glow);
@@ -1285,7 +1340,26 @@ html {
 .foot-ch {
   justify-content: flex-end;
   padding-top: 120px;
-  padding-bottom: 32px;
+  padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px)); /* clear of the iPhone's home bar */
+}
+.foot-grid a:active,
+.cta-lines a:active,
+.svc-d-call:active {
+  opacity: 0.6;
+}
+/* Fingers need bigger targets than a pointer: each footer link gets a 44px row */
+@media (pointer: coarse) {
+  .foot-grid li {
+    padding: 0;
+  }
+  .foot-grid li a,
+  .foot-grid p > a {
+    display: inline-block;
+    padding: 9px 0;
+  }
+  .foot-grid address p {
+    margin: 0;
+  }
 }
 .foot-grid {
   display: grid;
@@ -1356,13 +1430,12 @@ html {
   margin: 0;
 }
 
-/* ---------- Services stage: the banner dissolves into the title, then the ring alone (services-stage.ts) ---------- */
+/* ---------- Services stage: the banner dissolves straight into the ring (services-stage.ts) ---------- */
 .svc-ch {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(40px, 6vh, 72px);
   padding: 140px var(--gut) 72px;
   background: none; /* the dusk is its own layer, so it can fade in over the banner */
   text-align: center;
@@ -1372,28 +1445,13 @@ html {
   inset: 0;
   background: radial-gradient(120% 90% at 50% 45%, var(--pool), var(--pool-deep) 55%, var(--deep));
 }
-.svc-head,
 .svc-ring {
   position: relative;
   z-index: 2;
   width: 100%;
 }
-.svc-title {
-  font-size: clamp(64px, 11vw, 188px);
-  line-height: 0.95;
-  letter-spacing: -0.04em;
-  text-wrap: balance;
-}
-.svc-lede {
-  max-width: 34em;
-  margin: 26px auto 0;
-  font-size: 19px;
-  font-weight: 300;
-  line-height: 1.6;
-  color: var(--on-media-soft);
-}
-/* Staged (motion on): the section sits exactly over the banner; the title and
-   the ring take turns in the middle of the same screen */
+/* Staged (motion on): the section sits exactly over the banner and the ring
+   rises into the middle of the same screen as the dusk covers the film */
 .svc-staged .svc-ch {
   z-index: 6;
   height: 100svh;
@@ -1401,7 +1459,6 @@ html {
   padding: 0;
   pointer-events: none; /* the banner and its card stay usable while the dusk is still clear */
 }
-.svc-staged .svc-head,
 .svc-staged .svc-ring {
   position: absolute;
   inset: 0;
@@ -1633,6 +1690,7 @@ html {
 .svc-dialog {
   width: 100%;
   height: 100%;
+  height: 100dvh; /* tracks the phone's toolbars as they show and hide */
   max-width: none;
   max-height: none;
   margin: 0;
@@ -1766,20 +1824,88 @@ html {
   margin: 0;
   padding: 0 28px;
 }
+/* The way out: a breadcrumb pill top left (where Back lives on a phone) and the
+   close button top right, both in the same frosted dark material so they read
+   over the bright picture and over the words alike. */
+.svc-d-crumbs,
 .svc-d-close {
   position: absolute;
   z-index: 2;
   top: 14px;
+  border: 1px solid rgb(var(--glow-rgb) / 0.3);
+  border-radius: 999px;
+  background: rgb(var(--deep-rgb) / 0.55);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+  box-shadow: 0 6px 20px rgb(0 0 0 / 0.22);
+  color: var(--glow);
+}
+.svc-d-crumbs {
+  left: 14px;
+  max-width: calc(100% - 28px - 44px - 12px); /* stops short of the close button */
+}
+.svc-d-crumbs ol {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0 18px 0 0;
+  list-style: none;
+  font: 500 14px/1.2 var(--sans);
+  letter-spacing: 0.01em;
+}
+.svc-d-crumbs li {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+.svc-d-back {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 2px;
+  min-height: 42px;
+  padding: 0 6px 0 8px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: background-color 0.3s;
+}
+.svc-d-back:focus-visible {
+  outline-offset: -2px;
+}
+/* Press feedback the instant the finger lands, as a native back button does */
+.svc-d-back:active {
+  background: rgb(var(--glow-rgb) / 0.16);
+  transition: none;
+}
+.svc-d-here {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--on-media-soft);
+}
+.svc-d-here::before {
+  content: '/';
+  content: '/' / ''; /* a divider to the eye, silent to a screen reader */
+  margin: 0 10px 0 4px;
+  color: rgb(var(--glow-rgb) / 0.45);
+}
+.svc-d-close {
   right: 14px;
   display: grid;
   place-items: center;
   width: 44px;
   height: 44px;
   padding: 0;
-  border: 1px solid rgb(var(--glow-rgb) / 0.3);
-  border-radius: 50%;
-  background: rgb(var(--deep-rgb) / 0.4);
-  color: var(--glow);
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
@@ -1791,8 +1917,17 @@ html {
   transform: scale(0.94);
 }
 @media (hover: hover) and (pointer: fine) {
+  .svc-d-back:hover {
+    background: rgb(var(--glow-rgb) / 0.14);
+  }
   .svc-d-close:hover {
     background: rgb(var(--glow-rgb) / 0.14);
+  }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .svc-d-crumbs,
+  .svc-d-close {
+    background: rgb(var(--deep-rgb) / 0.86);
   }
 }
 @media (max-width: 800px) {
@@ -1800,20 +1935,13 @@ html {
     --card-w: min(62vw, 260px);
   }
   .svc-ch {
-    padding: 120px 0 56px; /* unstaged: the ring runs edge to edge, the words keep the gutter */
+    padding: 120px 0 56px; /* unstaged: the ring runs edge to edge, the controls keep the gutter */
   }
-  .svc-head,
   .ring-controls {
     padding-inline: var(--gut);
   }
-  .svc-staged .svc-head {
-    padding: 80px var(--gut) 32px;
-  }
   .svc-staged .svc-ring {
     padding: 80px 0 32px;
-  }
-  .svc-lede {
-    font-size: 17px;
   }
   /* Details become a full-screen sheet: picture on top, words below, the quote button last */
   .svc-dialog {
@@ -1832,7 +1960,21 @@ html {
     border-radius: 0;
   }
   .svc-d-copy {
-    padding: 24px 24px calc(28px + env(safe-area-inset-bottom, 0px));
+    padding: 24px var(--gut) calc(28px + env(safe-area-inset-bottom, 0px));
+  }
+  /* The way out stays on screen while the sheet scrolls, below the notch or
+     Dynamic Island, like a phone's own navigation bar */
+  .svc-d-crumbs,
+  .svc-d-close {
+    position: fixed;
+    top: calc(12px + env(safe-area-inset-top, 0px));
+  }
+  .svc-d-crumbs {
+    left: max(12px, env(safe-area-inset-left, 0px));
+    max-width: calc(100vw - 24px - 44px - 10px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+  }
+  .svc-d-close {
+    right: max(12px, env(safe-area-inset-right, 0px));
   }
   .svc-d-actions {
     flex-direction: column; /* the quote button last, at the bottom */
@@ -1865,11 +2007,30 @@ html {
   letter-spacing: -0.03em;
   text-wrap: balance; /* no single word left on the last line */
 }
-/* The footer is a full screen with its words at the foot; after the contact
-   panel that leaves an empty band, so here it takes only the room it needs. */
-.studio-cta + .foot-ch {
+/* The footer is a full screen with its words at the foot; after the flowing
+   sections that leaves an empty band, so here it takes only the room it needs. */
+.studio + .foot-ch {
   min-height: 0;
   padding-top: 0;
+}
+/* Clients: heading and line on one row on wide screens, then the logo wall */
+.clients-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px 40px;
+  padding-top: clamp(40px, 5vw, 72px);
+  border-top: 1px solid var(--hair);
+}
+.clients-head p {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--on-media-soft);
+}
+.studio-clients .client-grid {
+  margin-top: clamp(24px, 3vw, 40px);
 }
 .about-grid {
   display: grid;
@@ -2116,7 +2277,7 @@ html {
 /* ---------- Phone: stacked ---------- */
 @media (max-width: 800px) {
   .land {
-    --gut: 24px;
+    --gut: max(24px, calc(var(--safe-x) + 16px));
   }
   .wordmark {
     font-size: 18px;
@@ -2197,6 +2358,60 @@ html {
     padding-right: 72px;
   }
 }
+
+/* ---------- Short screens: a phone held sideways ---------- */
+/* The pinned ring must fit the screen it is pinned to, so the cards size from
+   the height that is left once the header and the arrows are placed. */
+@media (max-height: 560px) {
+  .svc-staged .svc-ch {
+    min-height: 0;
+  }
+  .svc-staged .svc-ring {
+    padding: calc(60px + env(safe-area-inset-top, 0px)) var(--gut) 10px;
+  }
+  .ring {
+    --card-w: min(240px, calc((100svh - 150px) * 0.8));
+  }
+  .ring-controls {
+    margin-top: 12px;
+  }
+  .ring-btn {
+    width: 44px;
+    height: 44px;
+  }
+  .ring-hint {
+    display: none;
+  }
+  .hero-copy {
+    padding-top: calc(84px + env(safe-area-inset-top, 0px));
+    padding-bottom: 32px;
+  }
+  .hero-copy h1 {
+    margin-top: 0;
+    font-size: clamp(34px, 7vw, 56px);
+  }
+  .hero-small {
+    margin-top: 14px;
+  }
+}
+
+/* ---------- Reduce transparency (iOS, macOS): frosted layers turn solid ---------- */
+@media (prefers-reduced-transparency: reduce) {
+  .card,
+  .site-head.scrolled,
+  .svc-d-crumbs,
+  .svc-d-close {
+    background: var(--deep);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .svc-dialog::backdrop {
+    background: rgb(21 20 14 / 0.94);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .land *,
   .land *::before,

@@ -22,6 +22,7 @@ const chapterLinks = [
   { href: '#about', label: 'About' },
   { href: '#vision', label: 'Vision' },
   { href: '#contact', label: 'Contact' },
+  { href: '#clients', label: 'Clients' },
 ];
 const pageLinks = [NAV.about, NAV.contact];
 ---
@@ -37,7 +38,10 @@ const pageLinks = [NAV.about, NAV.contact];
     <link rel="icon" href={withBase('/favicon-32.png')} type="image/png" sizes="32x32" />
     <link rel="icon" href={withBase('/favicon-48.png')} type="image/png" sizes="48x48" />
     <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
+    <!-- One dark page in every system theme: the phone's status bar and toolbars
+         take the banner's night colour, and native controls draw dark too -->
     <meta name="theme-color" content="#15140E" />
+    <meta name="color-scheme" content="dark" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

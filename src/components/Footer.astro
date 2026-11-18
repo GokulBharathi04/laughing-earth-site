@@ -145,7 +145,12 @@ const a = SITE.address;
     text-decoration-color: color-mix(in srgb, var(--link) 70%, transparent);
   }
 
-  a:hover {
+  @media (hover: hover) and (pointer: fine) {
+    a:hover {
+      color: var(--link);
+    }
+  }
+  a:active {
     color: var(--link);
   }
 

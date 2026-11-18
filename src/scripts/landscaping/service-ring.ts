@@ -204,8 +204,14 @@ export function init() {
     const wide = q<HTMLSourceElement>('[data-svc-d-wide]');
     const face = q('[data-svc-d-face]');
     const copy = Array.from(dlg.querySelectorAll<HTMLElement>('[data-svc-d-copy] > *'));
+    // The way out (breadcrumb and close button) arrives with the panel's face
+    // and leaves with it, so it never floats over the card while it zooms. It
+    // fades by opacity alone: hiding it (visibility) would drop the focus that
+    // the dialog has just given its back button.
+    const chrome = Array.from(dlg.querySelectorAll<HTMLElement>('[data-svc-d-chrome]'));
     const fields = {
       num: q('[data-svc-d-num]'),
+      crumb: q('[data-svc-d-crumb]'),
       title: q('[data-svc-d-title]'),
       text: q('[data-svc-d-text]'),
       list: q('[data-svc-d-list]'),
@@ -213,6 +219,7 @@ export function init() {
     };
     let shownFor = -1;
     let busy = false;
+    let closeWhenReady = false; // Back was pressed while the panel was still opening
 
     // Hold the page still behind the panel. Plain overflow, not the smoother's
     // pause, which would also swallow touch scrolling inside a tall panel on phones.
@@ -239,6 +246,7 @@ export function init() {
       const card = cards[k];
       const src = card.querySelector('.ring-detail')!;
       fields.num.textContent = `${String(k + 1).padStart(2, '0')} / ${String(n).padStart(2, '0')}`;
+      fields.crumb.textContent = names[k];
       fields.title.textContent = names[k];
       fields.text.textContent = src.querySelector('p')?.textContent ?? '';
       fields.list.replaceChildren(
@@ -253,26 +261,46 @@ export function init() {
       shownFor = k;
     };
 
+    // The panel is a step forward in the visitor's mind, so it gets its own
+    // history entry: the phone's Back (Android's button or gesture, the iPhone's
+    // edge swipe, the browser's back arrow) closes it instead of leaving the
+    // page. The address stays the same, so a reload or a shared link is unaffected.
+    let inHistory = false;
+
     const open = async (k: number) => {
       if (busy || dlg.open) return;
       busy = true;
       fill(k);
       dlg.showModal();
       lock(true);
+      if (!inHistory) {
+        history.pushState({ ...history.state, svcDetail: k }, '');
+        inHistory = true;
+      }
       if (!reduced) {
         gsap.set([media, face, ...copy], { autoAlpha: 0 });
+        gsap.set(chrome, { opacity: 0 });
         // Let the picture decode first, but never keep the visitor waiting long.
         await Promise.race([img.decode().catch(() => {}), new Promise((r) => setTimeout(r, 300))]);
         gsap.set([media], { autoAlpha: 1 });
         gsap.fromTo(media, fromCard(buttons[k].querySelector('img')!), { x: 0, y: 0, scale: 1, clipPath: 'inset(0px 0px round 4px)', ...ZOOM_IN });
         gsap.to(face, { autoAlpha: 1, duration: 0.45, ease: 'power2.out', delay: 0.12 });
+        gsap.to(chrome, { opacity: 1, duration: 0.4, ease: 'power2.out', delay: 0.2 });
         gsap.fromTo(copy, { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', stagger: 0.05, delay: 0.22 });
       }
       busy = false;
+      if (closeWhenReady) {
+        closeWhenReady = false;
+        close();
+      }
     };
 
     const close = async () => {
-      if (busy || !dlg.open) return;
+      if (!dlg.open) return;
+      if (busy) {
+        closeWhenReady = true; // still opening: close as soon as it has
+        return;
+      }
       busy = true;
       if (!reduced && shownFor >= 0) {
         dlg.classList.add('is-closing');
@@ -280,6 +308,7 @@ export function init() {
         const back = fromCard(buttons[shownFor].querySelector('img')!);
         await gsap
           .timeline()
+          .to(chrome, { opacity: 0, duration: 0.18, ease: 'power2.out' }, 0)
           .to(copy, { autoAlpha: 0, y: 8, duration: 0.18, ease: 'power2.out' }, 0)
           .to(face, { autoAlpha: 0, duration: 0.3, ease: 'power2.out' }, 0.05)
           .to(media, { ...back, ...ZOOM_OUT }, 0.05);
@@ -287,26 +316,46 @@ export function init() {
       dlg.close(); // the 'close' handler below tidies up
     };
 
+    // Every way out goes through history while the panel holds an entry, so the
+    // on-screen buttons and the phone's Back always agree and never double up.
+    const leave = () => {
+      if (inHistory) history.back(); // the popstate handler runs the close
+      else close();
+    };
+    addEventListener('popstate', () => {
+      if (!inHistory) return;
+      inHistory = false;
+      close();
+    });
+
     // Runs however the panel closes: our zoom-out, or the browser closing it
     // directly (a second Esc in a row cannot be held back for the animation).
     dlg.addEventListener('close', () => {
-      gsap.killTweensOf([media, face, ...copy]);
+      gsap.killTweensOf([media, face, ...chrome, ...copy]);
       dlg.classList.remove('is-closing');
-      gsap.set([media, face, ...copy], { clearProps: 'all' });
+      gsap.set([media, face, ...chrome, ...copy], { clearProps: 'all' });
       lock(false);
       if (shownFor >= 0) buttons[shownFor].focus({ preventScroll: true });
       busy = false;
+      closeWhenReady = false;
+      // Closed without going through history (that second Esc): drop the entry
+      // too, or the next Back would seem to do nothing.
+      if (inHistory) {
+        inHistory = false;
+        history.back();
+      }
     });
 
-    q('[data-svc-d-close]').addEventListener('click', close);
+    q('[data-svc-d-back]').addEventListener('click', leave);
+    q('[data-svc-d-close]').addEventListener('click', leave);
     dlg.addEventListener('cancel', (e) => {
       e.preventDefault(); // Esc: leave the way it came in
-      close();
+      leave();
     });
     dlg.addEventListener('click', (e) => {
-      if (e.target === dlg) close(); // a click on the dimmed backdrop
+      if (e.target === dlg) leave(); // a click on the dimmed backdrop
     });
-    return { open, close };
+    return { open, close: leave };
   }
 
   let resizeTimer: ReturnType<typeof setTimeout>;

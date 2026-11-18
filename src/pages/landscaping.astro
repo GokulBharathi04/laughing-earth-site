@@ -6,11 +6,12 @@ import PypCredit from '../components/PypCredit.astro';
 import mark from '../assets/brand/logo-mark.webp';
 import { SITE, NAV, POLICIES, whatsappLink, WHATSAPP_MESSAGES } from '../config/site';
 
-// Three parts, in the order the client set out:
+// Four parts, in the order the client set out:
 //  1. the banner and its enquiry card, exactly as on the previous version;
 //  2. the services, on a turning 3D ring (src/scripts/landscaping/service-ring.ts);
 //  3. about, vision and commitment, and contact, laid out as in the
-//     "Laughing Earth Landscape Studio" reference page, in this site's dusk palette.
+//     "Laughing Earth Landscape Studio" reference page, in this site's dusk palette;
+//  4. the clients' logos, just above the footer (brought back Nov 2026).
 
 // Pictures cut to size in /images/land-studio (see IMAGES-NEEDED.md).
 const pic = (file: string) => withBase(`/images/land-studio/${file}`);
@@ -70,6 +71,32 @@ const services = [
   },
 ];
 
+// Clients, with their logos (Wikimedia Commons and the companies' own sites;
+// see IMAGES-NEEDED.md). w/h are the trimmed files' pixel sizes.
+const clients = [
+  { name: 'Switch Mobility', file: 'switch', w: 171, h: 33 },
+  { name: 'PMJ Jewels', file: 'pmj', w: 160, h: 160 },
+  { name: 'TVS Motor Company', file: 'tvs', w: 354, h: 64 },
+  { name: 'Lucas TVS', file: 'lucas-tvs', w: 240, h: 55 },
+  { name: 'Indian Oil', file: 'indian-oil', w: 134, h: 160 },
+  { name: 'Hindustan Petroleum', file: 'hp', w: 126, h: 160 },
+  { name: 'CA India', file: 'ca', w: 212, h: 160 },
+  { name: 'Zoho', file: 'zoho', w: 371, h: 160 },
+  { name: 'Equitas Small Finance Bank', file: 'equitas', w: 172, h: 60 },
+  { name: 'HDFC Bank', file: 'hdfc', w: 955, h: 160 },
+  { name: 'Shriram Group', file: 'shriram', w: 532, h: 160 },
+  { name: 'L&T', file: 'lt', w: 160, h: 160 },
+  { name: 'IDFC First Bank', file: 'idfc', w: 452, h: 160 },
+  { name: 'Parker', file: 'parker', w: 416, h: 160 },
+  { name: 'Eone Technologies', file: 'eone', w: 439, h: 96 },
+].map((c) => {
+  // Same visual weight for every mark: size by area, not by height, so a wide
+  // wordmark is not shrunk to a sliver and a square badge does not dominate.
+  const ratio = c.w / c.h;
+  const height = Math.min(64, Math.round(46 / Math.sqrt(ratio)) + 14);
+  return { ...c, height, width: Math.round(height * ratio) };
+});
+
 const pad = (i: number) => String(i).padStart(2, '0');
 const a = SITE.address;
 ---
@@ -90,13 +117,12 @@ const a = SITE.address;
     </div>
   </section>
 
-  <!-- 2. Services: the banner dissolves into a large title, then the ring alone (services-stage.ts) -->
+  <!-- 2. Services: the banner dissolves straight into the ring (services-stage.ts).
+       The large "Our services" title screen was removed at the client's request
+       (Nov 2026); the heading stays for screen readers and the page outline. -->
   <section class="svc-ch chapter" id="services" data-svc-stage data-own-motion aria-labelledby="services-title">
     <div class="svc-bg" aria-hidden="true"></div>
-    <div class="svc-head">
-      <h2 id="services-title" class="svc-title">Our <em>services</em></h2>
-      <p class="svc-lede">Comprehensive outdoor solutions: conceptual design, development, installation and ongoing maintenance.</p>
-    </div>
+    <h2 id="services-title" class="sr-only">Our services</h2>
 
     <div class="svc-ring">
       <div class="ring" data-ring role="region" aria-roledescription="carousel" aria-label="Our services">
@@ -146,10 +172,23 @@ const a = SITE.address;
     </div>
   </section>
 
-  <!-- Details panel: the front card zooms up into it (service-ring.ts) -->
+  <!-- Details panel: the front card zooms up into it (service-ring.ts).
+       The way back sits top left, where a back button lives on a phone; the
+       browser's own Back (Android's back button, the iPhone edge swipe) also
+       closes the panel instead of leaving the page. -->
   <dialog class="svc-dialog" data-svc-dialog aria-labelledby="svc-d-title">
     <div class="svc-d-panel">
       <span class="svc-d-face" data-svc-d-face aria-hidden="true"></span>
+      <nav class="svc-d-crumbs" data-svc-d-chrome aria-label="Breadcrumb">
+        <ol>
+          <li>
+            <button class="svc-d-back" type="button" data-svc-d-back autofocus>
+              <Icon name="chevron-left" size={18} /><span><span class="sr-only">Back to </span>Our services</span>
+            </button>
+          </li>
+          <li class="svc-d-here" aria-current="page" data-svc-d-crumb>{services[0].name}</li>
+        </ol>
+      </nav>
       <figure class="svc-d-media" data-svc-d-media>
         <picture>
           <source media="(max-width: 800px)" data-svc-d-wide />
@@ -168,7 +207,7 @@ const a = SITE.address;
           <a class="pill primary svc-d-cta" data-svc-d-cta href={whatsappLink(WHATSAPP_MESSAGES.landscaping)} target="_blank" rel="noopener noreferrer" data-event="whatsapp_click" data-event-label="landscaping_service_quote">Contact us for quotes</a>
         </div>
       </div>
-      <button class="svc-d-close" type="button" data-svc-d-close aria-label="Close details" autofocus><Icon name="close" size={20} /></button>
+      <button class="svc-d-close" type="button" data-svc-d-close data-svc-d-chrome aria-label="Close details"><Icon name="close" size={20} /></button>
     </div>
   </dialog>
 
@@ -181,9 +220,9 @@ const a = SITE.address;
         <p class="card-eyebrow"><span>Plan my garden</span><i></i></p>
         <p class="card-intro">Tell us your name and we'll carry on the conversation on WhatsApp.</p>
         <form data-card-form>
-          <div class="field"><label for="c-name">Name</label><input id="c-name" name="name" autocomplete="name" maxlength="80" required /><i class="focusline"></i></div>
+          <div class="field"><label for="c-name">Name</label><input id="c-name" name="name" autocomplete="name" autocapitalize="words" enterkeyhint="send" maxlength="80" required /><i class="focusline"></i></div>
           <div class="morph" data-morph>
-            <div class="field"><label for="c-phone">Phone</label><input id="c-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="20" pattern="[0-9+ \(\)\-]{8,20}" tabindex="-1" /><i class="focusline"></i></div>
+            <div class="field"><label for="c-phone">Phone</label><input id="c-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" enterkeyhint="send" maxlength="20" pattern="[0-9+ \(\)\-]{8,20}" tabindex="-1" /><i class="focusline"></i></div>
           </div>
           <button class="pill primary" type="submit" data-card-send data-event="whatsapp_click" data-event-label="landscaping_hero">Continue on WhatsApp</button>
         </form>
@@ -259,6 +298,24 @@ const a = SITE.address;
           <a class="pill ghost" href={NAV.contact.href}>Book a site visit</a>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- 4. Clients, just above the footer. A flowing section with the one-way rise
+       (rise.ts), like its neighbours, not a scrubbed chapter. -->
+  <section class="studio studio-clients" id="clients" aria-labelledby="clients-title">
+    <div class="studio-wrap">
+      <div class="clients-head" data-rise>
+        <h2 id="clients-title">Our <em>clients</em></h2>
+        <p>Some of the companies we have worked with.</p>
+      </div>
+      <ul class="client-grid" role="list" data-rise style="--d: 1">
+        {
+          clients.map((c) => (
+            <li><img src={withBase(`/images/clients/${c.file}.webp`)} alt={c.name} width={c.width} height={c.height} style={`--logo-w:${c.width}px`} loading="lazy" decoding="async" /></li>
+          ))
+        }
+      </ul>
     </div>
   </section>
 

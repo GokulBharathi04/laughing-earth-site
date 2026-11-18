@@ -371,9 +371,15 @@ export function init() {
       const small = qs('.hero-small', wrapEl);
       const lines = linesOf(wrapEl);
       const card = qs('[data-card]');
+      // The banner is pinned (services-stage.ts), and a trigger on a pinned
+      // element is measured from where its pin ends, which would start these
+      // exits only after the dusk has covered them. The banner always starts
+      // the page, so its exits are plain scroll distances from the top instead.
+      const heroEl = qs('.hero');
+      const heroAt = (f: number) => () => Math.round(heroEl.offsetHeight * f);
       const armOut = () => {
         gsap
-          .timeline({ defaults: { ease: 'power2.out' }, scrollTrigger: { trigger: '.hero', start: 'top top', end: '40% top', scrub: 1.2 } })
+          .timeline({ defaults: { ease: 'power2.out' }, scrollTrigger: { start: 0, end: heroAt(0.4), scrub: 1.2 } })
           .fromTo(lines, { filter: 'blur(0px)' }, { filter: 'blur(8px)', duration: 0.5 }, 0)
           .fromTo(lines, { x: 0, opacity: 1 }, { x: sideways, opacity: 0, duration: 1 }, 0)
           .fromTo(eyebrow, { y: 0, opacity: 1, filter: 'blur(0px)' }, { y: 46, opacity: 0, filter: 'blur(5px)', duration: 0.95 }, 0)
@@ -410,7 +416,7 @@ export function init() {
             gsap.fromTo(
               card,
               { y: 0, opacity: 1, filter: 'blur(0px)' },
-              { y: -120, opacity: 0, filter: 'blur(6px)', ease: 'power2.out', immediateRender: false, scrollTrigger: { trigger: '.hero', start: '3% top', end: '33% top', scrub: 1.2 } },
+              { y: -120, opacity: 0, filter: 'blur(6px)', ease: 'power2.out', immediateRender: false, scrollTrigger: { start: heroAt(0.03), end: heroAt(0.33), scrub: 1.2 } },
             );
           },
         });

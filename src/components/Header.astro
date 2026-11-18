@@ -128,8 +128,13 @@ const isCurrent = (href: string) => path === href;
       color var(--duration-fast) var(--ease-out);
   }
 
-  .switch__option:hover {
-    background: color-mix(in srgb, var(--switch-active-bg) 18%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    .switch__option:hover {
+      background: color-mix(in srgb, var(--switch-active-bg) 18%, transparent);
+    }
+  }
+  .switch__option:active {
+    background: color-mix(in srgb, var(--switch-active-bg) 26%, transparent);
   }
 
   .switch__option[aria-current='page'] {
@@ -198,9 +203,14 @@ const isCurrent = (href: string) => path === href;
     text-decoration: none;
   }
 
-  .site-nav__list a:hover,
-  .site-nav__list a[aria-current='page'] {
+  .site-nav__list a[aria-current='page'],
+  .site-nav__list a:active {
     background: color-mix(in srgb, var(--switch-active-bg) 22%, transparent);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .site-nav__list a:hover {
+      background: color-mix(in srgb, var(--switch-active-bg) 22%, transparent);
+    }
   }
 
   /* ---- Tablet and up: one row ---- */

@@ -43,6 +43,8 @@ const { message = WHATSAPP_MESSAGES.general } = Astro.props;
     box-shadow: 0 6px 18px rgb(0 0 0 / 0.3);
     text-decoration: none;
     -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none; /* a long press is not a copy-the-link gesture here */
+    touch-action: manipulation;
   }
 
   @media (min-width: 1024px) {
@@ -71,7 +73,7 @@ const { message = WHATSAPP_MESSAGES.general } = Astro.props;
         box-shadow var(--duration-fast) var(--ease-out);
     }
   }
-  @media (hover: hover) {
+  @media (hover: hover) and (pointer: fine) {
     .wa-float:hover {
       transform: translateY(var(--lift));
       box-shadow: 0 10px 24px rgb(0 0 0 / 0.36);

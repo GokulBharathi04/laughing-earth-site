@@ -16,6 +16,16 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   scroll-padding-top: 6rem;
+  /* No grey flash on tap (iOS Safari, Android Chrome) */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Taps fire at once, with no wait for a double-tap zoom */
+a,
+button,
+summary,
+label {
+  touch-action: manipulation;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -109,7 +119,13 @@ a {
   text-decoration-thickness: 1px;
 }
 
-a:hover {
+/* Hover only with a real pointer (a tap would leave it stuck on); a press shows on touch */
+@media (hover: hover) and (pointer: fine) {
+  a:hover {
+    text-decoration-thickness: 2px;
+  }
+}
+a:active {
   text-decoration-thickness: 2px;
 }
 
