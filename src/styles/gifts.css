@@ -1498,6 +1498,13 @@ html:has(.morph-dialog[open]) {
   .g-kind__meta span:last-child {
     display: none;
   }
+  /* A single gift's price matters more than a kind's count: it stays, under
+     its description */
+  .g-kind__meta span.g-kind__price {
+    display: block;
+    grid-column: 2;
+    color: var(--t-fg, inherit);
+  }
   .g-foot__grid {
     grid-template-columns: 1fr;
   }

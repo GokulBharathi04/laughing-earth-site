@@ -22,14 +22,18 @@ photo of the real gift, 800 × 800 px square, under 90 KB, same file name.
 | `product-green-hug.webp` | The Green Hug | Flowering sapling in the recycled-bottle bag |
 | `product-bamboo-bliss.webp` | Bamboo Bliss | The gift box: three bamboo shoots, glass container, pebbles, card |
 | `product-the-minis.webp` | The Minis | **Own photo**: Minis.jpeg |
-| `product-indoor-greenies.webp` | Indoor Greenies | A few of the indoor plants in their pots |
+| `product-indoor-greenies.webp` | Indoor Greenies (also the banner's featured gift) | **Own photo** (19 Nov 2026): Indoor Greenies/Indoor Greenies 1.jpeg, the aglaonema in the white Laughing Earth planter |
 | `product-butterfly-box.webp` | Butterfly Box | **Own photo**: Butterfly seed box.jpeg |
 | `product-cotton-potli.webp` | Cotton Potli | **Own photo**: Potli Bag.webp (close crop of the coloured potlis) |
 | `product-jute-potli.webp` | Jute Potli | **Own photo**: Potli Bag.webp |
-| `product-single-seed-ball.webp` | Single Seed Ball Pack | One seed ball in its pack |
+| `product-single-seed-ball.webp` | Single Seed Ball Pack | **Own photo** (19 Nov 2026): Seed Balls.jpeg, the thank-you card with seed balls |
 | `product-seed-pens-pencils.webp` | Seed Pens & Pencils | The seed pens and pencils |
-| `product-diy-grow-kit.webp` | DIY Grow Kit | The open kit box with all its contents |
-| `product-thamboolam-bags.webp` | All four thamboolam bags | **Own photo**: Thamboolam Bags.jpeg. One photo for every size; add one per size if you have them |
+| `product-diy-grow-kit.webp` | DIY Grow Kit | **Own photo** (19 Nov 2026): DIY Kit.jpeg, the kit laid out by its box |
+| `product-thamboolam-bags.webp` | The thamboolam bag (all four sizes) | **Own photo**: Thamboolam Bags.jpeg. One photo for every size; add one per size if you have them |
+
+Single Seed Ball Pack and DIY Grow Kit also have a card of their own below the banner,
+after the three kinds of gift: `product-single-seed-ball-wide.webp` and
+`product-diy-grow-kit-wide.webp` (16:10, 960 x 600, cut from the same photos).
 | `product-aesthetic-seed-paper-wedding-card.webp` | Aesthetic seed-paper wedding card | Still an illustrated placeholder: seed-paper card, seeds visible |
 
 ### Videos (Return Gifts page)
@@ -160,21 +164,53 @@ client's own logo file where they supply one.
 
 ### Landscaping: services ring and studio sections (November 2026 layout)
 
-The six service pictures are **supplied by the client** (16 Nov 2026), matched to
-each service by file name. Originals (1024 x 1024 JPEG) are kept outside the repo in
-`Sample Images/Final Images/` of the old v3 folder. Each is cut with `sharp` into
+All service pictures are **supplied by the client**. Originals are kept outside the repo
+in `Sample Images/Final Images/` of the old v3 folder (the second batch, 19 Nov 2026,
+came as zips, unpacked into folders of the same name). Every picture gets the same
+light touch-up with `sharp` (saturation +4%, contrast +4%, unsharp mask after the resize,
+gentle on flat areas so JPEG blocks are not sharpened; WebP quality 80).
+
+**Ring card and details picture** (from 19 Nov 2026 one of the second-batch photos;
+the first batch, 16 Nov, is in git history). Each is cut into
 `public/images/land-studio/<name>-480.webp` (4:5, ring card), `<name>-detail.webp`
 (4:5, 800 x 1000, details panel on desktop) and `<name>-720.webp` (4:3, details panel
 on phones). To replace one, export the same three sizes under the same names.
 
-| Name | Service | Client file |
+| Name | Service | Client file (crop) |
 | --- | --- | --- |
-| `svc-landscape-design` | Landscape design | Landscape Design.jpg.jpeg |
-| `svc-hardscape-design` | Hardscape design | Hardscape Design.jpg.jpeg |
-| `svc-landscape-maintenance` | Landscape maintenance | Landscape Maintenance.jpg.jpeg |
-| `svc-gardening-services` | Gardening services | Gardening Services.jpg.jpeg |
-| `svc-miyawaki-butterfly` | Miyawaki & butterfly gardens | Miyawaki & Butterfly Gardens.jpg.jpeg |
-| `svc-irrigation` | Automated water irrigation | Automated Water Irrigation Systems.jpg.jpeg |
+| `svc-landscape-design` | Landscape design | Landscape/Landscape 2 (centre) |
+| `svc-hardscape-design` | Hardscape design | Hardscape3.jpeg (centre) |
+| `svc-landscape-maintenance` | Landscape maintenance | Landscape Maintenance/Landscape Maintenance 2 (left, on the gardener) |
+| `svc-gardening-services` | Gardening services | Gardening service.jpeg (top panel, right of its label; enlarged 1.8x for the desktop picture) |
+| `svc-miyawaki-butterfly` | Miyawaki & butterfly gardens | Butterfly Garden/Butterfly Garden 1 (centre) |
+| `svc-irrigation` | Automated water irrigation | Water Irrigation/Water Irrigation 1 (right, on the controller) |
+
+**Photos in each service's slider** (the pictures side of the details panel, after the
+card's own picture, in story order), resized keeping their own shape to
+`<name>-g<n>-1200.webp` and `-720.webp`; the slider crops them to its frame, around the
+focal point set as `pos` in `landscaping.astro`. g-numbers follow the source order; the
+photo used for the card is left out, so its g-number is skipped.
+
+| Name | Client files (g-number) |
+| --- | --- |
+| `svc-landscape-design` | Landscape/Landscape 1 (g1), Landscape.jpeg (g3) |
+| `svc-hardscape-design` | Hardscape/Hardscape 1–2 (g1–g2), Hardscape1.jpeg (g4), Hardscape2.jpeg (g5) |
+| `svc-landscape-maintenance` | Landscape Maintenance/Landscape Maintenance 1 (g1) |
+| `svc-gardening-services` | Gardening service.jpeg (g1, the labelled collage, whole) |
+| `svc-miyawaki-butterfly` | Miyawaki/Miyawaki 1–3 (g1–g3), Butterfly Garden/Butterfly Garden 2 (g5) |
+| `svc-irrigation` | Water Irrigation/Water Irrigation 2 (g2) |
+
+**Hand fan behind each ring card** (hover, pointer devices only): `<name>-fan<k>.webp`,
+4:5, 360 x 450, WebP quality 74, same touch-up. Loaded only where hover exists.
+
+| Name | fan1, fan2, fan3 |
+| --- | --- |
+| `svc-landscape-design` | Landscape Design.jpg.jpeg (first batch), Landscape.jpeg, Landscape/Landscape 1 (fan3 is the one that peeks over the top, so it needs foliage, not sky, along its top edge) |
+| `svc-hardscape-design` | Hardscape/Hardscape 1, Hardscape1.jpeg, Hardscape2.jpeg |
+| `svc-landscape-maintenance` | Landscape Maintenance/Landscape Maintenance 1, Landscape Maintenance.jpg.jpeg (first batch) |
+| `svc-gardening-services` | Gardening Services.jpg.jpeg (first batch), the collage's "Potting" and "Soil Preparation" panels (cropped clear of their labels) |
+| `svc-miyawaki-butterfly` | Miyawaki/Miyawaki 1–2, Butterfly Garden/Butterfly Garden 2 |
+| `svc-irrigation` | Water Irrigation/Water Irrigation 2, Automated Water Irrigation Systems.jpg.jpeg (first batch) |
 
 `about-aerial-{800,1400}.webp` (3:2, About section) is cut from the client's own aerial
 film poster, cropped from the left so the video's watermark is left out.

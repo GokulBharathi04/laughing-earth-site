@@ -1492,15 +1492,19 @@ html {
   padding: 0;
   list-style: none;
 }
+/* The card itself does not clip, so the hand fan behind it can spread past its
+   edges; its picture (.ring-open) clips instead. */
 .ring-card {
   position: relative;
-  overflow: hidden;
   border-radius: 4px;
   background: var(--soil);
   box-shadow: 0 24px 60px rgb(0 0 0 / 0.38);
 }
 .ring-open {
   position: relative;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: 4px;
   display: block;
   width: 100%;
   padding: 0;
@@ -1575,6 +1579,101 @@ html {
 .ring.is-ready .ring-card[data-active] .ring-open:active {
   transform: scale(0.98);
 }
+/* Hand fan: more of the service's photos wait behind the front card, exactly
+   under it, and fan out from a pivot below it when a pointer hovers, like
+   cards held in a hand. The card's own picture never moves, so what you are
+   about to click stays still. Opening: 520ms strong ease-out, 40ms apart.
+   Closing is quicker and all together, folding back under as they fade.
+   Transitions, not keyframes, so a quick in-and-out reverses smoothly. */
+.ring-fan {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.ring-fan img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 0 18px 44px rgb(0 0 0 / 0.42);
+  filter: brightness(0.92); /* a touch darker than the card: they sit behind it */
+  opacity: 0;
+  transform: none;
+  transform-origin: 50% 135%;
+  transition:
+    transform 240ms cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 180ms ease-out 60ms;
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .ring.is-ready:not(.is-dragging) .ring-card[data-active]:hover .ring-fan img {
+    opacity: 1;
+    transition:
+      transform 520ms cubic-bezier(0.23, 1, 0.32, 1),
+      opacity 140ms ease-out;
+  }
+  .ring.is-ready:not(.is-dragging) .ring-card[data-active]:hover .ring-fan img:nth-child(1) {
+    transform: rotate(-13deg);
+  }
+  .ring.is-ready:not(.is-dragging) .ring-card[data-active]:hover .ring-fan img:nth-child(2) {
+    transform: rotate(13deg);
+    transition-delay: 40ms;
+  }
+  /* A third photo rises straight up behind the card instead, so the hand
+     stays balanced on both sides */
+  .ring.is-ready:not(.is-dragging) .ring-card[data-active]:hover .ring-fan img:nth-child(3) {
+    transform: translateY(-17%) scale(0.94); /* the scale pulls it down towards the pivot; this leaves ~9% showing above */
+    filter: brightness(0.8); /* furthest back, so the darkest */
+    transition-delay: 80ms;
+  }
+  .ring.is-ready:not(.is-dragging) .ring-card[data-active]:hover .ring-fan[data-count='3'] img:nth-child(1) {
+    transform: rotate(-17deg);
+  }
+  .ring.is-ready:not(.is-dragging) .ring-card[data-active]:hover .ring-fan[data-count='3'] img:nth-child(2) {
+    transform: rotate(17deg);
+  }
+}
+/* The card's own picture: a defined edge (a dark outline and a fine light rim,
+   like light catching a print) and its own shadow, so it always reads as the
+   top card, above the photos that fan out behind it */
+.ring-open {
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 0.22),
+    0 12px 30px rgb(0 0 0 / 0.42);
+}
+.ring-open::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgb(var(--glow-rgb) / 0.24);
+  pointer-events: none;
+}
+/* On hover the shadow deepens and spreads, lifting the card clear of the fan.
+   It is its own layer under the picture, so only its opacity changes. */
+.ring.is-ready .ring-card::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  border-radius: 4px;
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 0.35),
+    0 22px 50px rgb(0 0 0 / 0.6),
+    0 0 90px rgb(0 0 0 / 0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease-out;
+}
+@media (hover: hover) and (pointer: fine) {
+  .ring.is-ready:not(.is-dragging) .ring-card[data-active]:hover::before {
+    opacity: 1;
+    transition-duration: 400ms;
+  }
+}
 @media (hover: hover) and (pointer: fine) {
   .ring.is-ready .ring-card[data-active] .ring-open:hover .ring-more {
     background: rgb(var(--glow-rgb) / 0.18);
@@ -1618,7 +1717,9 @@ html {
 .ring.is-ready .ring-card::after {
   content: '';
   position: absolute;
+  z-index: 2; /* over the card's picture, which has its own layer for the fan */
   inset: 0;
+  border-radius: 4px;
   background: rgb(var(--deep-rgb) / 0.58);
   pointer-events: none;
   transition: opacity 0.5s var(--slide);
@@ -1694,16 +1795,28 @@ html {
   max-width: none;
   max-height: none;
   margin: 0;
-  padding: clamp(16px, 4vw, 48px);
+  /* The space round the panel grows to clear a notch or home bar (a phone held
+     sideways is wide enough for the two-column panel) */
+  --d-pad: clamp(16px, 4vw, 48px);
+  padding:
+    max(var(--d-pad), env(safe-area-inset-top, 0px))
+    max(var(--d-pad), env(safe-area-inset-right, 0px))
+    max(var(--d-pad), env(safe-area-inset-bottom, 0px))
+    max(var(--d-pad), env(safe-area-inset-left, 0px));
   border: 0;
   background: transparent;
   color: var(--glow);
   overflow: auto;
   overscroll-behavior: contain;
 }
+/* The panel is centred by auto margins, not place-items: a panel taller than
+   the screen (the full story on a phone) then starts at the top and scrolls,
+   where place-items: center would push its top out of reach above the screen */
 .svc-dialog[open] {
   display: grid;
-  place-items: center;
+}
+.svc-d-panel {
+  margin: auto;
 }
 /* Literal colours: ::backdrop does not inherit custom properties in every browser */
 .svc-dialog::backdrop {
@@ -1724,9 +1837,15 @@ html {
 .svc-d-panel {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr);
-  width: min(1080px, 100%);
-  min-height: min(620px, calc(100dvh - 2 * clamp(16px, 4vw, 48px)));
+  /* Pictures on the left (a little the wider, they carry the panel), words on the right */
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  width: min(1120px, 100%);
+  /* A fixed height on wide screens: the photos turn on the left while the
+     words scroll in their own column on the right */
+  height: min(
+    780px,
+    calc(100dvh - max(var(--d-pad), env(safe-area-inset-top, 0px)) - max(var(--d-pad), env(safe-area-inset-bottom, 0px)))
+  );
 }
 .svc-d-face {
   position: absolute;
@@ -1741,18 +1860,150 @@ html {
   margin: 0;
   overflow: hidden;
   border-radius: 4px 0 0 4px;
+  background: var(--deep);
   transform-origin: 50% 50%;
+  touch-action: pan-y; /* a sideways swipe turns the photos; upright still scrolls */
+  user-select: none;
+  -webkit-user-select: none;
 }
-.svc-d-media img {
+/* The slider (service-ring.ts, setupSlider): one set per service, its photos
+   stacked full size and moved sideways into place one at a time */
+.svc-d-slides,
+.svc-d-slide {
+  position: absolute;
+  inset: 0;
+}
+.svc-d-slides[hidden] {
+  display: none;
+}
+.svc-d-slide {
+  overflow: hidden; /* the picture drifts inside its frame as it slides */
+}
+.svc-d-slide picture {
+  display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+}
+.svc-d-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: var(--fit, cover); /* contain for a photo that must show whole (the gardening collage) */
+  object-position: var(--pos, 50% 50%);
+  -webkit-touch-callout: none;
+}
+/* Arrows, count and pause: bottom left of the pictures, in the same frosted
+   material as the way out at the top */
+.svc-d-pager {
+  position: absolute;
+  z-index: 2;
+  left: 14px;
+  bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid rgb(var(--glow-rgb) / 0.3);
+  border-radius: 999px;
+  background: rgb(var(--deep-rgb) / 0.55);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+  box-shadow: 0 6px 20px rgb(0 0 0 / 0.22);
+  color: var(--glow);
+}
+.svc-d-pager[hidden] {
+  display: none;
+}
+.svc-d-pbtn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 0.3s,
+    transform 120ms var(--ease-out);
+}
+.svc-d-pbtn:active {
+  transform: scale(0.92);
+  background: rgb(var(--glow-rgb) / 0.16);
+  transition-duration: 0s, 120ms;
+}
+.svc-d-pbtn:focus-visible {
+  outline-offset: -2px;
+}
+/* Fingers get Apple's 44pt minimum */
+@media (pointer: coarse) {
+  .svc-d-pbtn {
+    width: 44px;
+    height: 44px;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .svc-d-pbtn:hover {
+    background: rgb(var(--glow-rgb) / 0.14);
+  }
+}
+.svc-d-play {
+  margin-left: 4px;
+  border-left: 1px solid rgb(var(--glow-rgb) / 0.2);
+  border-radius: 0 999px 999px 0;
+}
+.svc-d-play .is-play,
+.svc-d-play[data-paused] .is-pause {
+  display: none;
+}
+.svc-d-play[data-paused] .is-play {
+  display: block;
+}
+.svc-d-pcount {
+  min-width: 4.6em;
+  margin: 0;
+  font: 600 12px/1 var(--sans);
+  letter-spacing: 0.16em;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+/* The wait before the next photo, as a line filling along the bottom edge */
+.svc-d-progress {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: rgb(var(--glow-rgb) / 0.14);
+  pointer-events: none;
+}
+.svc-d-progress i {
+  display: block;
+  height: 100%;
+  background: var(--amber);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .svc-d-pager {
+    background: rgb(var(--deep-rgb) / 0.86);
+  }
 }
 .svc-d-copy {
+  --copy-pad: clamp(28px, 4vw, 52px);
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: clamp(28px, 4vw, 52px);
+  min-height: 0;
+  padding: var(--copy-pad) var(--copy-pad) 0;
+  overflow-y: auto;
+  overscroll-behavior: contain; /* reaching the end never scrolls the page behind */
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--glow-rgb) / 0.28) transparent;
   text-align: left;
 }
 .svc-d-num {
@@ -1774,6 +2025,7 @@ html {
   font-weight: 300;
   line-height: 1.6;
   color: var(--on-media-soft);
+  text-wrap: pretty;
 }
 .svc-d-sub {
   margin: 26px 0 10px;
@@ -1803,15 +2055,21 @@ html {
   font-weight: 300;
   color: var(--on-media-soft);
 }
-/* "Contact us for quotes" holds the bottom-right corner */
+/* "Contact us for quotes" holds the bottom-right corner and stays there while
+   the story scrolls under it, fading the words out beneath it (a scroll-edge
+   fade, not a hard line) */
 .svc-d-actions {
+  position: sticky;
+  z-index: 1;
+  bottom: 0;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
   gap: 12px 22px;
-  margin-top: auto;
-  padding-top: 32px;
+  margin: auto calc(-1 * var(--copy-pad)) 0;
+  padding: 40px var(--copy-pad) 24px;
+  background: linear-gradient(rgb(44 36 28 / 0), var(--soil) 34px);
 }
 .svc-d-call {
   font-size: 16px;
@@ -1950,6 +2208,7 @@ html {
   .svc-d-panel {
     grid-template-columns: 1fr;
     width: 100%;
+    height: auto;
     min-height: 100dvh;
   }
   .svc-d-face {
@@ -1959,8 +2218,20 @@ html {
     aspect-ratio: 4 / 3;
     border-radius: 0;
   }
+  /* The whole sheet scrolls here, so the story column does not scroll on its own */
   .svc-d-copy {
-    padding: 24px var(--gut) calc(28px + env(safe-area-inset-bottom, 0px));
+    --copy-pad: var(--gut);
+    padding: 24px var(--gut) 0;
+    overflow: visible;
+  }
+  /* The slider sits on top of the sheet; its controls stay in its corner and
+     a sideways swipe at its edge never turns into the browser's Back */
+  .svc-d-media {
+    overscroll-behavior-x: contain;
+  }
+  .svc-d-pager {
+    left: var(--gut);
+    bottom: 14px;
   }
   /* The way out stays on screen while the sheet scrolls, below the notch or
      Dynamic Island, like a phone's own navigation bar */
@@ -1979,6 +2250,8 @@ html {
   .svc-d-actions {
     flex-direction: column; /* the quote button last, at the bottom */
     align-items: stretch;
+    gap: 10px;
+    padding: 36px var(--gut) calc(14px + env(safe-area-inset-bottom, 0px));
   }
   .svc-d-cta {
     width: 100%;
@@ -2438,7 +2711,8 @@ html {
   .card,
   .site-head.scrolled,
   .svc-d-crumbs,
-  .svc-d-close {
+  .svc-d-close,
+  .svc-d-pager {
     background: var(--deep);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;

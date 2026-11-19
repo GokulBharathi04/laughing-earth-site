@@ -20,7 +20,13 @@ const kinds = [
 ] as const;
 
 const facts = ['Priced per piece', 'Customised with your names', 'Bulk orders welcome'];
-const featured = products[0];
+const bySlug = (slug: string) => products.find((p) => p.slug === slug);
+// The banner's featured gift (client, Nov 2026: Indoor Greenies, with its new photo).
+const featured = bySlug('indoor-greenies') ?? products[0];
+// Two single gifts that follow the kinds of gift in the cards below the banner
+// (client, Nov 2026), each with its own 16:10 picture (<image>-wide.webp).
+const picks = ['single-seed-ball', 'diy-grow-kit'].map(bySlug).filter((p) => p != null);
+const pad2 = (n: number) => String(n).padStart(2, '0');
 
 type Product = (typeof products)[number];
 const rupees = (n: number) => `₹${n.toLocaleString('en-IN')}`;
@@ -117,7 +123,7 @@ const faqs = [
   <section class="g-sec g-kinds tone-cream" id="kinds" data-header="dark" aria-labelledby="kinds-title">
     <div class="g-wrap g-split" data-pin-left>
       <div class="g-split__left">
-        <p class="g-label g-eyebrow">Three ways to say thank you</p>
+        <p class="g-label g-eyebrow">Ways to say thank you</p>
         <h2 id="kinds-title" class="g-h2" data-split>Choose your kind of gift</h2>
         <p class="g-lead">Priced per piece, customised with your names, and made for bulk orders.</p>
         <ArrowButton href="#catalogue" data-filter-link="all" data-rise>See all gifts</ArrowButton>
@@ -135,11 +141,31 @@ const faqs = [
                   <span class="abtn__arw" aria-hidden="true"><Icon name="arrow-right" size={15} /></span>
                 </div>
                 <div class="g-kind__meta">
-                  <span class="g-label">{String(i + 1).padStart(2, '0')}</span>
+                  <span class="g-label">{pad2(i + 1)}</span>
                   <p>{categories.find((c) => c.slug === k.slug)?.blurb}</p>
                   <span class="g-label">
                     {countIn(k.slug)} {countIn(k.slug) === 1 ? 'gift' : 'gifts'}
                   </span>
+                </div>
+              </a>
+            </li>
+          ))
+        }
+        {
+          picks.map((p, j) => (
+            <li>
+              <a class="g-kind" href="#catalogue" data-filter-link={p.category}>
+                <div class="g-kind__media" data-reveal>
+                  <img src={withBase(`${p.image}-wide.webp`)} width="960" height="600" alt="" loading="lazy" decoding="async" />
+                </div>
+                <div class="g-kind__row">
+                  <h3 class="g-h3">{p.name}</h3>
+                  <span class="abtn__arw" aria-hidden="true"><Icon name="arrow-right" size={15} /></span>
+                </div>
+                <div class="g-kind__meta">
+                  <span class="g-label">{pad2(kinds.length + j + 1)}</span>
+                  <p>{p.description}</p>
+                  <span class="g-label g-kind__price">{p.price == null ? 'Price on request' : `${rupees(p.price)} each`}</span>
                 </div>
               </a>
             </li>

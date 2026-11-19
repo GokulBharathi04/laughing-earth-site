@@ -197,13 +197,291 @@ export function init() {
     }),
   );
 
+  /* ---------- Pictures side of the details panel: a slider ----------
+     All of a service's photos, the card's own first. It turns on its own every
+     few seconds (a thin line shows the wait), holds while a mouse is over the
+     photos or the keyboard is on its buttons, and can be paused for good. The
+     arrows, the arrow keys and a swipe turn it by hand. Each move slides the
+     new photo in from the side it comes from while the picture inside lags a
+     little behind its frame (parallax), and every move starts from wherever
+     the photos are now, so a quick second press reverses smoothly. */
+  function setupSlider(media: HTMLElement) {
+    const sets = Array.from(media.querySelectorAll<HTMLElement>('[data-svc-d-slides]'));
+    const pager = media.querySelector<HTMLElement>('[data-svc-d-pager]')!;
+    const prevBtn = pager.querySelector<HTMLButtonElement>('[data-svc-d-prev]')!;
+    const nextBtn = pager.querySelector<HTMLButtonElement>('[data-svc-d-next]')!;
+    const playBtn = pager.querySelector<HTMLButtonElement>('[data-svc-d-play]')!;
+    const countEl = pager.querySelector<HTMLElement>('[data-svc-d-pcount]')!;
+    const nowEl = pager.querySelector<HTMLElement>('[data-svc-d-pnow]')!;
+    const allEl = pager.querySelector<HTMLElement>('[data-svc-d-pall]')!;
+    const bar = media.querySelector<HTMLElement>('[data-svc-d-bar]')!;
+    const AUTO = 5; // seconds each photo stays
+    const SLIDE = { duration: 0.9, ease: 'power3.inOut' }; // on-screen movement: ease in and out
+    const DRIFT = 30; // how far (%) the picture lags behind its sliding frame
+    const pad2 = (i: number) => String(i).padStart(2, '0');
+    const imgOf = (s: HTMLElement) => s.querySelector('img')!;
+
+    let slides: HTMLElement[] = [];
+    let at = 0;
+    let playing = !reduced; // no movement of its own for reduced motion; Play still offers it
+    // Reasons to hold the wait: a mouse over the photos, the keyboard on its
+    // buttons, a finger on the photos, or the photos scrolled out of view
+    // (on a phone they leave the top of the sheet while the words are read).
+    let hoverHold = false;
+    let focusHold = false;
+    let dragHold = false;
+    let offHold = false;
+    const held = () => hoverHold || focusHold || dragHold || offHold;
+    let timer: gsap.core.Tween | null = null;
+
+    const showPlayState = () => {
+      playBtn.toggleAttribute('data-paused', !playing);
+      playBtn.setAttribute('aria-label', playing ? 'Pause the slideshow' : 'Play the slideshow');
+      // While it turns by itself, the count is not announced at every turn.
+      countEl.setAttribute('aria-live', playing ? 'off' : 'polite');
+    };
+
+    const label = () => {
+      nowEl.textContent = pad2(at + 1);
+      slides.forEach((s, j) => s.setAttribute('aria-hidden', String(j !== at)));
+    };
+
+    // The wait is the progress line itself: when it fills, the next photo comes.
+    const runTimer = () => {
+      timer?.kill();
+      timer = null;
+      if (!playing || slides.length < 2) {
+        gsap.set(bar, { scaleX: 0 });
+        return;
+      }
+      timer = gsap.fromTo(bar, { scaleX: 0 }, { scaleX: 1, duration: AUTO, ease: 'none', onComplete: () => go(at + 1, 1) });
+      if (held()) timer.pause();
+    };
+    const hold = () => (held() ? timer?.pause() : timer?.resume());
+    // A turn by hand means the visitor has taken over: the slideshow stops
+    // turning by itself until they press Play again.
+    const takeOver = () => {
+      if (!playing) return;
+      playing = false;
+      showPlayState();
+    };
+
+    const go = (to: number, dir: 1 | -1, feel: gsap.TweenVars = SLIDE) => {
+      const count = slides.length;
+      if (count < 2) return;
+      to = ((to % count) + count) % count;
+      if (to === at) return;
+      const a = slides[at];
+      const b = slides[to];
+      // Photos not taking part wait off to the side.
+      slides.forEach((s, j) => {
+        if (j === at || j === to) return;
+        gsap.killTweensOf([s, imgOf(s)]);
+        gsap.set(s, { xPercent: 100 });
+        gsap.set(imgOf(s), { xPercent: 0 });
+      });
+      at = to;
+      label();
+      if (reduced) {
+        gsap.set(a, { xPercent: 100 });
+        gsap.set(b, { xPercent: 0 });
+      } else {
+        // Comes in from the side it is heading from, unless it is already on
+        // its way back (a quick second press): then it carries on from there.
+        const bx = Number(gsap.getProperty(b, 'xPercent'));
+        if (Math.abs(bx) >= 100 || Math.sign(bx) !== dir) {
+          gsap.set(b, { xPercent: 100 * dir });
+          gsap.set(imgOf(b), { xPercent: -DRIFT * dir });
+        }
+        gsap.to(b, { xPercent: 0, ...feel, overwrite: true });
+        gsap.to(imgOf(b), { xPercent: 0, ...feel, overwrite: true });
+        gsap.to(a, { xPercent: -100 * dir, ...feel, overwrite: true });
+        gsap.to(imgOf(a), { xPercent: DRIFT * dir, ...feel, overwrite: true });
+      }
+      runTimer();
+    };
+
+    prevBtn.addEventListener('click', () => {
+      takeOver();
+      go(at - 1, -1);
+    });
+    nextBtn.addEventListener('click', () => {
+      takeOver();
+      go(at + 1, 1);
+    });
+    playBtn.addEventListener('click', () => {
+      playing = !playing;
+      showPlayState();
+      runTimer();
+    });
+    pager.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        takeOver();
+        go(at + 1, 1);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        takeOver();
+        go(at - 1, -1);
+      }
+    });
+    // Out of view (scrolled off on a phone): no point turning unseen.
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(
+        ([e]) => {
+          offHold = !e.isIntersecting;
+          hold();
+        },
+        { threshold: 0.35 },
+      ).observe(media);
+    }
+
+    // Hold still while someone is looking: a mouse over the photos, or the
+    // keyboard on the buttons (a mouse click's focus does not count).
+    media.addEventListener('pointerenter', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      hoverHold = true;
+      hold();
+    });
+    media.addEventListener('pointerleave', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      hoverHold = false;
+      hold();
+    });
+    pager.addEventListener('focusin', (e) => {
+      focusHold = (e.target as Element).matches?.(':focus-visible') ?? false;
+      hold();
+    });
+    pager.addEventListener('focusout', (e) => {
+      if (pager.contains(e.relatedTarget as Node)) return;
+      focusHold = false;
+      hold();
+    });
+
+    /* Swipe (finger, pen or a mouse drag). The photos follow the finger 1:1,
+       the neighbour sliding in beside them, from the point where they were
+       grabbed (even mid-slide). On release, a flick or a drag past a quarter of
+       the frame carries on to that photo at the finger's own speed; less than
+       that settles back. Upright movement is left to the page: the first ~8px
+       decide (touch-action: pan-y in CSS keeps vertical scrolling native). */
+    type Drag = { id: number; x0: number; y0: number; on: boolean; p: number; p0: number; dir: 1 | -1; v: number; lastX: number; lastT: number };
+    let drag: Drag | null = null;
+    const peerOf = (dir: 1 | -1) => slides[(at + dir + slides.length) % slides.length];
+    const place = (s: HTMLElement, x: number) => {
+      gsap.set(s, { xPercent: x });
+      gsap.set(imgOf(s), { xPercent: (-x * DRIFT) / 100 }); // the same lag as a slide by button
+    };
+
+    media.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 || slides.length < 2 || (e.target as Element).closest('button')) return;
+      drag = { id: e.pointerId, x0: e.clientX, y0: e.clientY, on: false, p: 0, p0: 0, dir: 1, v: 0, lastX: e.clientX, lastT: e.timeStamp };
+    });
+    media.addEventListener('pointermove', (e) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const dx = e.clientX - drag.x0;
+      if (!drag.on) {
+        const dy = e.clientY - drag.y0;
+        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+        if (Math.abs(dy) > Math.abs(dx)) {
+          drag = null; // upright: the page is scrolling
+          return;
+        }
+        drag.on = true;
+        try {
+          media.setPointerCapture(e.pointerId);
+        } catch {
+          /* already lifted */
+        }
+        // Grab the photos wherever they are, mid-slide included.
+        slides.forEach((s) => gsap.killTweensOf([s, imgOf(s)]));
+        drag.p0 = Number(gsap.getProperty(slides[at], 'xPercent'));
+        slides.forEach((s, j) => j !== at && place(s, 100));
+        dragHold = true;
+        hold();
+      }
+      const w = media.clientWidth || 1;
+      drag.p = Math.max(-100, Math.min(100, drag.p0 + (dx / w) * 100));
+      const dir: 1 | -1 = drag.p < 0 ? 1 : -1; // finger to the left: the next photo
+      if (dir !== drag.dir) place(peerOf(drag.dir), 100); // the other neighbour goes back to wait
+      drag.dir = dir;
+      place(slides[at], drag.p);
+      place(peerOf(dir), drag.p + 100 * dir);
+      const dt = e.timeStamp - drag.lastT;
+      if (dt > 0) drag.v = drag.v * 0.6 + ((e.clientX - drag.lastX) / dt) * 0.4; // px per ms, smoothed
+      drag.lastX = e.clientX;
+      drag.lastT = e.timeStamp;
+    });
+    const release = (e: PointerEvent) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const d = drag;
+      drag = null;
+      if (!d.on) return;
+      dragHold = false;
+      const w = media.clientWidth || 1;
+      const v = e.timeStamp - d.lastT > 100 ? 0 : d.v; // held still before letting go: no throw
+      const projected = (d.p / 100) * w + v * 180; // where the throw would carry it, in px
+      const commit = Math.abs(projected) > w * 0.25 && Math.sign(projected) === Math.sign(d.p);
+      if (commit) {
+        takeOver();
+        // Carry on at the finger's speed: the faster the flick, the shorter the glide.
+        const left = (1 - Math.abs(d.p) / 100) * w;
+        const duration = Math.min(0.55, Math.max(0.22, left / Math.max(Math.abs(v), 0.9) / 1000));
+        go(at + d.dir, d.dir, { duration, ease: 'power2.out' });
+      } else {
+        const back = { duration: 0.4, ease: 'power3.out', overwrite: true };
+        gsap.to(slides[at], { xPercent: 0, ...back });
+        gsap.to(imgOf(slides[at]), { xPercent: 0, ...back });
+        const peer = peerOf(d.dir);
+        gsap.to(peer, { xPercent: 100 * d.dir, ...back });
+        gsap.to(imgOf(peer), { xPercent: -DRIFT * d.dir, ...back });
+        hold();
+      }
+    };
+    media.addEventListener('pointerup', release);
+    media.addEventListener('pointercancel', release);
+    media.addEventListener('dragstart', (e) => e.preventDefault());
+
+    showPlayState();
+
+    return {
+      /** Show service k's photos, from the first. */
+      load(k: number) {
+        sets.forEach((s, j) => (s.hidden = j !== k));
+        slides = Array.from(sets[k]?.querySelectorAll<HTMLElement>('[data-svc-d-slide]') ?? []);
+        at = 0;
+        slides.forEach((s, j) => {
+          gsap.killTweensOf([s, imgOf(s)]);
+          gsap.set(s, { xPercent: j === 0 ? 0 : 100 });
+          gsap.set(imgOf(s), { xPercent: 0 });
+        });
+        allEl.textContent = pad2(slides.length);
+        pager.hidden = slides.length < 2;
+        label();
+        gsap.set(bar, { scaleX: 0 });
+      },
+      start() {
+        hoverHold = media.matches(':hover');
+        focusHold = false;
+        runTimer();
+      },
+      stop() {
+        timer?.kill();
+        timer = null;
+      },
+      heroImg: () => (slides[0] ? imgOf(slides[0]) : null),
+      atHero: () => at === 0,
+    };
+  }
+
   function setupDetail(dlg: HTMLDialogElement) {
     const q = <T extends Element = HTMLElement>(s: string) => dlg.querySelector<T>(s)!;
     const media = q('[data-svc-d-media]');
-    const img = q<HTMLImageElement>('[data-svc-d-img]');
-    const wide = q<HTMLSourceElement>('[data-svc-d-wide]');
+    const slider = setupSlider(media);
     const face = q('[data-svc-d-face]');
     const copy = Array.from(dlg.querySelectorAll<HTMLElement>('[data-svc-d-copy] > *'));
+    // What is on show right now: the other services' stories are hidden and
+    // must not take a turn in the staggered entrance.
+    const shownCopy = () => copy.filter((el) => !el.hidden);
     // The way out (breadcrumb and close button) arrives with the panel's face
     // and leaves with it, so it never floats over the card while it zooms. It
     // fades by opacity alone: hiding it (visibility) would drop the focus that
@@ -213,10 +491,13 @@ export function init() {
       num: q('[data-svc-d-num]'),
       crumb: q('[data-svc-d-crumb]'),
       title: q('[data-svc-d-title]'),
-      text: q('[data-svc-d-text]'),
       list: q('[data-svc-d-list]'),
       cta: q<HTMLAnchorElement>('[data-svc-d-cta]'),
     };
+    // Each service's story (its words) and photos are written into the panel
+    // ahead of time; opening a card shows its own and hides the rest.
+    const stories = Array.from(dlg.querySelectorAll<HTMLElement>('[data-svc-d-story]'));
+    const scroller = q('[data-svc-d-copy]');
     let shownFor = -1;
     let busy = false;
     let closeWhenReady = false; // Back was pressed while the panel was still opening
@@ -248,16 +529,12 @@ export function init() {
       fields.num.textContent = `${String(k + 1).padStart(2, '0')} / ${String(n).padStart(2, '0')}`;
       fields.crumb.textContent = names[k];
       fields.title.textContent = names[k];
-      fields.text.textContent = src.querySelector('p')?.textContent ?? '';
+      stories.forEach((s) => (s.hidden = s.dataset.svcDStory !== String(k)));
       fields.list.replaceChildren(
         ...Array.from(src.querySelectorAll('li')).map((li) => Object.assign(document.createElement('li'), { textContent: li.textContent })),
       );
       fields.cta.href = whatsappLink(`Hi Laughing Earth! I'd like a quote for ${names[k].toLowerCase()}.`);
-      wide.srcset = card.dataset.detailWide ?? '';
-      img.src = card.dataset.detail ?? '';
-      img.width = Number(card.dataset.detailW) || 800;
-      img.height = Number(card.dataset.detailH) || 1000;
-      img.alt = card.querySelector('img')?.alt ?? '';
+      slider.load(k);
       shownFor = k;
     };
 
@@ -272,6 +549,10 @@ export function init() {
       busy = true;
       fill(k);
       dlg.showModal();
+      // Each story starts at its top: on wide screens the words scroll inside
+      // their column, on phones the whole sheet scrolls.
+      scroller.scrollTop = 0;
+      dlg.scrollTop = 0;
       lock(true);
       if (!inHistory) {
         history.pushState({ ...history.state, svcDetail: k }, '');
@@ -281,13 +562,15 @@ export function init() {
         gsap.set([media, face, ...copy], { autoAlpha: 0 });
         gsap.set(chrome, { opacity: 0 });
         // Let the picture decode first, but never keep the visitor waiting long.
-        await Promise.race([img.decode().catch(() => {}), new Promise((r) => setTimeout(r, 300))]);
+        const hero = slider.heroImg();
+        await Promise.race([hero ? hero.decode().catch(() => {}) : null, new Promise((r) => setTimeout(r, 300))]);
         gsap.set([media], { autoAlpha: 1 });
         gsap.fromTo(media, fromCard(buttons[k].querySelector('img')!), { x: 0, y: 0, scale: 1, clipPath: 'inset(0px 0px round 4px)', ...ZOOM_IN });
         gsap.to(face, { autoAlpha: 1, duration: 0.45, ease: 'power2.out', delay: 0.12 });
         gsap.to(chrome, { opacity: 1, duration: 0.4, ease: 'power2.out', delay: 0.2 });
-        gsap.fromTo(copy, { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', stagger: 0.05, delay: 0.22 });
+        gsap.fromTo(shownCopy(), { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', stagger: 0.05, delay: 0.22 });
       }
+      slider.start();
       busy = false;
       if (closeWhenReady) {
         closeWhenReady = false;
@@ -302,16 +585,20 @@ export function init() {
         return;
       }
       busy = true;
+      slider.stop();
       if (!reduced && shownFor >= 0) {
         dlg.classList.add('is-closing');
         gsap.set(media, { clearProps: 'transform,clipPath' }); // measure the resting position
         const back = fromCard(buttons[shownFor].querySelector('img')!);
+        // Back into the card only while the card's own picture is showing;
+        // another photo would visibly turn into it, so then it simply fades.
+        const away = slider.atHero() ? { ...back, ...ZOOM_OUT } : { autoAlpha: 0, scale: 0.97, duration: 0.3, ease: 'power2.inOut' };
         await gsap
           .timeline()
           .to(chrome, { opacity: 0, duration: 0.18, ease: 'power2.out' }, 0)
-          .to(copy, { autoAlpha: 0, y: 8, duration: 0.18, ease: 'power2.out' }, 0)
+          .to(shownCopy(), { autoAlpha: 0, y: 8, duration: 0.18, ease: 'power2.out' }, 0)
           .to(face, { autoAlpha: 0, duration: 0.3, ease: 'power2.out' }, 0.05)
-          .to(media, { ...back, ...ZOOM_OUT }, 0.05);
+          .to(media, away, 0.05);
       }
       dlg.close(); // the 'close' handler below tidies up
     };
@@ -335,6 +622,7 @@ export function init() {
       dlg.classList.remove('is-closing');
       gsap.set([media, face, ...chrome, ...copy], { clearProps: 'all' });
       lock(false);
+      slider.stop();
       if (shownFor >= 0) buttons[shownFor].focus({ preventScroll: true });
       busy = false;
       closeWhenReady = false;
@@ -363,6 +651,20 @@ export function init() {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(layout, 150);
   });
+
+  /* Hand fan (landscape.css): the photos behind each card are fetched only
+     where they can ever be seen, on a pointer that hovers, once the page is
+     idle or as soon as the pointer reaches the ring. Phones never load them. */
+  if (!reduced && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    const loadFan = () =>
+      root.querySelectorAll<HTMLImageElement>('[data-ring-fan] img[data-src]').forEach((im) => {
+        im.src = im.dataset.src!;
+        im.removeAttribute('data-src');
+      });
+    if ('requestIdleCallback' in window) requestIdleCallback(loadFan, { timeout: 4000 });
+    else setTimeout(loadFan, 2000);
+    root.addEventListener('pointerenter', loadFan, { once: true });
+  }
 
   root.classList.add('is-ready'); // switches the CSS from a flat row to the ring
   layout();

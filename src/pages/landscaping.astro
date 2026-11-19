@@ -16,59 +16,133 @@ import { SITE, NAV, POLICIES, whatsappLink, WHATSAPP_MESSAGES } from '../config/
 // Pictures cut to size in /images/land-studio (see IMAGES-NEEDED.md).
 const pic = (file: string) => withBase(`/images/land-studio/${file}`);
 
-// Each service: the reference page's line, and what it includes, taken from
-// that same line. The card shows the picture and name; the details panel shows
-// the rest. detail = 4:5 picture for the panel (its own pixel size), wide = 4:3
-// picture for the panel on phones.
-const services = [
+// Each service: the card shows the picture and name; the details panel tells
+// the whole story. detail = 4:5 picture for the panel (its own pixel size),
+// wide = 4:3 picture for the panel on phones.
+//
+// story = the client's own text for the service (Nov 2026, word for word), in
+// one or more parts, each with the client's photos that belong to it
+// (svc-…-g<n>-720/1200.webp, made from "Sample Images/Final Images"). The words
+// show on the right of the details panel; the photos, in the same order and
+// after the card's own picture, make the slider on the left (slidesOf). The
+// card picture is left out of the photos so it is not shown twice. w/h are the
+// 1200px file's size; pos is where a tall crop of a wide photo should sit
+// (default: the middle). includes = the same text as a quick list.
+type Photo = { n: number; w: number; h: number; alt: string; pos?: string; whole?: boolean };
+type Part = { text: string; photos: Photo[] };
+const services: { name: string; slug: string; detail: number[]; story: Part[]; includes: string[]; alt: string }[] = [
   {
     name: 'Landscape design',
     slug: 'svc-landscape-design',
     detail: [800, 1000],
-    text: 'Thoughtfully planned green spaces with trees, palms, plants, lawns, shrubs, flower beds and ground covers.',
+    story: [
+      {
+        text: 'Landscape design is the art of transforming outdoor spaces into beautiful, green and refreshing environments. It involves the thoughtful selection and arrangement of natural elements such as trees, palms, plants, lawns, shrubs, flower beds and ground covers. At Laughing Earth Landscape Studio, we create thoughtfully planned green spaces that enhance the beauty, functionality and natural balance of your surroundings, bringing people closer to nature.',
+        photos: [
+          { n: 1, w: 1200, h: 800, alt: 'A planted border of flowering shrubs, ferns and a frangipani along a white house, with a boulder and a garden light', pos: '40% 50%' },
+          { n: 3, w: 1200, h: 675, alt: 'A trimmed lawn bordered by palms, flower beds and garden lights in front of a house' },
+        ],
+      },
+    ],
     includes: ['Trees and palms', 'Plants and shrubs', 'Lawns', 'Flower beds', 'Ground covers'],
-    alt: 'A lawn garden with palms, flowering shrubs, a stone path, a lily pond with a fountain and a pergola',
+    alt: 'A corner lawn framed by tropical planting, ferns and a spreading tree beside a garden wall',
   },
   {
     name: 'Hardscape design',
     slug: 'svc-hardscape-design',
     detail: [800, 1000],
-    text: 'Natural stone paving, pathways, driveways, retaining walls, pergolas, garden steps, fountains and seating areas.',
-    includes: ['Natural stone paving', 'Pathways and driveways', 'Retaining walls', 'Pergolas', 'Garden steps', 'Fountains and seating areas'],
-    alt: 'A natural stone patio with broad steps, retaining walls, a fountain, a pergola and built-in seating',
+    story: [
+      {
+        text: 'Hardscape design focuses on the structural and functional elements of outdoor spaces, combining durability with aesthetic appeal. It includes features such as natural stone paving, pathways, driveways, outdoor flooring, retaining walls, pergolas, garden steps, water fountains and seating areas. We thoughtfully integrate textures, materials and architectural elements to create elegant, practical and enduring outdoor spaces that complement the surrounding landscape.',
+        photos: [
+          { n: 1, w: 1200, h: 800, alt: 'Large stone paving slabs set with grass joints, leading across a driveway to the gate' },
+          { n: 2, w: 1200, h: 800, alt: 'Pale stone pavers laid in grass along a planted driveway' },
+          { n: 4, w: 1200, h: 675, alt: 'A stone-paved pool deck with a circular inlay and round decorative stones', pos: '18% 50%' },
+          { n: 5, w: 1200, h: 800, alt: 'A poolside walk of large stone slabs with a cobble border, leading to a lit gazebo', pos: '12% 50%' },
+        ],
+      },
+    ],
+    includes: ['Natural stone paving', 'Pathways and driveways', 'Outdoor flooring', 'Retaining walls', 'Pergolas', 'Garden steps', 'Water fountains and seating areas'],
+    alt: 'A circular cobblestone driveway with an inlaid ring pattern, edged with planting under a spreading tree',
   },
   {
     name: 'Landscape maintenance',
     slug: 'svc-landscape-maintenance',
     detail: [800, 1000],
-    text: 'Mowing, pruning, trimming, fertilisation, weed control, irrigation management and seasonal care, all year round.',
-    includes: ['Mowing, pruning and trimming', 'Fertilisation', 'Weed control', 'Irrigation management', 'Seasonal care, all year round'],
-    alt: 'A freshly mown striped lawn with a mower, a wheelbarrow of tools and a sprinkler running',
+    story: [
+      {
+        text: 'A beautiful landscape deserves consistent care and attention to flourish throughout the year. Our landscape maintenance services are designed to keep your outdoor spaces healthy, vibrant and visually appealing in every season. From lawn mowing, pruning, trimming and plant care to fertilisation, weed control, irrigation management and seasonal maintenance, we provide comprehensive solutions to preserve the beauty and health of your landscape. Our goal is to ensure your gardens remain fresh, well-maintained and inviting all year round.',
+        photos: [
+          { n: 1, w: 1200, h: 800, alt: 'A gardener trimming shrubs while another pressure-washes a stone path' },
+        ],
+      },
+    ],
+    includes: ['Lawn mowing, pruning and trimming', 'Plant care', 'Fertilisation', 'Weed control', 'Irrigation management', 'Seasonal maintenance'],
+    alt: 'A gardener pruning a lush planted bed of tropical foliage beside a lawn',
   },
   {
     name: 'Gardening services',
     slug: 'svc-gardening-services',
     detail: [800, 1000],
-    text: 'Plant selection, garden setup, soil preparation, potting, repotting, planting and general garden care.',
-    includes: ['Plant selection', 'Garden setup', 'Soil preparation', 'Potting and repotting', 'Planting and general garden care'],
-    alt: 'Potted plants, soil, a watering can and hand tools set out on a stone courtyard for planting',
+    story: [
+      {
+        text: 'Gardening is more than just planting; it is about creating and nurturing living spaces that grow beautifully over time. We offer comprehensive gardening services, including plant selection, garden setup, soil preparation, potting, repotting, planting, fertilisation and general garden care. Whether it is a small home garden, a residential landscape or a commercial green space, we bring the right expertise and attention to detail to help every garden thrive.',
+        photos: [
+          // A labelled collage: shown whole in the slider, since a crop would cut its words
+          { n: 1, w: 1199, h: 1312, alt: 'Our gardening work in five pictures: garden maintenance, soil preparation, potting, re-potting, and plant care and health', whole: true },
+        ],
+      },
+    ],
+    includes: ['Plant selection', 'Garden setup', 'Soil preparation', 'Potting and repotting', 'Planting', 'Fertilisation', 'General garden care'],
+    alt: 'A Laughing Earth gardener trimming a shrub with garden shears',
   },
   {
     name: 'Miyawaki & butterfly gardens',
     slug: 'svc-miyawaki-butterfly',
     detail: [800, 1000],
-    text: 'Dense native mini-forests and nectar-rich pollinator gardens that support birds, insects and a healthier ecosystem.',
-    includes: ['Dense native mini-forests', 'Nectar-rich pollinator gardens', 'Homes for birds and insects'],
-    alt: 'A stone path through dense native planting and bright flowers, with butterflies in the sunlight',
+    // Two parts, so each kind of garden sits next to its own photos.
+    story: [
+      {
+        text: 'We specialise in creating nature-inspired green spaces that promote biodiversity, ecological balance and a thriving natural environment. Our Miyawaki gardens use the innovative Miyawaki method to develop dense, native mini-forests in relatively small spaces, encouraging natural growth and creating habitats for birds, insects and other wildlife.',
+        photos: [
+          { n: 1, w: 1200, h: 801, alt: 'A dense young Miyawaki forest of native trees over mulched ground' },
+          { n: 2, w: 1200, h: 800, alt: 'A Miyawaki mini-forest edged with a rope fence and a small sign' },
+          { n: 3, w: 1200, h: 675, alt: 'The thick native canopy of a Miyawaki forest seen from above' },
+        ],
+      },
+      {
+        text: 'Complementing this approach, our butterfly gardens feature carefully selected nectar-rich flowering plants and host plants that attract and support butterflies and other pollinators throughout their life cycle. By bringing together native vegetation, flowering plants and natural habitats, we create vibrant, sustainable green spaces that reconnect people with nature and contribute to a healthier ecosystem.',
+        photos: [
+          { n: 5, w: 1200, h: 800, alt: 'A butterfly garden with its sign, flowering beds and a stone bench', pos: '16% 50%' },
+        ],
+      },
+    ],
+    includes: ['Dense native mini-forests', 'Nectar-rich flowering plants', 'Host plants for butterflies', 'Habitats for birds, insects and wildlife'],
+    alt: 'A butterfly garden of lantana, pentas and other nectar-rich flowers beside a stone-edged path',
   },
   {
     name: 'Automated water irrigation',
     slug: 'svc-irrigation',
     detail: [800, 1000],
-    text: 'Drip and sprinkler systems, custom layouts and automatic timers that save water and effort.',
-    includes: ['Drip systems', 'Sprinkler systems', 'Custom layouts', 'Automatic timers'],
-    alt: 'Pop-up sprinklers watering a lawn beside a wall-mounted irrigation timer and drip lines',
+    story: [
+      {
+        text: 'Efficient watering is essential for maintaining healthy and thriving landscapes. Our automated water irrigation solutions are designed to deliver the right amount of water to plants and lawns at the right time, ensuring consistent hydration while reducing water wastage and manual effort. From drip irrigation and sprinkler systems to customised irrigation layouts and automatic timer controls, we provide smart watering solutions tailored to the specific requirements of each outdoor space. Our goal is to promote healthier plant growth, improve water efficiency and make garden maintenance more convenient and sustainable.',
+        photos: [
+          { n: 2, w: 1200, h: 800, alt: 'A terrace planter watered by drip lines, with a wall-mounted irrigation controller' },
+        ],
+      },
+    ],
+    includes: ['Drip irrigation', 'Sprinkler systems', 'Customised irrigation layouts', 'Automatic timer controls'],
+    alt: 'A gardener laying drip irrigation lines in a planted bed below the wall-mounted irrigation controller',
   },
+];
+const photo = (slug: string, n: number, w: 720 | 1200) => pic(`${slug}-g${n}-${w}.webp`);
+// The pictures side of the details panel: the card's own picture first, then
+// every photo from the story, in the order the story tells them.
+type Slide = { hero: true; pos: string } | ({ hero: false } & Photo & { pos: string });
+const slidesOf = (s: (typeof services)[number]): Slide[] => [
+  { hero: true, pos: '50% 50%' },
+  ...s.story.flatMap((part) => part.photos.map((ph) => ({ hero: false as const, ...ph, pos: ph.pos ?? '50% 50%' }))),
 ];
 
 // Clients, with their logos (Wikimedia Commons and the companies' own sites;
@@ -96,6 +170,18 @@ const clients = [
   const height = Math.min(64, Math.round(46 / Math.sqrt(ratio)) + 14);
   return { ...c, height, width: Math.round(height * ratio) };
 });
+
+// How many photos fan out behind each ring card on hover (svc-…-fan<k>.webp,
+// 4:5, 360 x 450): more of the service's own photos, a few from the client's
+// first batch where the second had too few. See IMAGES-NEEDED.md.
+const fanCount: Record<string, number> = {
+  'svc-landscape-design': 3,
+  'svc-hardscape-design': 3,
+  'svc-landscape-maintenance': 2,
+  'svc-gardening-services': 3,
+  'svc-miyawaki-butterfly': 3,
+  'svc-irrigation': 2,
+};
 
 const pad = (i: number) => String(i).padStart(2, '0');
 const a = SITE.address;
@@ -135,13 +221,18 @@ const a = SITE.address;
                   data-ring-card
                   data-name={s.name}
                   data-detail={pic(`${s.slug}-detail.webp`)}
-                  data-detail-w={s.detail[0]}
-                  data-detail-h={s.detail[1]}
-                  data-detail-wide={pic(`${s.slug}-720.webp`)}
                   role="group"
                   aria-roledescription="slide"
                   aria-label={`${i + 1} of ${services.length}: ${s.name}`}
                 >
+                  <!-- Hand fan: more of this service's photos, hidden behind the
+                       card until a pointer hovers the front card (landscape.css).
+                       data-src: fetched only where hover exists (service-ring.ts). -->
+                  <span class="ring-fan" data-ring-fan data-count={fanCount[s.slug]} aria-hidden="true">
+                    {Array.from({ length: fanCount[s.slug] }, (_, k) => (
+                      <img data-src={pic(`${s.slug}-fan${k + 1}.webp`)} alt="" width="360" height="450" decoding="async" draggable="false" />
+                    ))}
+                  </span>
                   <button class="ring-open" type="button" data-ring-open tabindex={i === 0 ? 0 : -1} aria-label={`${s.name}: see details`}>
                     <img src={pic(`${s.slug}-480.webp`)} width="480" height="600" alt={s.alt} loading="lazy" decoding="async" draggable="false" />
                     <span class="ring-over" aria-hidden="true">
@@ -151,7 +242,7 @@ const a = SITE.address;
                   </button>
                   <div class="ring-detail sr-only">
                     <h3>{s.name}</h3>
-                    <p>{s.text}</p>
+                    {s.story.map((part) => <p>{part.text}</p>)}
                     <ul>{s.includes.map((x) => <li>{x}</li>)}</ul>
                   </div>
                 </li>
@@ -189,16 +280,64 @@ const a = SITE.address;
           <li class="svc-d-here" aria-current="page" data-svc-d-crumb>{services[0].name}</li>
         </ol>
       </nav>
+      <!-- Pictures side: every photo of the opened service in one slider (the
+           card's own picture first), turning on its own every few seconds, with
+           arrows, a pause button and swipe (service-ring.ts). Hidden sets load
+           nothing. The words stay on the right. -->
       <figure class="svc-d-media" data-svc-d-media>
-        <picture>
-          <source media="(max-width: 800px)" data-svc-d-wide />
-          <img data-svc-d-img alt="" decoding="async" />
-        </picture>
+        {
+          services.map((s, i) => {
+            const slides = slidesOf(s);
+            return (
+              <div class="svc-d-slides" data-svc-d-slides={i} role="region" aria-roledescription="carousel" aria-label={`Photos: ${s.name}`} hidden>
+                {slides.map((sl, j) => (
+                  <div class="svc-d-slide" data-svc-d-slide role="group" aria-roledescription="slide" aria-label={`${j + 1} of ${slides.length}`} style={`--pos:${sl.pos};--fit:${!sl.hero && sl.whole ? 'contain' : 'cover'}`}>
+                    {sl.hero ? (
+                      <picture>
+                        <source media="(max-width: 800px)" srcset={pic(`${s.slug}-720.webp`)} width="720" height="540" />
+                        <img src={pic(`${s.slug}-detail.webp`)} width={s.detail[0]} height={s.detail[1]} alt={s.alt} decoding="async" draggable="false" />
+                      </picture>
+                    ) : (
+                      <img
+                        src={photo(s.slug, sl.n, 720)}
+                        srcset={`${photo(s.slug, sl.n, 720)} 720w, ${photo(s.slug, sl.n, 1200)} 1200w`}
+                        sizes="(max-width: 800px) 100vw, 580px"
+                        width={sl.w}
+                        height={sl.h}
+                        alt={sl.alt}
+                        loading="lazy"
+                        decoding="async"
+                        draggable="false"
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            );
+          })
+        }
+        <div class="svc-d-pager" data-svc-d-pager data-svc-d-chrome>
+          <button class="svc-d-pbtn" type="button" data-svc-d-prev aria-label="Previous photo"><Icon name="chevron-left" size={18} /></button>
+          <p class="svc-d-pcount" data-svc-d-pcount><span data-svc-d-pnow>01</span><span aria-hidden="true"> / </span><span class="sr-only"> of </span><span data-svc-d-pall>01</span></p>
+          <button class="svc-d-pbtn" type="button" data-svc-d-next aria-label="Next photo"><Icon name="chevron-right" size={18} /></button>
+          <button class="svc-d-pbtn svc-d-play" type="button" data-svc-d-play aria-label="Pause the slideshow">
+            <Icon name="pause" size={14} class="is-pause" /><Icon name="play" size={14} class="is-play" />
+          </button>
+        </div>
+        <span class="svc-d-progress" aria-hidden="true"><i data-svc-d-bar></i></span>
       </figure>
       <div class="svc-d-copy" data-svc-d-copy>
         <p class="svc-d-num" data-svc-d-num></p>
         <h3 id="svc-d-title" class="svc-d-title" data-svc-d-title>Service</h3>
-        <p class="svc-d-text" data-svc-d-text></p>
+        <!-- One story per service, shown for the card that was opened: the
+             words only, since every photo is on the pictures side. -->
+        {
+          services.map((s, i) => (
+            <div class="svc-d-story" data-svc-d-story={i} hidden>
+              {s.story.map((part) => <p class="svc-d-text">{part.text}</p>)}
+            </div>
+          ))
+        }
         <p class="svc-d-sub">What's included</p>
         <ul class="svc-d-list" data-svc-d-list></ul>
         <p class="svc-d-note">Every project starts with a site visit and a written quote.</p>
